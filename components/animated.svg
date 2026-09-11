@@ -1,0 +1,109 @@
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes scratch { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-5deg); } }
+    @keyframes think { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(3deg); } }
+    @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.4; transform: scale(0.8); } }
+    @keyframes eyes { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+    
+    .floating { animation: float 4s ease-in-out infinite; }
+    .scratching { animation: scratch 1.5s ease-in-out infinite; transform-origin: 485px 280px; }
+    .thinking-head { animation: think 3s ease-in-out infinite; transform-origin: center; }
+    .eye-move { animation: eyes 2s ease-in-out infinite; }
+    .q-mark { animation: pulse 2s infinite; transform-origin: 530px 180px; }
+  </style>
+
+  <!-- Background Glow -->
+  <circle cx="400" cy="250" r="200" fill="#F1F5F9" opacity="0.5" />
+
+  <!-- THE PHONE (eSIMzo Orange) -->
+  <g transform="translate(325, 60)">
+    <rect x="0" y="0" width="150" height="300" rx="25" fill="#FF7E54" />
+    <rect x="8" y="8" width="134" height="284" rx="20" fill="white" />
+    
+    <!-- Top Notch/Bar -->
+    <rect x="45" y="15" width="60" height="5" rx="2.5" fill="#FF7E54" opacity="0.2" />
+    
+    <!-- Comparison Cards -->
+    <g class="floating" style="animation-delay: 0s;">
+      <rect x="15" y="40" width="120" height="45" rx="8" fill="#F1F5F9" filter="url(#shadow)" />
+      <circle cx="30" cy="62.5" r="8" fill="#FF7E54" opacity="0.3" />
+      <text x="45" y="60" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Airalo</text>
+      <text x="100" y="67" font-family="Arial" font-size="10" fill="#FF7E54" font-weight="bold">$4.50</text>
+    </g>
+
+    <g class="floating" style="animation-delay: 1s;">
+      <rect x="15" y="95" width="120" height="45" rx="8" fill="#F1F5F9" filter="url(#shadow)" />
+      <circle cx="30" cy="117.5" r="8" fill="#333" opacity="0.1" />
+      <text x="45" y="115" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Holafly</text>
+      <text x="100" y="122" font-family="Arial" font-size="10" fill="#333" font-weight="bold">$19.00</text>
+    </g>
+
+    <g class="floating" style="animation-delay: 2s;">
+      <rect x="15" y="150" width="120" height="45" rx="8" fill="#F1F5F9" filter="url(#shadow)" />
+      <circle cx="30" cy="172.5" r="8" fill="#FF7E54" opacity="0.3" />
+      <text x="45" y="170" font-family="Arial" font-size="9" fill="#333" font-weight="bold">Esim2go</text>
+      <text x="100" y="177" font-family="Arial" font-size="10" fill="#FF7E54" font-weight="bold">$4.00</text>
+    </g>
+
+    <!-- Get Deal Button -->
+    <rect x="25" y="240" width="100" height="25" rx="12.5" fill="#FF7E54" />
+    <text x="75" y="257" font-family="Arial" font-size="9" fill="white" text-anchor="middle" font-weight="bold">Get Best Deal</text>
+  </g>
+
+  <!-- CHARACTER LEFT (Thinking Woman) -->
+  <g transform="translate(180, 220)">
+    <!-- Body -->
+    <path d="M20 120 Q50 80 80 120 L80 180 L20 180 Z" fill="#FF7E54" /> <!-- Shirt -->
+    <path d="M35 180 L35 230 M65 180 L65 230" stroke="#334155" stroke-width="12" stroke-linecap="round" /> <!-- Legs -->
+    
+    <!-- Arm reaching to chin -->
+    <path d="M75 110 Q95 130 85 155" fill="none" stroke="#F3D1B0" stroke-width="8" stroke-linecap="round" />
+    <path d="M85 155 L65 125" fill="none" stroke="#F3D1B0" stroke-width="8" stroke-linecap="round" />
+
+    <g class="thinking-head">
+      <circle cx="50" cy="70" r="30" fill="#F3D1B0" /> <!-- Face -->
+      <path d="M25 65 Q25 35 50 35 Q75 35 75 65" fill="#4B2C20" /> <!-- Hair top -->
+      <path d="M25 65 L20 90 M75 65 L80 90" stroke="#4B2C20" stroke-width="8" stroke-linecap="round" /> <!-- Hair sides -->
+      <g class="eye-move">
+        <circle cx="42" cy="70" r="2.5" fill="#333" />
+        <circle cx="58" cy="70" r="2.5" fill="#333" />
+      </g>
+      <path d="M45 85 Q50 88 55 85" stroke="#333" fill="none" stroke-width="1.5" /> <!-- Pensive mouth -->
+    </g>
+  </g>
+
+  <!-- CHARACTER RIGHT (Confused Man) -->
+  <g transform="translate(520, 220)">
+    <!-- Body -->
+    <path d="M20 120 Q50 80 80 120 L80 180 L20 180 Z" fill="#FF7E54" /> <!-- Shirt -->
+    <path d="M35 180 L35 230 M65 180 L65 230" stroke="#334155" stroke-width="12" stroke-linecap="round" /> <!-- Legs -->
+    
+    <!-- Scratching head arm -->
+    <g class="scratching">
+      <path d="M25 110 Q-5 100 15 65" fill="none" stroke="#F3D1B0" stroke-width="8" stroke-linecap="round" />
+    </g>
+
+    <g class="thinking-head">
+      <circle cx="50" cy="70" r="30" fill="#F3D1B0" /> <!-- Face -->
+      <rect x="25" y="40" width="50" height="15" rx="5" fill="#333" /> <!-- Short hair -->
+      <g class="eye-move">
+        <path d="M40 68 L45 72 M60 68 L55 72" stroke="#333" stroke-width="2" /> <!-- Squinting eyes -->
+      </g>
+      <circle cx="50" cy="85" r="3" fill="none" stroke="#333" stroke-width="1.5" /> <!-- 'O' mouth -->
+    </g>
+    
+    <!-- Floating Question Marks -->
+    <text x="80" y="40" font-family="Arial" font-size="30" fill="#FF7E54" font-weight="bold" class="q-mark">?</text>
+    <text x="-10" y="60" font-family="Arial" font-size="20" fill="#FF7E54" font-weight="bold" class="q-mark" style="animation-delay: 0.5s">?</text>
+  </g>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="400" cy="460" rx="150" ry="10" fill="#334155" opacity="0.05" />
+</svg>

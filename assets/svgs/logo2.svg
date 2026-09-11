@@ -1,0 +1,54 @@
+import React from "react";
+
+export default function EsimzoLogo() {
+  return (
+    <div className="flex items-center justify-center p-8 bg-white">
+      <svg
+        width="400"
+        height="120"
+        viewBox="0 0 400 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* --- LOGO ICON --- */}
+        <g id="icon">
+          {/* SIM Card Base */}
+          <path
+            d="M20 25C20 19.4772 24.4772 15 30 15H75L95 35V85C95 90.5228 90.5228 95 85 95H30C24.4772 95 20 90.5228 20 85V25Z"
+            fill="#1A1A1A"
+          />
+          
+          {/* Stylized 'Z' / Signal Bars */}
+          <path
+            d="M35 35H80L40 75H80"
+            stroke="#FF8C00"
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          
+          {/* Connectivity Spark (Small circle to show "e" aspect) */}
+          <circle cx="80" cy="75" r="5" fill="#FF8C00" />
+        </g>
+
+        {/* --- BRAND NAME --- */}
+        <text
+          x="115"
+          y="78"
+          style={{
+            fontFamily: "Inter, system-ui, sans-serif",
+            fontWeight: "800",
+            fontSize: "64px",
+            letterSpacing: "-2px"
+          }}
+        >
+          <tspan fill="#1A1A1A">esim</tspan>
+          <tspan fill="#FF8C00">zo</tspan>
+        </text>
+
+        {/* --- OPTIONAL TAGLINE / ACCENT --- */}
+        <rect x="115" y="90" width="260" height="2" fill="#FF8C00" opacity="0.3" />
+      </svg>
+    </div>
+  );
+}
