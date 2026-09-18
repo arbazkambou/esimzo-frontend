@@ -51,7 +51,7 @@ export default function Navbar({ searchSlot, mobileMenuSlot }: NavbarProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full",
+        "relative w-full",
         // Transitions only the background-color and backdrop-filter for smoothness
         "transition-[background-color,backdrop-filter] duration-150 ease-out",
         isScrolled

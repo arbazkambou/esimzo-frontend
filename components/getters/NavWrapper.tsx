@@ -6,7 +6,7 @@ import AnnouncementBar from "../common/AnnouncementBar";
 
 function NavWrapper() {
   return (
-    <>
+    <div className="sticky top-0 z-50 w-full">
       <AnnouncementBar />
       <Navbar
         searchSlot={<SearchTrigger variant="icon" />}
@@ -14,7 +14,7 @@ function NavWrapper() {
           <NavbarMobileMenu searchSlot={<SearchTrigger variant="icon" />} />
         }
       />
-    </>
+    </div>
   );
 }
 
