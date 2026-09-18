@@ -3,56 +3,95 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import PrimaryButton from "../common/PrimaryButton";
+import CountryCard from "./CountryCard";
+import type { Country } from "@/lib/types/plans.types";
+import { getRegionCountries } from "@/lib/services/plans/plans.services";
+import { Spinner } from "../ui/spinner";
 
 type Props = {
-  visibleCount: number;
+  regionSlug: string;
+  regionName: string;
+  initialCountries: Country[];
   totalCount: number;
-  children: React.ReactNode;
 };
 
 export default function ExpandableGrid({
-  visibleCount,
+  regionSlug,
+  regionName,
+  initialCountries,
   totalCount,
-  children,
 }: Props) {
+  const [countries, setCountries] = useState(initialCountries);
   const [expanded, setExpanded] = useState(false);
-  const hasMore = totalCount > visibleCount;
+  const [hasLoadedAll, setHasLoadedAll] = useState(
+    initialCountries.length >= totalCount,
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const hasMore = totalCount > initialCountries.length;
+  const visibleCountries = expanded ? countries : initialCountries;
+
+  async function toggleExpanded() {
+    if (expanded) {
+      setExpanded(false);
+      return;
+    }
+
+    if (!hasLoadedAll) {
+      setIsLoading(true);
+      setError("");
+      const result = await getRegionCountries(regionSlug);
+      setIsLoading(false);
+
+      if (!result.success) {
+        setError(result.message);
+        return;
+      }
+
+      setCountries(result.data);
+      setHasLoadedAll(true);
+    }
+
+    setExpanded(true);
+  }
 
   return (
     <>
-      {/* Wrapper adds the fade-out mask when collapsed */}
-      <div className="relative">
-        <div
-          className="-mt-2 grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 lg:grid-cols-3"
-          style={{
-            /* All cards stay in the DOM for SEO — just clip the overflow */
-            maxHeight: expanded
-              ? "none"
-              : `${(Math.ceil(visibleCount) / 3) * 100}px`,
-            overflow: "hidden",
-            transition: "max-height 0.4s ease-in-out",
-          }}
-        >
-          {children}
-        </div>
-
-        {/* Fade gradient — only shown when collapsed and there is more content */}
-        {hasMore && !expanded && (
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-background to-transparent" />
-        )}
+      <div className="-mt-2 grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 lg:grid-cols-3">
+        {visibleCountries.map((country) => (
+          <CountryCard key={country.id} country={country} />
+        ))}
       </div>
+
+      {error && (
+        <p className="mt-3 text-center text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      )}
 
       {hasMore && (
         <div className="mt-4 flex justify-center">
           <PrimaryButton
-            onClick={() => setExpanded((prev) => !prev)}
-            className="group flex "
+            onClick={() => void toggleExpanded()}
+            disabled={isLoading}
+            className="group flex"
           >
-            {expanded ? "Show Less" : `See All ${totalCount} Countries`}
-            {expanded ? (
-              <ChevronUp className="h-4 w-4" />
+            {isLoading ? (
+              <>
+                <Spinner />
+                Loading {regionName}…
+              </>
+            ) : expanded ? (
+              <>
+                Show Less
+                <ChevronUp className="h-4 w-4" />
+              </>
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <>
+                {error ? "Try Again" : `See All ${totalCount} Countries`}
+                <ChevronDown className="h-4 w-4" />
+              </>
             )}
           </PrimaryButton>
         </div>

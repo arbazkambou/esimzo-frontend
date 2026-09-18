@@ -42,6 +42,10 @@ export async function getRegions() {
   });
 }
 
+export async function getRegionCountries(slug: string) {
+  return api<Country[]>(`/regions/${slug}/countries`, noStore);
+}
+
 export async function getCountryPackagesBySlug(slug: string) {
   return unwrapPlans(await api<PlansListPayload | Plan[]>(
     `/plans/country/${slug}`,

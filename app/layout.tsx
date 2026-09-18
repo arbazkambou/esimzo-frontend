@@ -6,6 +6,8 @@ import QueryProvider from "@/components/providers/QueryProvider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import NavWrapper from "@/components/getters/NavWrapper";
 import NextTopLoader from "nextjs-toploader";
+import { SearchDialogProvider } from "@/components/search/SearchDialogProvider";
+import { SearchDialog } from "@/components/search/SearchDialog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +38,12 @@ export default function RootLayout({
         <NextTopLoader color="#F47854" showSpinner={false} />
         <QueryProvider>
           <NuqsAdapter>
-            <NavWrapper />
-            <main className="grow">{children}</main>
-            <Footer />
+            <SearchDialogProvider>
+              <NavWrapper />
+              <main className="grow">{children}</main>
+              <Footer />
+              <SearchDialog />
+            </SearchDialogProvider>
           </NuqsAdapter>
         </QueryProvider>
       </body>

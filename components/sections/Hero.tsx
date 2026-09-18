@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ConfusedPeopleSVG from "./ConfusedPeopleSVG";
-import SearchList from "@/components/search/SearchList";
+import { SearchTrigger } from "@/components/search/SearchTrigger";
 
 const popularDestinations = [
   { flag: "🇫🇷", name: "France", link: "/france/" },
@@ -43,7 +43,7 @@ export default function Hero() {
 
             {/* Search bar */}
             <div className="w-full max-w-xl">
-              <SearchList variant="bar" />
+              <SearchTrigger variant="bar" />
 
               {/* Popular tags */}
               <div className="mt-3 flex flex-wrap items-center gap-2">

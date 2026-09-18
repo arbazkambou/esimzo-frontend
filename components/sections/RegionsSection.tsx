@@ -1,11 +1,10 @@
 import { getRegions } from "@/lib/services/plans/plans.services";
-import CountryCard from "../cards/CountryCard";
 import ExpandableGrid from "../cards/ExpandableGrid";
 import RegionCard from "../cards/RegionCard";
 import GlobalRegionCard from "../cards/GlobalRegionCard";
 import Image from "next/image";
 
-const VISIBLE_COUNT = 10;
+const VISIBLE_COUNT = 12;
 
 export default async function RegionsSection() {
   const result = await getRegions();
@@ -42,15 +41,12 @@ export default async function RegionsSection() {
                 </h2>
               </div>
 
-              {/* All cards rendered server-side; ExpandableGrid clips overflow */}
               <ExpandableGrid
-                visibleCount={VISIBLE_COUNT}
+                regionSlug={region.slug}
+                regionName={region.name}
+                initialCountries={region.countries.slice(0, VISIBLE_COUNT)}
                 totalCount={region.countries.length}
-              >
-                {region.countries.map((country) => (
-                  <CountryCard key={country.id} country={country} />
-                ))}
-              </ExpandableGrid>
+              />
             </div>
           ))}
         </div>

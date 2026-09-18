@@ -27,15 +27,15 @@ export function SearchTrigger({ variant = "icon" }: { variant?: Variant }) {
     );
   }
 
-  // icon variant (Navbar)
   return (
     <button
       type="button"
       onClick={openSearch}
       aria-label="Search destinations"
-      className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-primary transition-colors"
+      className="flex items-center gap-2 rounded-full border border-foreground px-4 py-1 text-foreground cursor-pointer hover:bg-foreground hover:text-background transition-colors"
     >
       <Search className="h-4 w-4" />
+      <span>Destinations</span>
     </button>
   );
 }

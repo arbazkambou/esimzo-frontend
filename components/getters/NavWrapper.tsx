@@ -1,14 +1,14 @@
 import React from "react";
 import Navbar from "../sections/Navbar";
-import SearchList from "../search/SearchList";
+import { SearchTrigger } from "../search/SearchTrigger";
 import { NavbarMobileMenu } from "../sections/NavbarMobileMenu";
 
 function NavWrapper() {
   return (
     <Navbar
-      searchSlot={<SearchList variant="icon" />}
+      searchSlot={<SearchTrigger variant="icon" />}
       mobileMenuSlot={
-        <NavbarMobileMenu searchSlot={<SearchList variant="icon" />} />
+        <NavbarMobileMenu searchSlot={<SearchTrigger variant="icon" />} />
       }
     />
   );
