@@ -38,7 +38,7 @@ export default function Navbar({ searchSlot, mobileMenuSlot }: NavbarProps) {
   }, []);
 
   const routeBg = useMemo(() => {
-    if (pathname === "/") return "bg-secondary/80";
+    if (pathname === "/") return "bg-transparent";
     if (pathname === "/global") return "bg-secondary/40";
     if (pathname === "/region") return "bg-secondary/10";
     if (pathname.split("/").filter(Boolean).length === 1) {
@@ -55,7 +55,7 @@ export default function Navbar({ searchSlot, mobileMenuSlot }: NavbarProps) {
         // Transitions only the background-color and backdrop-filter for smoothness
         "transition-[background-color,backdrop-filter] duration-150 ease-out",
         isScrolled
-          ? "bg-background/30 shadow-xs backdrop-blur-md border-b border-background/20"
+          ? "bg-background/70 shadow-xs backdrop-blur-md border-b border-border/40"
           : routeBg,
       )}
     >
@@ -73,20 +73,35 @@ export default function Navbar({ searchSlot, mobileMenuSlot }: NavbarProps) {
 
         {/* Desktop Nav */}
         <nav
-          className="hidden md:flex items-center gap-1"
+          className="hidden md:flex items-center gap-1 lg:gap-2"
           aria-label="Main navigation"
         >
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="relative group px-4 py-2 text-sm font-medium text-foreground rounded-lg transition-colors"
-            >
-              {link.label}
-              <span className="absolute inset-x-2 -bottom-px h-0.5 bg-primary scale-x-0 transition-transform group-hover:scale-x-100 origin-left" />
-            </Link>
-          ))}
-          <div className="hidden md:flex items-center gap-2">{searchSlot}</div>
+          {navLinks.map((link) => {
+            const isActive =
+              link.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={cn(
+                  "relative group px-3.5 py-2 text-sm transition-colors",
+                  isActive
+                    ? "text-slate-950 dark:text-white font-bold"
+                    : "text-slate-700 hover:text-slate-950 dark:text-slate-200 dark:hover:text-white font-semibold"
+                )}
+              >
+                {link.label}
+                {isActive ? (
+                  <span className="absolute inset-x-2 -bottom-1 h-[2.5px] bg-[#ff5a22] rounded-full" />
+                ) : (
+                  <span className="absolute inset-x-2 -bottom-1 h-[2px] bg-[#ff5a22]/50 scale-x-0 transition-transform group-hover:scale-x-100 origin-left rounded-full" />
+                )}
+              </Link>
+            );
+          })}
+          <div className="hidden md:flex items-center gap-2 ml-2">{searchSlot}</div>
         </nav>
 
         {/* Desktop CTA — SearchList is a server component so Navbar must be a server component too */}
