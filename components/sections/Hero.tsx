@@ -73,19 +73,19 @@ export default function Hero() {
           {/* ── Left: copy + CTA ── */}
           <div className="flex flex-col items-start gap-5 w-full lg:col-span-7">
             {/* Eyebrow badge matching screenshot: clean single-line on mobile & desktop */}
-            <div className="inline-flex max-w-full items-center justify-between sm:justify-start gap-1 min-[375px]:gap-2.5 sm:gap-3.5 rounded-full border border-white/90 bg-white/95 px-3 min-[375px]:px-3.5 sm:px-5 py-1.5 sm:py-2 text-[10px] min-[375px]:text-xs sm:text-[13px] font-medium text-slate-800 shadow-sm backdrop-blur-md dark:border-slate-700/80 dark:bg-card/90 dark:text-slate-200 select-none">
+            <div className="inline-flex max-w-full items-center justify-between sm:justify-start gap-1 min-[360px]:gap-1.5 min-[410px]:gap-2 min-[480px]:gap-2.5 sm:gap-3.5 rounded-full border border-white/90 bg-white/95 px-2 min-[360px]:px-2.5 min-[410px]:px-3 min-[480px]:px-3.5 sm:px-5 py-1.5 sm:py-2 text-[9.5px] min-[360px]:text-[10px] min-[410px]:text-[11px] min-[480px]:text-xs sm:text-[13px] font-medium text-slate-800 shadow-sm backdrop-blur-md dark:border-slate-700/80 dark:bg-card/90 dark:text-slate-200 select-none">
               <span className="inline-flex items-center gap-1 sm:gap-1.5 text-slate-800 dark:text-slate-200 font-medium shrink-0">
-                <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#0ea5e9] shrink-0 stroke-[2.2]" />
+                <Globe className="h-3 w-3 min-[360px]:h-3.5 min-[360px]:w-3.5 sm:h-4 sm:w-4 text-[#0ea5e9] shrink-0 stroke-[2.2]" />
                 <span className="whitespace-nowrap">200+ Countries</span>
               </span>
-              <span className="h-3 sm:h-3.5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
+              <span className="h-2.5 sm:h-3.5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
               <span className="inline-flex items-center gap-1 sm:gap-1.5 text-slate-800 dark:text-slate-200 font-medium shrink-0">
-                <RefreshCw className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#10b981] shrink-0 stroke-[2.2]" />
+                <RefreshCw className="h-2.5 w-2.5 min-[360px]:h-3 min-[360px]:w-3 sm:h-3.5 sm:w-3.5 text-[#10b981] shrink-0 stroke-[2.2]" />
                 <span className="whitespace-nowrap">Updated Daily</span>
               </span>
-              <span className="h-3 sm:h-3.5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
+              <span className="h-2.5 sm:h-3.5 w-px bg-slate-200 dark:bg-slate-700 shrink-0" />
               <span className="inline-flex items-center gap-1 sm:gap-1.5 text-slate-800 dark:text-slate-200 font-medium shrink-0">
-                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#f97316] shrink-0 stroke-[2.2]" />
+                <ShieldCheck className="h-3 w-3 min-[360px]:h-3.5 min-[360px]:w-3.5 sm:h-4 sm:w-4 text-[#f97316] shrink-0 stroke-[2.2]" />
                 <span className="whitespace-nowrap">No Paid Placements</span>
               </span>
             </div>

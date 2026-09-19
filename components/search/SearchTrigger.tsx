@@ -23,16 +23,16 @@ export function SearchTrigger({
       <button
         type="button"
         onClick={openSearch}
-        className="flex w-full max-w-xl items-center gap-3 rounded-full border border-slate-200/90 bg-white p-1.5 pl-4 shadow-lg shadow-slate-200/50 dark:border-slate-800 dark:bg-card dark:shadow-none text-left cursor-pointer hover:border-primary/60 hover:ring-2 hover:ring-primary/20 transition-all group"
+        className="flex w-full max-w-xl items-center gap-2 min-[380px]:gap-2.5 sm:gap-3 rounded-full border border-slate-200/90 bg-white p-1 min-[380px]:p-1.5 pl-3 min-[380px]:pl-3.5 sm:pl-4 shadow-lg shadow-slate-200/50 dark:border-slate-800 dark:bg-card dark:shadow-none text-left cursor-pointer hover:border-primary/60 hover:ring-2 hover:ring-primary/20 transition-all group"
         aria-label="Open search"
       >
-        <Search className="h-4.5 w-4.5 shrink-0 text-slate-400 group-hover:text-primary transition-colors" />
-        <span className="flex-1 py-1.5 text-sm text-slate-500 dark:text-slate-400 select-none">
+        <Search className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0 text-slate-400 group-hover:text-primary transition-colors" />
+        <span className="flex-1 min-w-0 py-1 sm:py-1.5 text-xs min-[400px]:text-[13px] sm:text-sm text-slate-500 dark:text-slate-400 select-none truncate">
           {placeholder}
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ff5a22] hover:bg-[#e84a12] px-3.5 min-[375px]:px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm pointer-events-none transition-transform group-hover:scale-[1.02] shrink-0">
+        <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#ff5a22] hover:bg-[#e84a12] px-3 min-[380px]:px-3.5 min-[440px]:px-5 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm pointer-events-none transition-transform group-hover:scale-[1.02] shrink-0 whitespace-nowrap">
           <span>{buttonLabel}</span>
-          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
         </span>
       </button>
     );

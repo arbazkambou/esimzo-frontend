@@ -3,10 +3,9 @@ import Hero from "@/components/sections/Hero";
 import CountriesSection from "@/components/sections/CountriesSection";
 import RegionsSection from "@/components/sections/RegionsSection";
 import GetProviders from "@/components/getters/GetProviders";
-import FAQSection from "@/components/sections/FAQSection";
 import CompareAndSurf from "@/components/sections/CompareAndSurf";
-import StatsBar from "@/components/sections/StatsBar";
 import WhyEsimzo from "@/components/sections/WhyEsimzo";
+import FAQSection from "@/components/sections/FAQSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
 import CtaBanner from "@/components/sections/CtaBanner";
 
@@ -185,7 +184,6 @@ export default function Home() {
       />
       <main className="flex-1">
         <Hero />
-        <StatsBar />
         <CountriesSection />
         <RegionsSection />
         <CompareAndSurf />

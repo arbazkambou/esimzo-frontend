@@ -42,7 +42,8 @@ export default function ProvidersCarousel({
 
           {/* Subtitle matching screenshot */}
           <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Find the best eSIM providers, compare plans, check coverage, and get the perfect eSIM for your next trip — all in one place.
+            Find the best eSIM providers, compare plans, check coverage, and get
+            the perfect eSIM for your next trip — all in one place.
           </p>
         </div>
 
@@ -89,7 +90,9 @@ export default function ProvidersCarousel({
                         {provider.name}
                       </span>
                       <span className="text-[11px] text-slate-400 font-normal truncate leading-tight mt-0.5">
-                        {provider.planCount ? `${provider.planCount} Plans` : "eSIM Data"}
+                        {provider.planCount
+                          ? `${provider.planCount} Plans`
+                          : "eSIM Data"}
                       </span>
                     </div>
                   </div>
@@ -115,7 +118,8 @@ export default function ProvidersCarousel({
                 Compare plans from 50+ providers
               </div>
               <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                Get the best coverage, data plans and prices for your destination.
+                Get the best coverage, data plans and prices for your
+                destination.
               </div>
             </div>
           </div>

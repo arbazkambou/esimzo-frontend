@@ -27,7 +27,8 @@ const reviews: Review[] = [
     destination: "Japan",
     flagUrl: "https://flagcdn.com/w40/jp.png",
     provider: "Airalo",
-    quote: "Instant 5G the moment wheels touched down at Narita. No airport Wi-Fi line needed.",
+    quote:
+      "Instant 5G the moment wheels touched down at Narita. No airport Wi-Fi line needed.",
   },
   {
     id: "rev-2",
@@ -38,7 +39,8 @@ const reviews: Review[] = [
     destination: "Europe",
     flagUrl: "https://flagcdn.com/w40/eu.png",
     provider: "Nomad",
-    quote: "Laptop hotspotting worked smoothly on the train from Paris to Zurich for Zoom calls.",
+    quote:
+      "Laptop hotspotting worked smoothly on the train from Paris to Zurich for Zoom calls.",
   },
   {
     id: "rev-3",
@@ -49,7 +51,8 @@ const reviews: Review[] = [
     destination: "USA",
     flagUrl: "https://flagcdn.com/w40/us.png",
     provider: "Saily",
-    quote: "Saved £110 compared to my carrier's roaming fee. T-Mobile 5G was rock solid.",
+    quote:
+      "Saved £110 compared to my carrier's roaming fee. T-Mobile 5G was rock solid.",
   },
   {
     id: "rev-4",
@@ -60,7 +63,8 @@ const reviews: Review[] = [
     destination: "Thailand",
     flagUrl: "https://flagcdn.com/w40/th.png",
     provider: "Ubigi",
-    quote: "Scanned the QR code before flying. Landed in Bangkok with instant high-speed data for $6.",
+    quote:
+      "Scanned the QR code before flying. Landed in Bangkok with instant high-speed data for $6.",
   },
   {
     id: "rev-5",
@@ -71,7 +75,8 @@ const reviews: Review[] = [
     destination: "UAE",
     flagUrl: "https://flagcdn.com/w40/ae.png",
     provider: "Yesim",
-    quote: "Perfect speeds across Dubai and Abu Dhabi. Half the price of the airport SIM booths.",
+    quote:
+      "Perfect speeds across Dubai and Abu Dhabi. Half the price of the airport SIM booths.",
   },
   {
     id: "rev-6",
@@ -82,7 +87,8 @@ const reviews: Review[] = [
     destination: "Turkey",
     flagUrl: "https://flagcdn.com/w40/tr.png",
     provider: "GigSky",
-    quote: "Traveled from Istanbul to Cappadocia with zero dropouts. Effortless activation.",
+    quote:
+      "Traveled from Istanbul to Cappadocia with zero dropouts. Effortless activation.",
   },
 ];
 
@@ -108,7 +114,8 @@ export default function ReviewsSection() {
           </h2>
 
           <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl mx-auto font-normal">
-            Honest feedback on gate activation, real connection speeds, and carrier roaming savings.
+            Honest feedback on gate activation, real connection speeds, and
+            carrier roaming savings.
           </p>
         </div>
 
