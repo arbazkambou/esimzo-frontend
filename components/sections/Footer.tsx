@@ -92,6 +92,26 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
+        {/* SEO Summary & Transparency Disclosure */}
+        <div className="border-t border-border/80 pt-8 mt-10">
+          <div className="rounded-2xl border border-border/60 bg-muted/30 p-5 sm:p-6 text-left">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Globe2 className="h-4 w-4 text-primary shrink-0" />
+              <h4 className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-foreground">
+                Independent Travel eSIM Comparison
+              </h4>
+            </div>
+
+            <p className="text-xs sm:text-[13px] text-muted-foreground leading-relaxed">
+              eSIMzo is an independent travel eSIM comparison engine helping international travelers find, compare, and choose prepaid mobile data packages across 200+ countries and territories. We track over 30,000+ plans daily from 50+ providers — including Airalo, Holafly, Nomad, Saily, Ubigi, and regional network operators. Our algorithms prioritize real value: highlighting price per gigabyte, transparent fair-use policies (FUP), mobile hotspot permissions, and verified roaming partner speeds, so you never land with unexpected roaming fees or throttled connections.
+            </p>
+
+            <p className="text-[11px] sm:text-xs text-muted-foreground/80 italic mt-3 pt-3 border-t border-border/50">
+              <span className="font-semibold text-foreground/80 not-italic">Transparency Note:</span> eSIMzo may earn an affiliate commission when you buy through our links, but providers can never pay to rank higher. All plan listings are ranked strictly by measurable traveler criteria.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Bottom bar */}
