@@ -71,29 +71,30 @@ export default function ExpandableGrid({
       )}
 
       {hasMore && (
-        <div className="mt-4 flex justify-center">
-          <PrimaryButton
+        <div className="mt-6 flex justify-center">
+          <button
+            type="button"
             onClick={() => void toggleExpanded()}
             disabled={isLoading}
-            className="group flex"
+            className="inline-flex items-center gap-2 rounded-full border border-[#BCD8F6] dark:border-sky-800 bg-white dark:bg-card px-6 py-2.5 text-xs sm:text-sm font-semibold text-[#0B1E48] dark:text-slate-200 hover:text-[#0284C7] hover:border-sky-400 shadow-2xs hover:shadow-xs transition-all cursor-pointer group disabled:opacity-50 disabled:pointer-events-none"
           >
             {isLoading ? (
               <>
                 <Spinner />
-                Loading {regionName}…
+                <span>Loading {regionName}…</span>
               </>
             ) : expanded ? (
               <>
-                Show Less
-                <ChevronUp className="h-4 w-4" />
+                <span>Show Less</span>
+                <ChevronUp className="h-4 w-4 text-[#0284C7] transition-transform group-hover:-translate-y-0.5" />
               </>
             ) : (
               <>
-                {error ? "Try Again" : `See All ${totalCount} Countries`}
-                <ChevronDown className="h-4 w-4" />
+                <span>{error ? "Try Again" : `See All ${totalCount} Countries`}</span>
+                <ChevronDown className="h-4 w-4 text-[#0284C7] transition-transform group-hover:translate-y-0.5" />
               </>
             )}
-          </PrimaryButton>
+          </button>
         </div>
       )}
     </>
