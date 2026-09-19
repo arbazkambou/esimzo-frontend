@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
+import StatsBar from "@/components/sections/StatsBar";
 import CountriesSection from "@/components/sections/CountriesSection";
 import RegionsSection from "@/components/sections/RegionsSection";
 import GetProviders from "@/components/getters/GetProviders";
@@ -184,6 +185,7 @@ export default function Home() {
       />
       <main className="flex-1">
         <Hero />
+        <StatsBar />
         <CountriesSection />
         <RegionsSection />
         <CompareAndSurf />
