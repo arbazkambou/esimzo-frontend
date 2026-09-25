@@ -3,10 +3,10 @@ import PlansClientPage from "@/components/plans/PlansClientPage";
 import CountriesHeader from "@/components/sections/CountriesHeader";
 import FAQSection from "@/components/sections/FAQSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
-import {
-  getCountries,
-  getCountryPackagesBySlug,
-} from "@/lib/services/plans/plans.services";
+import { getCountryPlansHeroContent } from "@/lib/content/countries";
+import { displayNameFromSlug } from "@/lib/display-name";
+import { derivePlansHeroStats } from "@/lib/plans/derive-plans-hero-stats";
+import { getCountryPackagesBySlug } from "@/lib/services/plans/plans.services";
 
 const faqs = [
   {
@@ -54,9 +54,18 @@ export default async function page({ params }: PageProps) {
   if (!packages.success) return <NoPackagesState />;
   if (packages.data.length === 0) return <NoPackagesState />;
 
+  const countryName = displayNameFromSlug(slug);
+
+  const content = getCountryPlansHeroContent(slug);
+  const stats = derivePlansHeroStats(packages.data);
+
   return (
     <>
-      <CountriesHeader slug={slug} />
+      <CountriesHeader
+        countryName={countryName}
+        content={content}
+        stats={stats}
+      />
       <div className="container">
         <PlansClientPage slug={slug} initialData={packages.data} />
         <GetCountryProvidersAndTopDestinations slug={slug} />
