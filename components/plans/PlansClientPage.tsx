@@ -47,7 +47,7 @@ export default function PlansClientPage({
   scope = "country",
 }: Props) {
   return (
-    <div className="container py-6">
+    <div id="plans" className="container scroll-mt-6 py-6">
       <Suspense fallback={<PlansTableSkeleton />}>
         <PlansContent slug={slug} initialData={initialData} scope={scope} />
       </Suspense>
