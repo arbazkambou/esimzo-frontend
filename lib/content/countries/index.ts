@@ -23,6 +23,18 @@ import {
   spainTravelerTipsContent,
   spainUnlimitedPlansContent,
 } from "./spain";
+import {
+  unitedStatesCountryVsRegionalContent,
+  unitedStatesDataNeedsContent,
+  unitedStatesEsimVsLocalContent,
+  unitedStatesFaqsContent,
+  unitedStatesHowToChooseContent,
+  unitedStatesNetworkCoverageContent,
+  unitedStatesPhoneCompatibilityContent,
+  unitedStatesPlansHeroContent,
+  unitedStatesTravelerTipsContent,
+  unitedStatesUnlimitedPlansContent,
+} from "./united-states";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -62,17 +74,20 @@ export type {
 const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   france: francePlansHeroContent,
   spain: spainPlansHeroContent,
+  "united-states": unitedStatesPlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
   {
     france: franceHowToChooseContent,
     spain: spainHowToChooseContent,
+    "united-states": unitedStatesHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   france: franceDataNeedsContent,
   spain: spainDataNeedsContent,
+  "united-states": unitedStatesDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -81,6 +96,7 @@ const countryNetworkCoverageContentBySlug: Record<
 > = {
   france: franceNetworkCoverageContent,
   spain: spainNetworkCoverageContent,
+  "united-states": unitedStatesNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -89,17 +105,20 @@ const countryUnlimitedPlansContentBySlug: Record<
 > = {
   france: franceUnlimitedPlansContent,
   spain: spainUnlimitedPlansContent,
+  "united-states": unitedStatesUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   france: franceEsimVsLocalContent,
   spain: spainEsimVsLocalContent,
+  "united-states": unitedStatesEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
   {
     france: franceCountryVsRegionalContent,
     spain: spainCountryVsRegionalContent,
+    "united-states": unitedStatesCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -108,16 +127,19 @@ const countryPhoneCompatibilityContentBySlug: Record<
 > = {
   france: francePhoneCompatibilityContent,
   spain: spainPhoneCompatibilityContent,
+  "united-states": unitedStatesPhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   france: franceTravelerTipsContent,
   spain: spainTravelerTipsContent,
+  "united-states": unitedStatesTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   france: franceFaqsContent,
   spain: spainFaqsContent,
+  "united-states": unitedStatesFaqsContent,
 };
 
 function fillTemplate(
