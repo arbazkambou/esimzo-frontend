@@ -21,3 +21,25 @@ export type PlansHeroStats = {
   /** Display string or Date; omit/null when unknown */
   lastUpdated?: string | Date | null;
 };
+
+export type HowToChooseEsimCriterion = {
+  heading: string;
+  /** One or more body paragraphs; may include {countryName} */
+  paragraphs: string[];
+  /** Optional bullet list under this criterion */
+  list?: string[];
+  /** Optional callout under this criterion */
+  notice?: string;
+};
+
+export type HowToChooseEsimContent = {
+  /** Optional non-heading eyebrow label */
+  eyebrow?: string;
+  /** e.g. "How to Choose an eSIM for {countryName}" */
+  headingTemplate: string;
+  /** Lead paragraph; may include {countryName} */
+  intro: string;
+  criteria: HowToChooseEsimCriterion[];
+  /** Optional section-level notice */
+  notice?: string;
+};

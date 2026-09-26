@@ -2,8 +2,12 @@ import GetCountryProvidersAndTopDestinations from "@/components/getters/GetCount
 import PlansClientPage from "@/components/plans/PlansClientPage";
 import CountriesHeader from "@/components/sections/CountriesHeader";
 import FAQSection from "@/components/sections/FAQSection";
+import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
-import { getCountryPlansHeroContent } from "@/lib/content/countries";
+import {
+  getCountryHowToChooseContent,
+  getCountryPlansHeroContent,
+} from "@/lib/content/countries";
 import { displayNameFromSlug } from "@/lib/display-name";
 import { derivePlansHeroStats } from "@/lib/plans/derive-plans-hero-stats";
 import { getCountryPackagesBySlug } from "@/lib/services/plans/plans.services";
@@ -57,6 +61,7 @@ export default async function page({ params }: PageProps) {
   const countryName = displayNameFromSlug(slug);
 
   const content = getCountryPlansHeroContent(slug);
+  const howToChooseContent = getCountryHowToChooseContent(slug);
   const stats = derivePlansHeroStats(packages.data);
 
   return (
@@ -68,6 +73,12 @@ export default async function page({ params }: PageProps) {
       />
       <div className="container">
         <PlansClientPage slug={slug} initialData={packages.data} />
+        {howToChooseContent ? (
+          <HowToChooseEsimSection
+            countryName={countryName}
+            content={howToChooseContent}
+          />
+        ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />
         <FAQSection faqs={faqs} />
       </div>
