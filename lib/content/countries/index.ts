@@ -7,6 +7,7 @@ import {
   franceNetworkCoverageContent,
   francePhoneCompatibilityContent,
   francePlansHeroContent,
+  franceTravelerTipsContent,
   franceUnlimitedPlansContent,
 } from "./france";
 import type {
@@ -17,6 +18,7 @@ import type {
   HowToChooseEsimContent,
   NetworkCoverageContent,
   PhoneCompatibilityContent,
+  TravelerTipsContent,
   UnlimitedPlansContent,
 } from "./types";
 
@@ -33,6 +35,8 @@ export type {
   NetworkCoverageContent,
   PhoneCompatibilityContent,
   PlansHeroStats,
+  TravelerTip,
+  TravelerTipsContent,
   UnlimitedPlansContent,
 } from "./types";
 
@@ -77,6 +81,10 @@ const countryPhoneCompatibilityContentBySlug: Record<
   PhoneCompatibilityContent
 > = {
   france: francePhoneCompatibilityContent,
+};
+
+const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
+  france: franceTravelerTipsContent,
 };
 
 export function getCountryPlansHeroContent(
@@ -132,4 +140,11 @@ export function getCountryPhoneCompatibilityContent(
   slug: string,
 ): PhoneCompatibilityContent | null {
   return countryPhoneCompatibilityContentBySlug[slug] ?? null;
+}
+
+/** Returns traveler tips content, or null when none exists. */
+export function getCountryTravelerTipsContent(
+  slug: string,
+): TravelerTipsContent | null {
+  return countryTravelerTipsContentBySlug[slug] ?? null;
 }

@@ -147,3 +147,17 @@ export type PhoneCompatibilityContent = {
   ctaLabel?: string;
   ctaHref?: string;
 };
+
+export type TravelerTip = {
+  title: string;
+  paragraphs: string[];
+};
+
+export type TravelerTipsContent = {
+  eyebrow?: string;
+  /** e.g. "Mobile Connectivity Tips for {countryName}" */
+  headingTemplate: string;
+  intro?: string;
+  tips: TravelerTip[];
+  notice?: string;
+};

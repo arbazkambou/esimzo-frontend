@@ -6,6 +6,7 @@ import type {
   HowToChooseEsimContent,
   NetworkCoverageContent,
   PhoneCompatibilityContent,
+  TravelerTipsContent,
   UnlimitedPlansContent,
 } from "./types";
 
@@ -225,5 +226,49 @@ export const francePhoneCompatibilityContent: PhoneCompatibilityContent = {
   paragraphs: [
     "Your phone generally needs to support eSIM and be carrier unlocked. Compatibility can vary by model, country of purchase and device configuration, even when a phone family normally supports eSIM.",
     "Check the exact model in the eSIMzo compatibility checker before purchasing. You can also look in your phone settings for an option to add an eSIM or mobile plan. If your device is locked to a carrier, contact that carrier before traveling.",
+  ],
+};
+
+/** France traveler tips. Country-specific; not used inside the reusable UI. */
+export const franceTravelerTipsContent: TravelerTipsContent = {
+  eyebrow: "Traveler Tips",
+  headingTemplate: "Mobile Connectivity Tips for {countryName}",
+  tips: [
+    {
+      title: "Install before departure, but check the start rule.",
+      paragraphs: [
+        "Installation at home gives you reliable WiFi and time to solve setup issues. Wait if the provider starts validity at installation.",
+      ],
+    },
+    {
+      title: "Protect your primary SIM from roaming charges.",
+      paragraphs: [
+        "Keep it active if you need your usual number for calls or verification texts, but turn off mobile data switching and data roaming for that line.",
+      ],
+    },
+    {
+      title: "Prepare for train and mountain routes.",
+      paragraphs: [
+        "Download maps, hotel details and tickets before journeys through tunnels, rural areas, the Alps or the Pyrenees. A signal can change as the train moves between coverage areas.",
+      ],
+    },
+    {
+      title: "Check the partner network for your actual route.",
+      paragraphs: [
+        "Good service in central Paris does not guarantee the same experience in a remote village. Use the local operator coverage map when a connection is essential.",
+      ],
+    },
+    {
+      title: "Confirm territorial coverage.",
+      paragraphs: [
+        "A plan that covers mainland {countryName} may not include French overseas destinations. Check each island or territory by name before purchasing.",
+      ],
+    },
+    {
+      title: "Review hotspot rules before remote work.",
+      paragraphs: [
+        "Some plans allow full tethering, while unlimited plans may set a separate hotspot allowance or speed restriction.",
+      ],
+    },
   ],
 };
