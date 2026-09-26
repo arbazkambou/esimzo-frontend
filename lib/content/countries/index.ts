@@ -1,4 +1,15 @@
-import { defaultPlansHeroContent } from "./default";
+import {
+  defaultCountryVsRegionalContent,
+  defaultDataNeedsContent,
+  defaultEsimVsLocalContent,
+  defaultFaqsContent,
+  defaultHowToChooseContent,
+  defaultNetworkCoverageContent,
+  defaultPhoneCompatibilityContent,
+  defaultPlansHeroContent,
+  defaultTravelerTipsContent,
+  defaultUnlimitedPlansContent,
+} from "./default";
 import {
   franceCountryVsRegionalContent,
   franceDataNeedsContent,
@@ -239,6 +250,150 @@ import {
   indiaTravelerTipsContent,
   indiaUnlimitedPlansContent,
 } from "./india";
+import {
+  europeCountryVsRegionalContent,
+  europeDataNeedsContent,
+  europeEsimVsLocalContent,
+  europeFaqsContent,
+  europeHowToChooseContent,
+  europeNetworkCoverageContent,
+  europePhoneCompatibilityContent,
+  europePlansHeroContent,
+  europeTravelerTipsContent,
+  europeUnlimitedPlansContent,
+} from "./europe";
+import {
+  asiaCountryVsRegionalContent,
+  asiaDataNeedsContent,
+  asiaEsimVsLocalContent,
+  asiaFaqsContent,
+  asiaHowToChooseContent,
+  asiaNetworkCoverageContent,
+  asiaPhoneCompatibilityContent,
+  asiaPlansHeroContent,
+  asiaTravelerTipsContent,
+  asiaUnlimitedPlansContent,
+} from "./asia";
+import {
+  balkansCountryVsRegionalContent,
+  balkansDataNeedsContent,
+  balkansEsimVsLocalContent,
+  balkansFaqsContent,
+  balkansHowToChooseContent,
+  balkansNetworkCoverageContent,
+  balkansPhoneCompatibilityContent,
+  balkansPlansHeroContent,
+  balkansTravelerTipsContent,
+  balkansUnlimitedPlansContent,
+} from "./balkans";
+import {
+  caribbeanCountryVsRegionalContent,
+  caribbeanDataNeedsContent,
+  caribbeanEsimVsLocalContent,
+  caribbeanFaqsContent,
+  caribbeanHowToChooseContent,
+  caribbeanNetworkCoverageContent,
+  caribbeanPhoneCompatibilityContent,
+  caribbeanPlansHeroContent,
+  caribbeanTravelerTipsContent,
+  caribbeanUnlimitedPlansContent,
+} from "./caribbean";
+import {
+  gccMiddleEastCountryVsRegionalContent,
+  gccMiddleEastDataNeedsContent,
+  gccMiddleEastEsimVsLocalContent,
+  gccMiddleEastFaqsContent,
+  gccMiddleEastHowToChooseContent,
+  gccMiddleEastNetworkCoverageContent,
+  gccMiddleEastPhoneCompatibilityContent,
+  gccMiddleEastPlansHeroContent,
+  gccMiddleEastTravelerTipsContent,
+  gccMiddleEastUnlimitedPlansContent,
+} from "./gcc-middle-east";
+import {
+  latinAmericaCountryVsRegionalContent,
+  latinAmericaDataNeedsContent,
+  latinAmericaEsimVsLocalContent,
+  latinAmericaFaqsContent,
+  latinAmericaHowToChooseContent,
+  latinAmericaNetworkCoverageContent,
+  latinAmericaPhoneCompatibilityContent,
+  latinAmericaPlansHeroContent,
+  latinAmericaTravelerTipsContent,
+  latinAmericaUnlimitedPlansContent,
+} from "./latin-america";
+import {
+  middleEastCountryVsRegionalContent,
+  middleEastDataNeedsContent,
+  middleEastEsimVsLocalContent,
+  middleEastFaqsContent,
+  middleEastHowToChooseContent,
+  middleEastNetworkCoverageContent,
+  middleEastPhoneCompatibilityContent,
+  middleEastPlansHeroContent,
+  middleEastTravelerTipsContent,
+  middleEastUnlimitedPlansContent,
+} from "./middle-east";
+import {
+  northAmericaCountryVsRegionalContent,
+  northAmericaDataNeedsContent,
+  northAmericaEsimVsLocalContent,
+  northAmericaFaqsContent,
+  northAmericaHowToChooseContent,
+  northAmericaNetworkCoverageContent,
+  northAmericaPhoneCompatibilityContent,
+  northAmericaPlansHeroContent,
+  northAmericaTravelerTipsContent,
+  northAmericaUnlimitedPlansContent,
+} from "./north-america";
+import {
+  oceaniaCountryVsRegionalContent,
+  oceaniaDataNeedsContent,
+  oceaniaEsimVsLocalContent,
+  oceaniaFaqsContent,
+  oceaniaHowToChooseContent,
+  oceaniaNetworkCoverageContent,
+  oceaniaPhoneCompatibilityContent,
+  oceaniaPlansHeroContent,
+  oceaniaTravelerTipsContent,
+  oceaniaUnlimitedPlansContent,
+} from "./oceania";
+import {
+  southAmericaCountryVsRegionalContent,
+  southAmericaDataNeedsContent,
+  southAmericaEsimVsLocalContent,
+  southAmericaFaqsContent,
+  southAmericaHowToChooseContent,
+  southAmericaNetworkCoverageContent,
+  southAmericaPhoneCompatibilityContent,
+  southAmericaPlansHeroContent,
+  southAmericaTravelerTipsContent,
+  southAmericaUnlimitedPlansContent,
+} from "./south-america";
+import {
+  africaCountryVsRegionalContent,
+  africaDataNeedsContent,
+  africaEsimVsLocalContent,
+  africaFaqsContent,
+  africaHowToChooseContent,
+  africaNetworkCoverageContent,
+  africaPhoneCompatibilityContent,
+  africaPlansHeroContent,
+  africaTravelerTipsContent,
+  africaUnlimitedPlansContent,
+} from "./africa";
+import {
+  globalCountryVsRegionalContent,
+  globalDataNeedsContent,
+  globalEsimVsLocalContent,
+  globalFaqsContent,
+  globalHowToChooseContent,
+  globalNetworkCoverageContent,
+  globalPhoneCompatibilityContent,
+  globalPlansHeroContent,
+  globalTravelerTipsContent,
+  globalUnlimitedPlansContent,
+} from "./global";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -296,6 +451,18 @@ const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   indonesia: indonesiaPlansHeroContent,
   china: chinaPlansHeroContent,
   india: indiaPlansHeroContent,
+  europe: europePlansHeroContent,
+  asia: asiaPlansHeroContent,
+  balkans: balkansPlansHeroContent,
+  caribbean: caribbeanPlansHeroContent,
+  "gcc-middle-east": gccMiddleEastPlansHeroContent,
+  "latin-america": latinAmericaPlansHeroContent,
+  "middle-east": middleEastPlansHeroContent,
+  "north-america": northAmericaPlansHeroContent,
+  oceania: oceaniaPlansHeroContent,
+  "south-america": southAmericaPlansHeroContent,
+  africa: africaPlansHeroContent,
+  global: globalPlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
@@ -320,6 +487,18 @@ const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
     indonesia: indonesiaHowToChooseContent,
     china: chinaHowToChooseContent,
     india: indiaHowToChooseContent,
+    europe: europeHowToChooseContent,
+    asia: asiaHowToChooseContent,
+    balkans: balkansHowToChooseContent,
+    caribbean: caribbeanHowToChooseContent,
+    "gcc-middle-east": gccMiddleEastHowToChooseContent,
+    "latin-america": latinAmericaHowToChooseContent,
+    "middle-east": middleEastHowToChooseContent,
+    "north-america": northAmericaHowToChooseContent,
+    oceania: oceaniaHowToChooseContent,
+    "south-america": southAmericaHowToChooseContent,
+    africa: africaHowToChooseContent,
+    global: globalHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
@@ -343,6 +522,18 @@ const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   indonesia: indonesiaDataNeedsContent,
   china: chinaDataNeedsContent,
   india: indiaDataNeedsContent,
+  europe: europeDataNeedsContent,
+  asia: asiaDataNeedsContent,
+  balkans: balkansDataNeedsContent,
+  caribbean: caribbeanDataNeedsContent,
+  "gcc-middle-east": gccMiddleEastDataNeedsContent,
+  "latin-america": latinAmericaDataNeedsContent,
+  "middle-east": middleEastDataNeedsContent,
+  "north-america": northAmericaDataNeedsContent,
+  oceania: oceaniaDataNeedsContent,
+  "south-america": southAmericaDataNeedsContent,
+  africa: africaDataNeedsContent,
+  global: globalDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -369,6 +560,18 @@ const countryNetworkCoverageContentBySlug: Record<
   indonesia: indonesiaNetworkCoverageContent,
   china: chinaNetworkCoverageContent,
   india: indiaNetworkCoverageContent,
+  europe: europeNetworkCoverageContent,
+  asia: asiaNetworkCoverageContent,
+  balkans: balkansNetworkCoverageContent,
+  caribbean: caribbeanNetworkCoverageContent,
+  "gcc-middle-east": gccMiddleEastNetworkCoverageContent,
+  "latin-america": latinAmericaNetworkCoverageContent,
+  "middle-east": middleEastNetworkCoverageContent,
+  "north-america": northAmericaNetworkCoverageContent,
+  oceania: oceaniaNetworkCoverageContent,
+  "south-america": southAmericaNetworkCoverageContent,
+  africa: africaNetworkCoverageContent,
+  global: globalNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -395,6 +598,18 @@ const countryUnlimitedPlansContentBySlug: Record<
   indonesia: indonesiaUnlimitedPlansContent,
   china: chinaUnlimitedPlansContent,
   india: indiaUnlimitedPlansContent,
+  europe: europeUnlimitedPlansContent,
+  asia: asiaUnlimitedPlansContent,
+  balkans: balkansUnlimitedPlansContent,
+  caribbean: caribbeanUnlimitedPlansContent,
+  "gcc-middle-east": gccMiddleEastUnlimitedPlansContent,
+  "latin-america": latinAmericaUnlimitedPlansContent,
+  "middle-east": middleEastUnlimitedPlansContent,
+  "north-america": northAmericaUnlimitedPlansContent,
+  oceania: oceaniaUnlimitedPlansContent,
+  "south-america": southAmericaUnlimitedPlansContent,
+  africa: africaUnlimitedPlansContent,
+  global: globalUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
@@ -418,6 +633,18 @@ const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   indonesia: indonesiaEsimVsLocalContent,
   china: chinaEsimVsLocalContent,
   india: indiaEsimVsLocalContent,
+  europe: europeEsimVsLocalContent,
+  asia: asiaEsimVsLocalContent,
+  balkans: balkansEsimVsLocalContent,
+  caribbean: caribbeanEsimVsLocalContent,
+  "gcc-middle-east": gccMiddleEastEsimVsLocalContent,
+  "latin-america": latinAmericaEsimVsLocalContent,
+  "middle-east": middleEastEsimVsLocalContent,
+  "north-america": northAmericaEsimVsLocalContent,
+  oceania: oceaniaEsimVsLocalContent,
+  "south-america": southAmericaEsimVsLocalContent,
+  africa: africaEsimVsLocalContent,
+  global: globalEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
@@ -442,6 +669,18 @@ const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
     indonesia: indonesiaCountryVsRegionalContent,
     china: chinaCountryVsRegionalContent,
     india: indiaCountryVsRegionalContent,
+    europe: europeCountryVsRegionalContent,
+    asia: asiaCountryVsRegionalContent,
+    balkans: balkansCountryVsRegionalContent,
+    caribbean: caribbeanCountryVsRegionalContent,
+    "gcc-middle-east": gccMiddleEastCountryVsRegionalContent,
+    "latin-america": latinAmericaCountryVsRegionalContent,
+    "middle-east": middleEastCountryVsRegionalContent,
+    "north-america": northAmericaCountryVsRegionalContent,
+    oceania: oceaniaCountryVsRegionalContent,
+    "south-america": southAmericaCountryVsRegionalContent,
+    africa: africaCountryVsRegionalContent,
+    global: globalCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -468,6 +707,18 @@ const countryPhoneCompatibilityContentBySlug: Record<
   indonesia: indonesiaPhoneCompatibilityContent,
   china: chinaPhoneCompatibilityContent,
   india: indiaPhoneCompatibilityContent,
+  europe: europePhoneCompatibilityContent,
+  asia: asiaPhoneCompatibilityContent,
+  balkans: balkansPhoneCompatibilityContent,
+  caribbean: caribbeanPhoneCompatibilityContent,
+  "gcc-middle-east": gccMiddleEastPhoneCompatibilityContent,
+  "latin-america": latinAmericaPhoneCompatibilityContent,
+  "middle-east": middleEastPhoneCompatibilityContent,
+  "north-america": northAmericaPhoneCompatibilityContent,
+  oceania: oceaniaPhoneCompatibilityContent,
+  "south-america": southAmericaPhoneCompatibilityContent,
+  africa: africaPhoneCompatibilityContent,
+  global: globalPhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
@@ -491,6 +742,18 @@ const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   indonesia: indonesiaTravelerTipsContent,
   china: chinaTravelerTipsContent,
   india: indiaTravelerTipsContent,
+  europe: europeTravelerTipsContent,
+  asia: asiaTravelerTipsContent,
+  balkans: balkansTravelerTipsContent,
+  caribbean: caribbeanTravelerTipsContent,
+  "gcc-middle-east": gccMiddleEastTravelerTipsContent,
+  "latin-america": latinAmericaTravelerTipsContent,
+  "middle-east": middleEastTravelerTipsContent,
+  "north-america": northAmericaTravelerTipsContent,
+  oceania: oceaniaTravelerTipsContent,
+  "south-america": southAmericaTravelerTipsContent,
+  africa: africaTravelerTipsContent,
+  global: globalTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
@@ -514,6 +777,18 @@ const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   indonesia: indonesiaFaqsContent,
   china: chinaFaqsContent,
   india: indiaFaqsContent,
+  europe: europeFaqsContent,
+  asia: asiaFaqsContent,
+  balkans: balkansFaqsContent,
+  caribbean: caribbeanFaqsContent,
+  "gcc-middle-east": gccMiddleEastFaqsContent,
+  "latin-america": latinAmericaFaqsContent,
+  "middle-east": middleEastFaqsContent,
+  "north-america": northAmericaFaqsContent,
+  oceania: oceaniaFaqsContent,
+  "south-america": southAmericaFaqsContent,
+  africa: africaFaqsContent,
+  global: globalFaqsContent,
 };
 
 function fillTemplate(
@@ -543,67 +818,72 @@ export function getCountryPlansHeroContent(
   return countryPlansHeroContentBySlug[slug] ?? defaultPlansHeroContent;
 }
 
-/** Returns country-specific how-to-choose content, or null when none exists. */
+/** Destination how-to-choose copy, or the generic fallback when none exists. */
 export function getCountryHowToChooseContent(
   slug: string,
-): HowToChooseEsimContent | null {
-  return countryHowToChooseContentBySlug[slug] ?? null;
+): HowToChooseEsimContent {
+  return countryHowToChooseContentBySlug[slug] ?? defaultHowToChooseContent;
 }
 
-/** Returns country-specific data-needs content, or null when none exists. */
-export function getCountryDataNeedsContent(
-  slug: string,
-): DataNeedsContent | null {
-  return countryDataNeedsContentBySlug[slug] ?? null;
+/** Destination data-needs copy, or the generic fallback when none exists. */
+export function getCountryDataNeedsContent(slug: string): DataNeedsContent {
+  return countryDataNeedsContentBySlug[slug] ?? defaultDataNeedsContent;
 }
 
-/** Returns country-specific network coverage content, or null when none exists. */
+/** Destination network copy, or the generic fallback when none exists. */
 export function getCountryNetworkCoverageContent(
   slug: string,
-): NetworkCoverageContent | null {
-  return countryNetworkCoverageContentBySlug[slug] ?? null;
+): NetworkCoverageContent {
+  return (
+    countryNetworkCoverageContentBySlug[slug] ?? defaultNetworkCoverageContent
+  );
 }
 
-/** Returns country-specific unlimited-plans content, or null when none exists. */
+/** Destination unlimited-plans copy, or the generic fallback when none exists. */
 export function getCountryUnlimitedPlansContent(
   slug: string,
-): UnlimitedPlansContent | null {
-  return countryUnlimitedPlansContentBySlug[slug] ?? null;
+): UnlimitedPlansContent {
+  return (
+    countryUnlimitedPlansContentBySlug[slug] ?? defaultUnlimitedPlansContent
+  );
 }
 
-/** Returns country-specific eSIM vs local content, or null when none exists. */
+/** Destination eSIM vs local copy, or the generic fallback when none exists. */
 export function getCountryEsimVsLocalContent(
   slug: string,
-): EsimVsLocalContent | null {
-  return countryEsimVsLocalContentBySlug[slug] ?? null;
+): EsimVsLocalContent {
+  return countryEsimVsLocalContentBySlug[slug] ?? defaultEsimVsLocalContent;
 }
 
-/** Returns country vs regional content, or null when none exists. */
+/** Destination coverage-choice copy, or the generic fallback when none exists. */
 export function getCountryVsRegionalContent(
   slug: string,
-): CountryVsRegionalContent | null {
-  return countryVsRegionalContentBySlug[slug] ?? null;
+): CountryVsRegionalContent {
+  return (
+    countryVsRegionalContentBySlug[slug] ?? defaultCountryVsRegionalContent
+  );
 }
 
-/** Returns phone compatibility content, or null when none exists. */
+/** Destination phone copy, or the generic fallback when none exists. */
 export function getCountryPhoneCompatibilityContent(
   slug: string,
-): PhoneCompatibilityContent | null {
-  return countryPhoneCompatibilityContentBySlug[slug] ?? null;
+): PhoneCompatibilityContent {
+  return (
+    countryPhoneCompatibilityContentBySlug[slug] ??
+    defaultPhoneCompatibilityContent
+  );
 }
 
-/** Returns traveler tips content, or null when none exists. */
+/** Destination traveler tips, or the generic fallback when none exists. */
 export function getCountryTravelerTipsContent(
   slug: string,
-): TravelerTipsContent | null {
-  return countryTravelerTipsContentBySlug[slug] ?? null;
+): TravelerTipsContent {
+  return countryTravelerTipsContentBySlug[slug] ?? defaultTravelerTipsContent;
 }
 
-/** Returns country FAQ content, or null when none exists. */
-export function getCountryFaqsContent(
-  slug: string,
-): CountryFaqsContent | null {
-  return countryFaqsContentBySlug[slug] ?? null;
+/** Destination FAQs, or the generic fallback when none exists. */
+export function getCountryFaqsContent(slug: string): CountryFaqsContent {
+  return countryFaqsContentBySlug[slug] ?? defaultFaqsContent;
 }
 
 /** Resolves FAQ templates with country name and live plan stats. */
