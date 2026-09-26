@@ -1,6 +1,7 @@
 import { defaultPlansHeroContent } from "./default";
 import {
   franceDataNeedsContent,
+  franceEsimVsLocalContent,
   franceHowToChooseContent,
   franceNetworkCoverageContent,
   francePlansHeroContent,
@@ -9,6 +10,7 @@ import {
 import type {
   CountryPlansHeroContent,
   DataNeedsContent,
+  EsimVsLocalContent,
   HowToChooseEsimContent,
   NetworkCoverageContent,
   UnlimitedPlansContent,
@@ -18,6 +20,8 @@ export type {
   CountryPlansHeroContent,
   DataNeedsContent,
   DataNeedsTableRow,
+  EsimVsLocalContent,
+  EsimVsLocalRow,
   HowToChooseEsimContent,
   HowToChooseEsimCriterion,
   NetworkCoverageContent,
@@ -52,6 +56,10 @@ const countryUnlimitedPlansContentBySlug: Record<
   france: franceUnlimitedPlansContent,
 };
 
+const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
+  france: franceEsimVsLocalContent,
+};
+
 export function getCountryPlansHeroContent(
   slug: string,
 ): CountryPlansHeroContent {
@@ -84,4 +92,11 @@ export function getCountryUnlimitedPlansContent(
   slug: string,
 ): UnlimitedPlansContent | null {
   return countryUnlimitedPlansContentBySlug[slug] ?? null;
+}
+
+/** Returns country-specific eSIM vs local content, or null when none exists. */
+export function getCountryEsimVsLocalContent(
+  slug: string,
+): EsimVsLocalContent | null {
+  return countryEsimVsLocalContentBySlug[slug] ?? null;
 }

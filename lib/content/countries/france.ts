@@ -1,6 +1,7 @@
 import type {
   CountryPlansHeroContent,
   DataNeedsContent,
+  EsimVsLocalContent,
   HowToChooseEsimContent,
   NetworkCoverageContent,
   UnlimitedPlansContent,
@@ -139,4 +140,47 @@ export const franceUnlimitedPlansContent: UnlimitedPlansContent = {
   ],
   closing:
     "Choose unlimited for the conditions you need, not only for the label.",
+};
+
+/** France eSIM vs local SIM guide. Country-specific; not used inside the reusable UI. */
+export const franceEsimVsLocalContent: EsimVsLocalContent = {
+  eyebrow: "eSIM vs Local",
+  headingTemplate: "eSIM or Local SIM in {countryName}?",
+  intro:
+    "Both can work well. The better choice depends on whether you value setup before arrival, a local phone number or access to a particular French operator.",
+  columns: {
+    travelEsim: "Travel eSIM",
+    localSim: "Local SIM or operator eSIM",
+  },
+  rows: [
+    {
+      travelEsim: "Can usually be purchased before departure",
+      localSim: "Often purchased directly from a French operator or retailer",
+    },
+    {
+      travelEsim: "No physical SIM swap is needed",
+      localSim: "Physical SIM and eSIM options depend on the operator",
+    },
+    {
+      travelEsim: "Lets you keep your primary SIM installed",
+      localSim: "May replace a physical primary SIM in a single slot phone",
+    },
+    {
+      travelEsim: "Makes plans from several providers easier to compare",
+      localSim: "May offer local bundles and a French phone number",
+    },
+    {
+      travelEsim: "Many plans are data only",
+      localSim: "Voice and SMS options are more common",
+    },
+    {
+      travelEsim:
+        "Support and identification requirements depend on the provider",
+      localSim:
+        "Purchase and identification requirements depend on the operator and sales channel",
+    },
+  ],
+  closingParagraphs: [
+    "A travel eSIM is useful when you want data ready for arrival and do not need a French number. A local plan may suit a longer stay or a traveler who needs conventional calls, SMS and local service. Compare the complete package rather than assuming one type is always cheaper.",
+  ],
 };

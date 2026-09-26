@@ -100,3 +100,24 @@ export type UnlimitedPlansContent = {
   /** Optional section-level notice */
   notice?: string;
 };
+
+export type EsimVsLocalRow = {
+  travelEsim: string;
+  localSim: string;
+};
+
+export type EsimVsLocalContent = {
+  /** Optional non-heading eyebrow label */
+  eyebrow?: string;
+  /** e.g. "eSIM or Local SIM in {countryName}?" */
+  headingTemplate: string;
+  /** Intro paragraph; may include {countryName} */
+  intro: string;
+  columns: {
+    travelEsim: string;
+    localSim: string;
+  };
+  rows: EsimVsLocalRow[];
+  closingParagraphs: string[];
+  notice?: string;
+};

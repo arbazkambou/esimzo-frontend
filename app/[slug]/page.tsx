@@ -2,6 +2,7 @@ import GetCountryProvidersAndTopDestinations from "@/components/getters/GetCount
 import PlansClientPage from "@/components/plans/PlansClientPage";
 import CountriesHeader from "@/components/sections/CountriesHeader";
 import DataNeedsSection from "@/components/sections/DataNeedsSection";
+import EsimVsLocalSection from "@/components/sections/EsimVsLocalSection";
 import FAQSection from "@/components/sections/FAQSection";
 import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
 import NetworkCoverageSection from "@/components/sections/NetworkCoverageSection";
@@ -9,6 +10,7 @@ import NoPackagesState from "@/components/sections/NoPackagesFound";
 import UnlimitedPlansSection from "@/components/sections/UnlimitedPlansSection";
 import {
   getCountryDataNeedsContent,
+  getCountryEsimVsLocalContent,
   getCountryHowToChooseContent,
   getCountryNetworkCoverageContent,
   getCountryPlansHeroContent,
@@ -71,6 +73,7 @@ export default async function page({ params }: PageProps) {
   const dataNeedsContent = getCountryDataNeedsContent(slug);
   const networkCoverageContent = getCountryNetworkCoverageContent(slug);
   const unlimitedPlansContent = getCountryUnlimitedPlansContent(slug);
+  const esimVsLocalContent = getCountryEsimVsLocalContent(slug);
   const stats = derivePlansHeroStats(packages.data);
 
   return (
@@ -104,6 +107,12 @@ export default async function page({ params }: PageProps) {
           <UnlimitedPlansSection
             countryName={countryName}
             content={unlimitedPlansContent}
+          />
+        ) : null}
+        {esimVsLocalContent ? (
+          <EsimVsLocalSection
+            countryName={countryName}
+            content={esimVsLocalContent}
           />
         ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />
