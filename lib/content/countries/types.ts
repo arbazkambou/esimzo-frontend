@@ -148,6 +148,17 @@ export type PhoneCompatibilityContent = {
   ctaHref?: string;
 };
 
+export type CountryFaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type CountryFaqsContent = {
+  /** Optional FAQ section heading */
+  heading?: string;
+  faqs: CountryFaqItem[];
+};
+
 export type TravelerTip = {
   title: string;
   paragraphs: string[];

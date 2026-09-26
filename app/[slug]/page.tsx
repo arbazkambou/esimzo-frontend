@@ -14,6 +14,7 @@ import UnlimitedPlansSection from "@/components/sections/UnlimitedPlansSection";
 import {
   getCountryDataNeedsContent,
   getCountryEsimVsLocalContent,
+  getCountryFaqsContent,
   getCountryHowToChooseContent,
   getCountryNetworkCoverageContent,
   getCountryPhoneCompatibilityContent,
@@ -21,38 +22,11 @@ import {
   getCountryTravelerTipsContent,
   getCountryUnlimitedPlansContent,
   getCountryVsRegionalContent,
+  resolveCountryFaqs,
 } from "@/lib/content/countries";
 import { displayNameFromSlug } from "@/lib/display-name";
 import { derivePlansHeroStats } from "@/lib/plans/derive-plans-hero-stats";
 import { getCountryPackagesBySlug } from "@/lib/services/plans/plans.services";
-
-const faqs = [
-  {
-    question: "How do I buy an eSIM for this Country?",
-    answer:
-      "You can buy an eSIM for [Country] by selecting a plan from the list above and following the checkout process. Once purchased, you'll receive an email with instructions on how to install and activate your eSIM.",
-  },
-  {
-    question: "Can I use my eSIM immediately after purchase?",
-    answer:
-      "Yes, you can use your eSIM immediately after installation. Simply follow the instructions in the email to install and activate your eSIM, and you'll be able to use it right away.",
-  },
-  {
-    question: "How long does it take to install an eSIM?",
-    answer:
-      "Installing an eSIM usually takes less than 5 minutes. Simply follow the instructions in the email you receive after purchase, and you'll be able to use your eSIM in no time.",
-  },
-  {
-    question: "Can I use my eSIM after my plan expires?",
-    answer:
-      "No, you cannot use your eSIM after your plan expires. Once your plan expires, you'll need to purchase a new plan to continue using your eSIM.",
-  },
-  {
-    question: "Can I use my eSIM after my plan expires?",
-    answer:
-      "No, you cannot use your eSIM after your plan expires. Once your plan expires, you'll need to purchase a new plan to continue using your eSIM.",
-  },
-];
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -83,7 +57,11 @@ export default async function page({ params }: PageProps) {
   const countryVsRegionalContent = getCountryVsRegionalContent(slug);
   const phoneCompatibilityContent = getCountryPhoneCompatibilityContent(slug);
   const travelerTipsContent = getCountryTravelerTipsContent(slug);
+  const faqsContent = getCountryFaqsContent(slug);
   const stats = derivePlansHeroStats(packages.data);
+  const resolvedFaqs = faqsContent
+    ? resolveCountryFaqs(faqsContent, countryName, stats)
+    : null;
 
   return (
     <>
@@ -143,7 +121,9 @@ export default async function page({ params }: PageProps) {
           />
         ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />
-        <FAQSection faqs={faqs} />
+        {resolvedFaqs && resolvedFaqs.faqs.length > 0 ? (
+          <FAQSection faqs={resolvedFaqs.faqs} heading={resolvedFaqs.heading} />
+        ) : null}
       </div>
     </>
   );

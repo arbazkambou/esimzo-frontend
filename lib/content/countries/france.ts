@@ -1,4 +1,5 @@
 import type {
+  CountryFaqsContent,
   CountryPlansHeroContent,
   CountryVsRegionalContent,
   DataNeedsContent,
@@ -269,6 +270,64 @@ export const franceTravelerTipsContent: TravelerTipsContent = {
       paragraphs: [
         "Some plans allow full tethering, while unlimited plans may set a separate hotspot allowance or speed restriction.",
       ],
+    },
+  ],
+};
+
+/** France FAQs. Country-specific; not used inside the reusable UI. */
+export const franceFaqsContent: CountryFaqsContent = {
+  heading: "Frequently Asked Questions",
+  faqs: [
+    {
+      question: "What is the best eSIM for {countryName}?",
+      answer:
+        "There is no single best eSIM for every trip to {countryName}. The right choice depends on your trip length, data use, route, required network, hotspot needs and whether you need calls or SMS. Compare the current plans by total price, price per GB, validity, local network, 5G access and fair use terms. A smaller fixed data plan may offer better value than an unlimited plan for light use.",
+    },
+    {
+      question: "How much does an eSIM for {countryName} cost?",
+      answer:
+        "{countryName} eSIM prices vary by provider, data allowance, validity and included features. Current plans on eSIMzo start at {{starting_price}}, but the lowest price is not always the lowest cost per GB or the best match for your trip. Check whether taxes, speed limits, hotspot restrictions or activation rules affect the value. Live pricing and availability were updated {{last_updated}}.",
+    },
+    {
+      question: "Can tourists use an eSIM in {countryName}?",
+      answer:
+        "Yes, tourists can use a compatible travel eSIM in {countryName}. Your phone must support eSIM and normally needs to be carrier unlocked. International travel eSIMs can usually be purchased online before arrival, although account, payment and identity requirements vary by provider. Install according to the provider instructions and check whether data roaming must be enabled on the eSIM line.",
+    },
+    {
+      question: "Which mobile networks operate in {countryName}?",
+      answer:
+        "The four major mobile network operators in mainland {countryName} are Orange, SFR, Bouygues Telecom and Free Mobile. Travel eSIM providers use agreements with one or more of these local networks. The partner network can influence coverage, 5G access and performance, so check the network listed in the plan details. Network availability can also change by location and device.",
+    },
+    {
+      question: "Does {countryName} have 5G coverage?",
+      answer:
+        "Yes, 5G networks are active in {countryName}, including deployments by Orange, SFR, Bouygues Telecom and Free Mobile. A 5G phone does not guarantee that every travel eSIM will connect to 5G. The plan must include 5G access, the partner network must offer it at your location, and your device must support the relevant network bands. Otherwise, the connection may use 4G.",
+    },
+    {
+      question: "Can I get unlimited data with a {countryName} eSIM?",
+      answer:
+        "Unlimited eSIM plans for {countryName} are available when shown in the live results, but their conditions differ. A plan may provide a daily amount of high speed data, reduce speed after a threshold, cap the connection speed or limit hotspot use. Read the fair use policy and the post allowance speed before buying. For video, work or tethering, these details matter more than the unlimited label alone.",
+    },
+    {
+      question:
+        "Can a {countryName} travel eSIM include calls, SMS or a phone number?",
+      answer:
+        "Some {countryName} eSIM plans include voice, SMS or a phone number, but many travel plans are data only. Use the plan filters and read the details to confirm what is included. If a number is provided, check whether it is French or from another country and whether incoming and outgoing calls and texts are supported. Internet calling apps work with a data only plan.",
+    },
+    {
+      question: "Can I keep using WhatsApp with a {countryName} eSIM?",
+      answer:
+        "Yes. WhatsApp remains linked to your existing account and phone number when you use a travel eSIM for mobile data. You normally do not need to change the number inside WhatsApp. Keep access to your primary number if you may need a verification code, and avoid choosing the option to replace your WhatsApp number unless you genuinely want to change it.",
+    },
+    {
+      question: "When should I install and activate my {countryName} eSIM?",
+      answer:
+        "Install it before departure when the provider allows installation without starting the validity period. This gives you time to complete setup over reliable WiFi. If validity begins at installation, wait until closer to departure or follow the provider timing. Some plans activate only after connecting in {countryName}. Read the activation policy and save the QR code or manual details before traveling.",
+    },
+    {
+      question: "Can I use hotspot with an eSIM in {countryName}?",
+      answer:
+        "Hotspot use depends on the specific plan. Many {countryName} eSIMs allow tethering, but some unlimited or daily data plans apply a separate hotspot limit or block it. Check the plan details before purchasing if you need to connect a laptop, tablet or another phone. Also remember that video calls, cloud syncing and software updates can consume a large amount of data through hotspot.",
     },
   ],
 };

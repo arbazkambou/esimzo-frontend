@@ -3,6 +3,7 @@ import {
   franceCountryVsRegionalContent,
   franceDataNeedsContent,
   franceEsimVsLocalContent,
+  franceFaqsContent,
   franceHowToChooseContent,
   franceNetworkCoverageContent,
   francePhoneCompatibilityContent,
@@ -11,6 +12,8 @@ import {
   franceUnlimitedPlansContent,
 } from "./france";
 import type {
+  CountryFaqItem,
+  CountryFaqsContent,
   CountryPlansHeroContent,
   CountryVsRegionalContent,
   DataNeedsContent,
@@ -18,11 +21,15 @@ import type {
   HowToChooseEsimContent,
   NetworkCoverageContent,
   PhoneCompatibilityContent,
+  PlansHeroStats,
   TravelerTipsContent,
   UnlimitedPlansContent,
 } from "./types";
+import { formatPrice } from "@/lib/utils";
 
 export type {
+  CountryFaqItem,
+  CountryFaqsContent,
   CountryPlansHeroContent,
   CountryVsRegionalContent,
   CountryVsRegionalOption,
@@ -87,6 +94,31 @@ const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   france: franceTravelerTipsContent,
 };
 
+const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
+  france: franceFaqsContent,
+};
+
+function fillTemplate(
+  template: string,
+  values: Record<string, string>,
+): string {
+  return template
+    .replace(/\{\{(\w+)\}\}/g, (_, key: string) => values[key] ?? "")
+    .replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
+}
+
+function formatLastUpdated(value: PlansHeroStats["lastUpdated"]): string {
+  if (value == null || value === "") return "daily";
+  if (value instanceof Date) {
+    return value.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+  return String(value);
+}
+
 export function getCountryPlansHeroContent(
   slug: string,
 ): CountryPlansHeroContent {
@@ -147,4 +179,34 @@ export function getCountryTravelerTipsContent(
   slug: string,
 ): TravelerTipsContent | null {
   return countryTravelerTipsContentBySlug[slug] ?? null;
+}
+
+/** Returns country FAQ content, or null when none exists. */
+export function getCountryFaqsContent(
+  slug: string,
+): CountryFaqsContent | null {
+  return countryFaqsContentBySlug[slug] ?? null;
+}
+
+/** Resolves FAQ templates with country name and live plan stats. */
+export function resolveCountryFaqs(
+  content: CountryFaqsContent,
+  countryName: string,
+  stats: PlansHeroStats,
+): { heading?: string; faqs: CountryFaqItem[] } {
+  const values = {
+    countryName,
+    starting_price: formatPrice(stats.startingPrice),
+    last_updated: formatLastUpdated(stats.lastUpdated),
+  };
+
+  return {
+    heading: content.heading
+      ? fillTemplate(content.heading, values)
+      : undefined,
+    faqs: content.faqs.map((faq) => ({
+      question: fillTemplate(faq.question, values),
+      answer: fillTemplate(faq.answer, values),
+    })),
+  };
 }
