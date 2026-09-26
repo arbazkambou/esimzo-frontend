@@ -4,10 +4,12 @@ import CountriesHeader from "@/components/sections/CountriesHeader";
 import DataNeedsSection from "@/components/sections/DataNeedsSection";
 import FAQSection from "@/components/sections/FAQSection";
 import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
+import NetworkCoverageSection from "@/components/sections/NetworkCoverageSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
 import {
   getCountryDataNeedsContent,
   getCountryHowToChooseContent,
+  getCountryNetworkCoverageContent,
   getCountryPlansHeroContent,
 } from "@/lib/content/countries";
 import { displayNameFromSlug } from "@/lib/display-name";
@@ -65,6 +67,7 @@ export default async function page({ params }: PageProps) {
   const content = getCountryPlansHeroContent(slug);
   const howToChooseContent = getCountryHowToChooseContent(slug);
   const dataNeedsContent = getCountryDataNeedsContent(slug);
+  const networkCoverageContent = getCountryNetworkCoverageContent(slug);
   const stats = derivePlansHeroStats(packages.data);
 
   return (
@@ -86,6 +89,12 @@ export default async function page({ params }: PageProps) {
           <DataNeedsSection
             countryName={countryName}
             content={dataNeedsContent}
+          />
+        ) : null}
+        {networkCoverageContent ? (
+          <NetworkCoverageSection
+            countryName={countryName}
+            content={networkCoverageContent}
           />
         ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />

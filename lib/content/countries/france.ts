@@ -2,6 +2,7 @@ import type {
   CountryPlansHeroContent,
   DataNeedsContent,
   HowToChooseEsimContent,
+  NetworkCoverageContent,
 } from "./types";
 
 /** France plans-page hero copy. Country-specific; not used inside the reusable UI. */
@@ -94,4 +95,26 @@ export const franceDataNeedsContent: DataNeedsContent = {
     "Download offline maps, music and entertainment over WiFi before traveling if you want a smaller plan. Turn off automatic photo backups and app updates on mobile data to prevent background use from consuming your allowance.",
     "An unlimited plan can be convenient, but it is not automatically the fastest option. Compare the high speed allowance, fair use terms, hotspot rules and reduced speed before deciding.",
   ],
+};
+
+/** France network coverage guide. Country-specific; not used inside the reusable UI. */
+export const franceNetworkCoverageContent: NetworkCoverageContent = {
+  eyebrow: "Coverage",
+  headingTemplate: "Mobile Networks and eSIM Coverage in {countryName}",
+  paragraphs: [
+    "The major mobile networks in {countryName} are Orange, SFR, Bouygues Telecom and Free Mobile. {countryName} has active 4G and 5G networks, but a travel eSIM only receives the technologies and networks supported by its provider agreement.",
+    "Paris, Lyon, Marseille, Nice, Bordeaux, Toulouse and other large urban areas usually give travelers more network options than remote areas. Signal quality can still change inside buildings, on underground transport, in tunnels, on fast moving trains and in mountainous regions such as the Alps and the Pyrenees.",
+    "Do not judge coverage only by a 5G label. A reliable 4G connection may be more useful than inconsistent 5G along a rural route. Check the listed local partner and its current coverage map when connectivity is important for work or navigation.",
+  ],
+  networks: ["Orange", "SFR", "Bouygues Telecom", "Free Mobile"],
+  territories: [
+    "Guadeloupe",
+    "Martinique",
+    "French Guiana",
+    "Réunion",
+    "Mayotte",
+    "French Polynesia",
+  ],
+  notice:
+    "Coverage for mainland {countryName} does not automatically confirm coverage in every French overseas territory. If your itinerary includes Guadeloupe, Martinique, French Guiana, Réunion, Mayotte, French Polynesia or another territory, confirm that destination separately in the provider coverage list.",
 };

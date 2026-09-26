@@ -68,3 +68,18 @@ export type DataNeedsContent = {
   /** Optional section-level notice */
   notice?: string;
 };
+
+export type NetworkCoverageContent = {
+  /** Optional non-heading eyebrow label */
+  eyebrow?: string;
+  /** e.g. "Mobile Networks and eSIM Coverage in {countryName}" */
+  headingTemplate: string;
+  /** Body paragraphs; may include {countryName} */
+  paragraphs: string[];
+  /** Major local network operator names */
+  networks?: string[];
+  /** Optional overseas / special destinations for chips */
+  territories?: string[];
+  /** Optional coverage notice (e.g. overseas territories) */
+  notice?: string;
+};
