@@ -119,6 +119,18 @@ import {
   thailandTravelerTipsContent,
   thailandUnlimitedPlansContent,
 } from "./thailand";
+import {
+  unitedArabEmiratesCountryVsRegionalContent,
+  unitedArabEmiratesDataNeedsContent,
+  unitedArabEmiratesEsimVsLocalContent,
+  unitedArabEmiratesFaqsContent,
+  unitedArabEmiratesHowToChooseContent,
+  unitedArabEmiratesNetworkCoverageContent,
+  unitedArabEmiratesPhoneCompatibilityContent,
+  unitedArabEmiratesPlansHeroContent,
+  unitedArabEmiratesTravelerTipsContent,
+  unitedArabEmiratesUnlimitedPlansContent,
+} from "./united-arab-emirates";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -166,6 +178,7 @@ const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   italy: italyPlansHeroContent,
   germany: germanyPlansHeroContent,
   thailand: thailandPlansHeroContent,
+  "united-arab-emirates": unitedArabEmiratesPlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
@@ -180,6 +193,7 @@ const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
     italy: italyHowToChooseContent,
     germany: germanyHowToChooseContent,
     thailand: thailandHowToChooseContent,
+    "united-arab-emirates": unitedArabEmiratesHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
@@ -193,6 +207,7 @@ const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   italy: italyDataNeedsContent,
   germany: germanyDataNeedsContent,
   thailand: thailandDataNeedsContent,
+  "united-arab-emirates": unitedArabEmiratesDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -209,6 +224,7 @@ const countryNetworkCoverageContentBySlug: Record<
   italy: italyNetworkCoverageContent,
   germany: germanyNetworkCoverageContent,
   thailand: thailandNetworkCoverageContent,
+  "united-arab-emirates": unitedArabEmiratesNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -225,6 +241,7 @@ const countryUnlimitedPlansContentBySlug: Record<
   italy: italyUnlimitedPlansContent,
   germany: germanyUnlimitedPlansContent,
   thailand: thailandUnlimitedPlansContent,
+  "united-arab-emirates": unitedArabEmiratesUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
@@ -238,6 +255,7 @@ const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   italy: italyEsimVsLocalContent,
   germany: germanyEsimVsLocalContent,
   thailand: thailandEsimVsLocalContent,
+  "united-arab-emirates": unitedArabEmiratesEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
@@ -252,6 +270,7 @@ const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
     italy: italyCountryVsRegionalContent,
     germany: germanyCountryVsRegionalContent,
     thailand: thailandCountryVsRegionalContent,
+    "united-arab-emirates": unitedArabEmiratesCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -268,6 +287,7 @@ const countryPhoneCompatibilityContentBySlug: Record<
   italy: italyPhoneCompatibilityContent,
   germany: germanyPhoneCompatibilityContent,
   thailand: thailandPhoneCompatibilityContent,
+  "united-arab-emirates": unitedArabEmiratesPhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
@@ -281,6 +301,7 @@ const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   italy: italyTravelerTipsContent,
   germany: germanyTravelerTipsContent,
   thailand: thailandTravelerTipsContent,
+  "united-arab-emirates": unitedArabEmiratesTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
@@ -294,6 +315,7 @@ const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   italy: italyFaqsContent,
   germany: germanyFaqsContent,
   thailand: thailandFaqsContent,
+  "united-arab-emirates": unitedArabEmiratesFaqsContent,
 };
 
 function fillTemplate(
