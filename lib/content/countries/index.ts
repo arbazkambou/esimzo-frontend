@@ -167,6 +167,78 @@ import {
   mexicoTravelerTipsContent,
   mexicoUnlimitedPlansContent,
 } from "./mexico";
+import {
+  australiaCountryVsRegionalContent,
+  australiaDataNeedsContent,
+  australiaEsimVsLocalContent,
+  australiaFaqsContent,
+  australiaHowToChooseContent,
+  australiaNetworkCoverageContent,
+  australiaPhoneCompatibilityContent,
+  australiaPlansHeroContent,
+  australiaTravelerTipsContent,
+  australiaUnlimitedPlansContent,
+} from "./australia";
+import {
+  southKoreaCountryVsRegionalContent,
+  southKoreaDataNeedsContent,
+  southKoreaEsimVsLocalContent,
+  southKoreaFaqsContent,
+  southKoreaHowToChooseContent,
+  southKoreaNetworkCoverageContent,
+  southKoreaPhoneCompatibilityContent,
+  southKoreaPlansHeroContent,
+  southKoreaTravelerTipsContent,
+  southKoreaUnlimitedPlansContent,
+} from "./south-korea";
+import {
+  vietnamCountryVsRegionalContent,
+  vietnamDataNeedsContent,
+  vietnamEsimVsLocalContent,
+  vietnamFaqsContent,
+  vietnamHowToChooseContent,
+  vietnamNetworkCoverageContent,
+  vietnamPhoneCompatibilityContent,
+  vietnamPlansHeroContent,
+  vietnamTravelerTipsContent,
+  vietnamUnlimitedPlansContent,
+} from "./vietnam";
+import {
+  indonesiaCountryVsRegionalContent,
+  indonesiaDataNeedsContent,
+  indonesiaEsimVsLocalContent,
+  indonesiaFaqsContent,
+  indonesiaHowToChooseContent,
+  indonesiaNetworkCoverageContent,
+  indonesiaPhoneCompatibilityContent,
+  indonesiaPlansHeroContent,
+  indonesiaTravelerTipsContent,
+  indonesiaUnlimitedPlansContent,
+} from "./indonesia";
+import {
+  chinaCountryVsRegionalContent,
+  chinaDataNeedsContent,
+  chinaEsimVsLocalContent,
+  chinaFaqsContent,
+  chinaHowToChooseContent,
+  chinaNetworkCoverageContent,
+  chinaPhoneCompatibilityContent,
+  chinaPlansHeroContent,
+  chinaTravelerTipsContent,
+  chinaUnlimitedPlansContent,
+} from "./china";
+import {
+  indiaCountryVsRegionalContent,
+  indiaDataNeedsContent,
+  indiaEsimVsLocalContent,
+  indiaFaqsContent,
+  indiaHowToChooseContent,
+  indiaNetworkCoverageContent,
+  indiaPhoneCompatibilityContent,
+  indiaPlansHeroContent,
+  indiaTravelerTipsContent,
+  indiaUnlimitedPlansContent,
+} from "./india";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -218,6 +290,12 @@ const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   singapore: singaporePlansHeroContent,
   canada: canadaPlansHeroContent,
   mexico: mexicoPlansHeroContent,
+  australia: australiaPlansHeroContent,
+  "south-korea": southKoreaPlansHeroContent,
+  vietnam: vietnamPlansHeroContent,
+  indonesia: indonesiaPlansHeroContent,
+  china: chinaPlansHeroContent,
+  india: indiaPlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
@@ -236,6 +314,12 @@ const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
     singapore: singaporeHowToChooseContent,
     canada: canadaHowToChooseContent,
     mexico: mexicoHowToChooseContent,
+    australia: australiaHowToChooseContent,
+    "south-korea": southKoreaHowToChooseContent,
+    vietnam: vietnamHowToChooseContent,
+    indonesia: indonesiaHowToChooseContent,
+    china: chinaHowToChooseContent,
+    india: indiaHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
@@ -253,6 +337,12 @@ const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   singapore: singaporeDataNeedsContent,
   canada: canadaDataNeedsContent,
   mexico: mexicoDataNeedsContent,
+  australia: australiaDataNeedsContent,
+  "south-korea": southKoreaDataNeedsContent,
+  vietnam: vietnamDataNeedsContent,
+  indonesia: indonesiaDataNeedsContent,
+  china: chinaDataNeedsContent,
+  india: indiaDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -273,6 +363,12 @@ const countryNetworkCoverageContentBySlug: Record<
   singapore: singaporeNetworkCoverageContent,
   canada: canadaNetworkCoverageContent,
   mexico: mexicoNetworkCoverageContent,
+  australia: australiaNetworkCoverageContent,
+  "south-korea": southKoreaNetworkCoverageContent,
+  vietnam: vietnamNetworkCoverageContent,
+  indonesia: indonesiaNetworkCoverageContent,
+  china: chinaNetworkCoverageContent,
+  india: indiaNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -293,6 +389,12 @@ const countryUnlimitedPlansContentBySlug: Record<
   singapore: singaporeUnlimitedPlansContent,
   canada: canadaUnlimitedPlansContent,
   mexico: mexicoUnlimitedPlansContent,
+  australia: australiaUnlimitedPlansContent,
+  "south-korea": southKoreaUnlimitedPlansContent,
+  vietnam: vietnamUnlimitedPlansContent,
+  indonesia: indonesiaUnlimitedPlansContent,
+  china: chinaUnlimitedPlansContent,
+  india: indiaUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
@@ -310,6 +412,12 @@ const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   singapore: singaporeEsimVsLocalContent,
   canada: canadaEsimVsLocalContent,
   mexico: mexicoEsimVsLocalContent,
+  australia: australiaEsimVsLocalContent,
+  "south-korea": southKoreaEsimVsLocalContent,
+  vietnam: vietnamEsimVsLocalContent,
+  indonesia: indonesiaEsimVsLocalContent,
+  china: chinaEsimVsLocalContent,
+  india: indiaEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
@@ -328,6 +436,12 @@ const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
     singapore: singaporeCountryVsRegionalContent,
     canada: canadaCountryVsRegionalContent,
     mexico: mexicoCountryVsRegionalContent,
+    australia: australiaCountryVsRegionalContent,
+    "south-korea": southKoreaCountryVsRegionalContent,
+    vietnam: vietnamCountryVsRegionalContent,
+    indonesia: indonesiaCountryVsRegionalContent,
+    china: chinaCountryVsRegionalContent,
+    india: indiaCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -348,6 +462,12 @@ const countryPhoneCompatibilityContentBySlug: Record<
   singapore: singaporePhoneCompatibilityContent,
   canada: canadaPhoneCompatibilityContent,
   mexico: mexicoPhoneCompatibilityContent,
+  australia: australiaPhoneCompatibilityContent,
+  "south-korea": southKoreaPhoneCompatibilityContent,
+  vietnam: vietnamPhoneCompatibilityContent,
+  indonesia: indonesiaPhoneCompatibilityContent,
+  china: chinaPhoneCompatibilityContent,
+  india: indiaPhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
@@ -365,6 +485,12 @@ const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   singapore: singaporeTravelerTipsContent,
   canada: canadaTravelerTipsContent,
   mexico: mexicoTravelerTipsContent,
+  australia: australiaTravelerTipsContent,
+  "south-korea": southKoreaTravelerTipsContent,
+  vietnam: vietnamTravelerTipsContent,
+  indonesia: indonesiaTravelerTipsContent,
+  china: chinaTravelerTipsContent,
+  india: indiaTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
@@ -382,6 +508,12 @@ const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   singapore: singaporeFaqsContent,
   canada: canadaFaqsContent,
   mexico: mexicoFaqsContent,
+  australia: australiaFaqsContent,
+  "south-korea": southKoreaFaqsContent,
+  vietnam: vietnamFaqsContent,
+  indonesia: indonesiaFaqsContent,
+  china: chinaFaqsContent,
+  india: indiaFaqsContent,
 };
 
 function fillTemplate(
