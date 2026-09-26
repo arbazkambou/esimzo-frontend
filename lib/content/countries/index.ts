@@ -131,6 +131,18 @@ import {
   unitedArabEmiratesTravelerTipsContent,
   unitedArabEmiratesUnlimitedPlansContent,
 } from "./united-arab-emirates";
+import {
+  singaporeCountryVsRegionalContent,
+  singaporeDataNeedsContent,
+  singaporeEsimVsLocalContent,
+  singaporeFaqsContent,
+  singaporeHowToChooseContent,
+  singaporeNetworkCoverageContent,
+  singaporePhoneCompatibilityContent,
+  singaporePlansHeroContent,
+  singaporeTravelerTipsContent,
+  singaporeUnlimitedPlansContent,
+} from "./singapore";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -179,6 +191,7 @@ const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   germany: germanyPlansHeroContent,
   thailand: thailandPlansHeroContent,
   "united-arab-emirates": unitedArabEmiratesPlansHeroContent,
+  singapore: singaporePlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
@@ -194,6 +207,7 @@ const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
     germany: germanyHowToChooseContent,
     thailand: thailandHowToChooseContent,
     "united-arab-emirates": unitedArabEmiratesHowToChooseContent,
+    singapore: singaporeHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
@@ -208,6 +222,7 @@ const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   germany: germanyDataNeedsContent,
   thailand: thailandDataNeedsContent,
   "united-arab-emirates": unitedArabEmiratesDataNeedsContent,
+  singapore: singaporeDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -225,6 +240,7 @@ const countryNetworkCoverageContentBySlug: Record<
   germany: germanyNetworkCoverageContent,
   thailand: thailandNetworkCoverageContent,
   "united-arab-emirates": unitedArabEmiratesNetworkCoverageContent,
+  singapore: singaporeNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -242,6 +258,7 @@ const countryUnlimitedPlansContentBySlug: Record<
   germany: germanyUnlimitedPlansContent,
   thailand: thailandUnlimitedPlansContent,
   "united-arab-emirates": unitedArabEmiratesUnlimitedPlansContent,
+  singapore: singaporeUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
@@ -256,6 +273,7 @@ const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   germany: germanyEsimVsLocalContent,
   thailand: thailandEsimVsLocalContent,
   "united-arab-emirates": unitedArabEmiratesEsimVsLocalContent,
+  singapore: singaporeEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
@@ -271,6 +289,7 @@ const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
     germany: germanyCountryVsRegionalContent,
     thailand: thailandCountryVsRegionalContent,
     "united-arab-emirates": unitedArabEmiratesCountryVsRegionalContent,
+    singapore: singaporeCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -288,6 +307,7 @@ const countryPhoneCompatibilityContentBySlug: Record<
   germany: germanyPhoneCompatibilityContent,
   thailand: thailandPhoneCompatibilityContent,
   "united-arab-emirates": unitedArabEmiratesPhoneCompatibilityContent,
+  singapore: singaporePhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
@@ -302,6 +322,7 @@ const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   germany: germanyTravelerTipsContent,
   thailand: thailandTravelerTipsContent,
   "united-arab-emirates": unitedArabEmiratesTravelerTipsContent,
+  singapore: singaporeTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
@@ -316,6 +337,7 @@ const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   germany: germanyFaqsContent,
   thailand: thailandFaqsContent,
   "united-arab-emirates": unitedArabEmiratesFaqsContent,
+  singapore: singaporeFaqsContent,
 };
 
 function fillTemplate(
