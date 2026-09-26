@@ -7,9 +7,10 @@ import Link from "next/link";
 interface Props {
   provider: Provider;
   slug: string;
+  placeName?: string;
 }
 
-const ProviderInfoCard = ({ provider, slug }: Props) => {
+const ProviderInfoCard = ({ provider, slug, placeName }: Props) => {
   const { name, image, planCount } = provider;
   return (
     <div className="group relative flex items-center gap-4 rounded-2xl border border-border bg-muted/60 hover:bg-muted/80 p-4">
@@ -28,7 +29,7 @@ const ProviderInfoCard = ({ provider, slug }: Props) => {
 
         <div className="flex items-center gap-1">
           <p className="text-sm font-semibold text-muted-foreground">
-            {planCount} Plans for {capitalize(slug)}
+            {planCount} Plans for {placeName ?? capitalize(slug)}
           </p>
         </div>
       </div>

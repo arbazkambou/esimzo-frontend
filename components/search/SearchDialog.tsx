@@ -209,7 +209,7 @@ export function SearchDialog() {
     return (
       <button
         type="button"
-        onClick={() => navigate(`/region/${region.slug}`)}
+        onClick={() => navigate(`/${region.slug}`)}
         className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-muted group transition-colors"
       >
         <div className="relative h-6 w-8 shrink-0 overflow-hidden rounded">

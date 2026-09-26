@@ -4,7 +4,12 @@ import ProviderPackageHeader from "@/components/sections/ProviderPackageHeader";
 import SeoPage from "@/components/seo-content/SeoPage";
 
 import NoPackagesState from "@/components/sections/NoPackagesFound";
-import { getProviderBySearchParams } from "@/lib/services/plans/plans.services";
+import {
+  getGlobalPackagesBySlug,
+  getProviderBySearchParams,
+  getRegionBySlug,
+  getRegionalPackagesByProvider,
+} from "@/lib/services/plans/plans.services";
 // import { getSeoContentPage } from "@/lib/services/seo/seo.services";
 
 type PropType = {
@@ -20,7 +25,13 @@ export default async function Page({ params }: PropType) {
   if (isProviderPage) {
     // remove -provider then send the slug into api
     const cleanProviderSlug = provider.replace("-provider", "");
-    const result = await getProviderBySearchParams(slug, cleanProviderSlug);
+    const isGlobal = slug.toLowerCase() === "global";
+    const region = isGlobal ? null : await getRegionBySlug(slug);
+    const result = isGlobal
+      ? await getGlobalPackagesBySlug(cleanProviderSlug)
+      : region
+        ? await getRegionalPackagesByProvider(slug, cleanProviderSlug)
+        : await getProviderBySearchParams(slug, cleanProviderSlug);
     if (!result.success) return <NoPackagesState />;
 
     const { plans, provider: providerData } = result.data;
@@ -29,7 +40,7 @@ export default async function Page({ params }: PropType) {
       <main className="container py-8 flex flex-col gap-8">
         <ProviderPackageHeader
           providerName={cleanProviderSlug}
-          countryName={slug}
+          countryName={isGlobal ? "Global" : (region?.name ?? slug)}
         />
 
         <section className="grid grid-cols-1 xl:grid-cols-[380px_1fr] gap-8 items-start">

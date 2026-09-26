@@ -21,7 +21,7 @@ export default function RegionsCards({ region }: RegionsCardsProps) {
   const hasMore = region.countries && region.countries.length > 5;
 
   return (
-    <Link href={`/region/${region.slug}`} className="block h-full">
+    <Link href={`/${region.slug}`} className="block h-full">
       <div className="relative overflow-hidden h-full group bg-gradient-to-br from-primary/[0.04] to-secondary/10 border border-primary/10 rounded-3xl p-6 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-500 cursor-pointer">
         {/* Decorative Background Blur */}
         <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 blur-3xl rounded-full group-hover:bg-primary/20 transition-colors duration-500" />

@@ -105,7 +105,7 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
     canTopUp,
     has5G,
     isLowLatency,
-    coverages,
+    coverages = [],
   } = data;
 
   // Reset search when dialog closes

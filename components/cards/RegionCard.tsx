@@ -12,7 +12,7 @@ export default function RegionCard({ region }: PropType) {
 
   return (
     <Link
-      href={`/region/${slug}`}
+      href={`/${slug}`}
       className="group relative flex items-center gap-3.5 sm:gap-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-3.5 sm:p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-[2.5px] hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-md hover:shadow-sky-500/5 hover:bg-[#F8FBFE] dark:hover:bg-slate-800/90 active:scale-[0.985] transition-all duration-[240ms] ease-out"
     >
       {/* Flag Container */}

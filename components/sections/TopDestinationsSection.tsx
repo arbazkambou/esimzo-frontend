@@ -14,7 +14,7 @@ const curatedDestinations: CuratedDestination[] = [
   {
     title: "Europe eSIM (multi-country)",
     blurb: "Best for multi-stop trips",
-    href: "/region/europe",
+    href: "/europe",
     flagUrl: "https://flagcdn.com/w40/eu.png",
   },
   {

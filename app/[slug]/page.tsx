@@ -30,12 +30,49 @@ import {
   buildCountryPlansJsonLd,
   buildCountryPlansMetadataFields,
 } from "@/lib/seo/country-plans-jsonld";
-import { getCountryPackagesBySlug } from "@/lib/services/plans/plans.services";
+import type { PlansScope } from "@/lib/hooks/use-plans";
+import {
+  getCountryPackagesBySlug,
+  getGlobalPackages,
+  getRegionBySlug,
+  getRegionalPackagesBySlug,
+} from "@/lib/services/plans/plans.services";
+import type { Plan } from "@/lib/types/plans.types";
+import type { ApiResponse } from "@/lib/services/api";
 import type { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+async function loadPlans(slug: string): Promise<{
+  scope: PlansScope;
+  name: string;
+  packages: ApiResponse<Plan[]>;
+}> {
+  if (slug.toLowerCase() === "global") {
+    return {
+      scope: "global",
+      name: "Global",
+      packages: await getGlobalPackages(),
+    };
+  }
+
+  const region = await getRegionBySlug(slug);
+  if (region) {
+    return {
+      scope: "region",
+      name: region.name,
+      packages: await getRegionalPackagesBySlug(slug),
+    };
+  }
+
+  return {
+    scope: "country",
+    name: displayNameFromSlug(slug),
+    packages: await getCountryPackagesBySlug(slug),
+  };
+}
 
 const DEFAULT_OG_IMAGE = {
   url: "/opengraph-image",
@@ -48,9 +85,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const packages = await getCountryPackagesBySlug(slug);
+  const { name: countryName, packages } = await loadPlans(slug);
   const hasPlans = packages.success && packages.data.length > 0;
-  const countryName = displayNameFromSlug(slug);
   const heroContent = getCountryPlansHeroContent(slug);
   const stats = hasPlans
     ? derivePlansHeroStats(packages.data)
@@ -104,12 +140,10 @@ export async function generateMetadata({
 
 export default async function page({ params }: PageProps) {
   const { slug } = await params;
-  const packages = await getCountryPackagesBySlug(slug);
+  const { scope, name: countryName, packages } = await loadPlans(slug);
 
   if (!packages.success) return <NoPackagesState />;
   if (packages.data.length === 0) return <NoPackagesState />;
-
-  const countryName = displayNameFromSlug(slug);
 
   const content = getCountryPlansHeroContent(slug);
   const howToChooseContent = getCountryHowToChooseContent(slug);
@@ -148,7 +182,11 @@ export default async function page({ params }: PageProps) {
         stats={stats}
       />
       <div className="container">
-        <PlansClientPage slug={slug} initialData={packages.data} />
+        <PlansClientPage
+          slug={slug}
+          initialData={packages.data}
+          scope={scope}
+        />
         {howToChooseContent ? (
           <HowToChooseEsimSection
             countryName={countryName}
@@ -197,7 +235,11 @@ export default async function page({ params }: PageProps) {
             content={travelerTipsContent}
           />
         ) : null}
-        <GetCountryProvidersAndTopDestinations slug={slug} />
+        <GetCountryProvidersAndTopDestinations
+          slug={slug}
+          name={countryName}
+          scope={scope}
+        />
         {resolvedFaqs && resolvedFaqs.faqs.length > 0 ? (
           <FAQSection faqs={resolvedFaqs.faqs} heading={resolvedFaqs.heading} />
         ) : null}
