@@ -26,11 +26,74 @@ import {
 } from "@/lib/content/countries";
 import { displayNameFromSlug } from "@/lib/display-name";
 import { derivePlansHeroStats } from "@/lib/plans/derive-plans-hero-stats";
+import {
+  buildCountryPlansJsonLd,
+  buildCountryPlansMetadataFields,
+} from "@/lib/seo/country-plans-jsonld";
 import { getCountryPackagesBySlug } from "@/lib/services/plans/plans.services";
+import type { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+const DEFAULT_OG_IMAGE = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: "eSIMzo — Compare travel eSIM plans",
+} as const;
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const packages = await getCountryPackagesBySlug(slug);
+  const hasPlans = packages.success && packages.data.length > 0;
+  const countryName = displayNameFromSlug(slug);
+  const heroContent = getCountryPlansHeroContent(slug);
+  const stats = hasPlans
+    ? derivePlansHeroStats(packages.data)
+    : {
+        planCount: 0,
+        providerCount: 0,
+        startingPrice: 0,
+        lastUpdated: "daily" as const,
+      };
+
+  const { title, description, pageUrl } = buildCountryPlansMetadataFields({
+    slug,
+    countryName,
+    heroContent,
+    stats,
+  });
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: pageUrl,
+    },
+    robots: hasPlans
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: "eSIMzo",
+      locale: "en_US",
+      type: "website",
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [DEFAULT_OG_IMAGE.url],
+    },
+  };
+}
 
 // export async function generateStaticParams() {
 //   const countries = await getCountries();
@@ -63,8 +126,22 @@ export default async function page({ params }: PageProps) {
     ? resolveCountryFaqs(faqsContent, countryName, stats)
     : null;
 
+  const jsonLd = buildCountryPlansJsonLd({
+    slug,
+    countryName,
+    heroContent: content,
+    stats,
+    plans: packages.data,
+    faqs: resolvedFaqs?.faqs,
+    howToChoose: howToChooseContent,
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <CountriesHeader
         countryName={countryName}
         content={content}
