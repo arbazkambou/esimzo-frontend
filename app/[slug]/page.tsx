@@ -6,11 +6,13 @@ import FAQSection from "@/components/sections/FAQSection";
 import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
 import NetworkCoverageSection from "@/components/sections/NetworkCoverageSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
+import UnlimitedPlansSection from "@/components/sections/UnlimitedPlansSection";
 import {
   getCountryDataNeedsContent,
   getCountryHowToChooseContent,
   getCountryNetworkCoverageContent,
   getCountryPlansHeroContent,
+  getCountryUnlimitedPlansContent,
 } from "@/lib/content/countries";
 import { displayNameFromSlug } from "@/lib/display-name";
 import { derivePlansHeroStats } from "@/lib/plans/derive-plans-hero-stats";
@@ -68,6 +70,7 @@ export default async function page({ params }: PageProps) {
   const howToChooseContent = getCountryHowToChooseContent(slug);
   const dataNeedsContent = getCountryDataNeedsContent(slug);
   const networkCoverageContent = getCountryNetworkCoverageContent(slug);
+  const unlimitedPlansContent = getCountryUnlimitedPlansContent(slug);
   const stats = derivePlansHeroStats(packages.data);
 
   return (
@@ -95,6 +98,12 @@ export default async function page({ params }: PageProps) {
           <NetworkCoverageSection
             countryName={countryName}
             content={networkCoverageContent}
+          />
+        ) : null}
+        {unlimitedPlansContent ? (
+          <UnlimitedPlansSection
+            countryName={countryName}
+            content={unlimitedPlansContent}
           />
         ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />

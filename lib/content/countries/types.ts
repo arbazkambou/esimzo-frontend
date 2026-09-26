@@ -83,3 +83,20 @@ export type NetworkCoverageContent = {
   /** Optional coverage notice (e.g. overseas territories) */
   notice?: string;
 };
+
+export type UnlimitedPlansContent = {
+  /** Optional non-heading eyebrow label */
+  eyebrow?: string;
+  /** e.g. "Are Unlimited eSIM Plans Available in {countryName}?" */
+  headingTemplate: string;
+  /** Intro paragraphs; may include {countryName} */
+  introParagraphs: string[];
+  /** Lead-in before the checklist */
+  checklistIntro: string;
+  /** Comparison checklist items */
+  checklist: string[];
+  /** Closing sentence */
+  closing: string;
+  /** Optional section-level notice */
+  notice?: string;
+};

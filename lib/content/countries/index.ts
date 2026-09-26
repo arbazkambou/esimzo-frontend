@@ -4,12 +4,14 @@ import {
   franceHowToChooseContent,
   franceNetworkCoverageContent,
   francePlansHeroContent,
+  franceUnlimitedPlansContent,
 } from "./france";
 import type {
   CountryPlansHeroContent,
   DataNeedsContent,
   HowToChooseEsimContent,
   NetworkCoverageContent,
+  UnlimitedPlansContent,
 } from "./types";
 
 export type {
@@ -20,6 +22,7 @@ export type {
   HowToChooseEsimCriterion,
   NetworkCoverageContent,
   PlansHeroStats,
+  UnlimitedPlansContent,
 } from "./types";
 
 const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
@@ -40,6 +43,13 @@ const countryNetworkCoverageContentBySlug: Record<
   NetworkCoverageContent
 > = {
   france: franceNetworkCoverageContent,
+};
+
+const countryUnlimitedPlansContentBySlug: Record<
+  string,
+  UnlimitedPlansContent
+> = {
+  france: franceUnlimitedPlansContent,
 };
 
 export function getCountryPlansHeroContent(
@@ -67,4 +77,11 @@ export function getCountryNetworkCoverageContent(
   slug: string,
 ): NetworkCoverageContent | null {
   return countryNetworkCoverageContentBySlug[slug] ?? null;
+}
+
+/** Returns country-specific unlimited-plans content, or null when none exists. */
+export function getCountryUnlimitedPlansContent(
+  slug: string,
+): UnlimitedPlansContent | null {
+  return countryUnlimitedPlansContentBySlug[slug] ?? null;
 }

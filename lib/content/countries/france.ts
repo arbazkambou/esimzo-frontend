@@ -3,6 +3,7 @@ import type {
   DataNeedsContent,
   HowToChooseEsimContent,
   NetworkCoverageContent,
+  UnlimitedPlansContent,
 } from "./types";
 
 /** France plans-page hero copy. Country-specific; not used inside the reusable UI. */
@@ -117,4 +118,25 @@ export const franceNetworkCoverageContent: NetworkCoverageContent = {
   ],
   notice:
     "Coverage for mainland {countryName} does not automatically confirm coverage in every French overseas territory. If your itinerary includes Guadeloupe, Martinique, French Guiana, Réunion, Mayotte, French Polynesia or another territory, confirm that destination separately in the provider coverage list.",
+};
+
+/** France unlimited-plans guide. Country-specific; not used inside the reusable UI. */
+export const franceUnlimitedPlansContent: UnlimitedPlansContent = {
+  eyebrow: "Unlimited Plans",
+  headingTemplate: "Are Unlimited eSIM Plans Available in {countryName}?",
+  introParagraphs: [
+    "Unlimited and high data eSIM plans are available for {countryName} when shown in the current comparison results. The word unlimited does not describe every condition of a plan.",
+    "One provider may include a daily high speed allowance followed by slower data. Another may apply a fixed speed cap, a fair use threshold or a separate hotspot limit. Some plans allow tethering without a stated cap, while others restrict it or do not support it.",
+  ],
+  checklistIntro: "Open the plan details and compare these points:",
+  checklist: [
+    "The amount of data available at full speed",
+    "The speed after any daily or total allowance is reached",
+    "Whether hotspot and tethering are allowed",
+    "Any daily reset time",
+    "The network and 5G access",
+    "The activation and validity rules",
+  ],
+  closing:
+    "Choose unlimited for the conditions you need, not only for the label.",
 };
