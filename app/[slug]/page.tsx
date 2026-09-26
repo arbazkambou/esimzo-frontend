@@ -1,10 +1,12 @@
 import GetCountryProvidersAndTopDestinations from "@/components/getters/GetCountryProviders";
 import PlansClientPage from "@/components/plans/PlansClientPage";
 import CountriesHeader from "@/components/sections/CountriesHeader";
+import DataNeedsSection from "@/components/sections/DataNeedsSection";
 import FAQSection from "@/components/sections/FAQSection";
 import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
 import {
+  getCountryDataNeedsContent,
   getCountryHowToChooseContent,
   getCountryPlansHeroContent,
 } from "@/lib/content/countries";
@@ -62,6 +64,7 @@ export default async function page({ params }: PageProps) {
 
   const content = getCountryPlansHeroContent(slug);
   const howToChooseContent = getCountryHowToChooseContent(slug);
+  const dataNeedsContent = getCountryDataNeedsContent(slug);
   const stats = derivePlansHeroStats(packages.data);
 
   return (
@@ -77,6 +80,12 @@ export default async function page({ params }: PageProps) {
           <HowToChooseEsimSection
             countryName={countryName}
             content={howToChooseContent}
+          />
+        ) : null}
+        {dataNeedsContent ? (
+          <DataNeedsSection
+            countryName={countryName}
+            content={dataNeedsContent}
           />
         ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />

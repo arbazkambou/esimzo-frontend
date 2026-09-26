@@ -1,6 +1,6 @@
 import type { HowToChooseEsimContent } from "@/lib/content/countries";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Compass } from "lucide-react";
+import { ArrowUp, Compass } from "lucide-react";
 
 type Props = {
   countryName: string;
@@ -34,6 +34,12 @@ export default function HowToChooseEsimSection({
     ? fillTemplate(content.notice, values)
     : null;
 
+  const titleSuffix = ` ${countryName}`;
+  const titleHasCountrySuffix = heading.endsWith(titleSuffix);
+  const titlePrefix = titleHasCountrySuffix
+    ? heading.slice(0, -titleSuffix.length)
+    : heading;
+
   return (
     <section
       id="how-to-choose"
@@ -41,16 +47,16 @@ export default function HowToChooseEsimSection({
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-sky-100/30 blur-3xl dark:bg-sky-950/20"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute bottom-0 right-1/4 h-72 w-72 translate-x-1/2 rounded-full bg-orange-100/20 blur-3xl dark:bg-orange-950/15"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 mx-auto max-w-3xl px-4">
-        <header className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
+      <div className="relative z-10 w-full">
+        <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
             <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#FFF0E8] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A22] select-none dark:bg-[#FF5A22]/15">
               <Compass
@@ -66,23 +72,30 @@ export default function HowToChooseEsimSection({
             id="how-to-choose-heading"
             className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
           >
-            {heading}
+            {titleHasCountrySuffix ? (
+              <>
+                {titlePrefix}{" "}
+                <span className="text-[#FF5A22]">{countryName}</span>
+              </>
+            ) : (
+              heading
+            )}
           </h2>
 
-          <p className="mx-auto max-w-2xl text-sm leading-relaxed font-normal text-slate-500 sm:text-[15px] dark:text-slate-400">
+          <p className="mx-auto max-w-3xl text-xs leading-relaxed font-normal text-slate-500 sm:text-[13.5px] dark:text-slate-400">
             {intro}
           </p>
         </header>
 
         {sectionNotice ? (
-          <Alert className="mb-8 border-sky-200/80 bg-sky-50/60 dark:border-sky-900 dark:bg-sky-950/30">
+          <Alert className="mb-8 border-sky-200/80 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/30">
             <AlertDescription className="text-slate-600 dark:text-slate-300">
               {sectionNotice}
             </AlertDescription>
           </Alert>
         ) : null}
 
-        <ol className="flex flex-col gap-0">
+        <ol className="flex w-full flex-col gap-3 sm:gap-3.5">
           {criteria.map((criterion, index) => {
             const paragraphs = criterion.paragraphs
               .map((p) => fillTemplate(p, values).trim())
@@ -95,55 +108,73 @@ export default function HowToChooseEsimSection({
               : null;
 
             return (
-              <li
-                key={`${criterion.heading}-${index}`}
-                className="border-b border-slate-200/80 py-7 last:border-b-0 last:pb-0 first:pt-0 dark:border-slate-800"
-              >
-                <article className="flex gap-4 sm:gap-5">
+              <li key={`${criterion.heading}-${index}`}>
+                <article className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-sky-300 hover:shadow-sm sm:p-6 dark:border-slate-800 dark:bg-card dark:hover:border-sky-600">
                   <div
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-100 bg-[#EBF5FE] text-xs font-extrabold text-[#0284C7] dark:border-sky-900/60 dark:bg-sky-950/50 dark:text-sky-400 sm:h-9 sm:w-9"
+                    className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#FF5A22] via-sky-400 to-transparent opacity-80"
                     aria-hidden="true"
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </div>
+                  />
 
-                  <div className="min-w-0 flex-1">
-                    <h3 className="mb-3 text-base font-bold leading-snug text-[#0B1E48] sm:text-lg dark:text-white">
-                      {criterion.heading}
-                    </h3>
-
-                    <div className="flex flex-col gap-3">
-                      {paragraphs.map((paragraph, pIndex) => (
-                        <p
-                          key={pIndex}
-                          className="text-sm leading-relaxed font-normal text-slate-500 sm:text-[15px] sm:leading-7 dark:text-slate-400"
-                        >
-                          {paragraph}
-                        </p>
-                      ))}
+                  <div className="flex items-start gap-3.5 sm:gap-4">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EBF5FE] text-xs font-extrabold tracking-wide text-[#0284C7] ring-1 ring-sky-100 transition-colors group-hover:bg-[#FFF0E8] group-hover:text-[#FF5A22] group-hover:ring-orange-100 dark:bg-sky-950/50 dark:text-sky-400 dark:ring-sky-900/60 dark:group-hover:bg-[#FF5A22]/15 dark:group-hover:text-[#FF5A22] dark:group-hover:ring-[#FF5A22]/25 sm:h-10 sm:w-10"
+                      aria-hidden="true"
+                    >
+                      {String(index + 1).padStart(2, "0")}
                     </div>
 
-                    {list && list.length > 0 ? (
-                      <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-500 sm:text-[15px] dark:text-slate-400">
-                        {list.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    ) : null}
+                    <div className="min-w-0 flex-1 pt-0.5">
+                      <h3 className="mb-2.5 text-base font-bold leading-snug text-[#0B1E48] sm:mb-3 sm:text-[17px] dark:text-white">
+                        {criterion.heading}
+                      </h3>
 
-                    {notice ? (
-                      <Alert className="mt-4 border-orange-200/80 bg-[#FFF0E8]/60 dark:border-orange-900/50 dark:bg-[#FF5A22]/10">
-                        <AlertDescription className="text-slate-600 dark:text-slate-300">
-                          {notice}
-                        </AlertDescription>
-                      </Alert>
-                    ) : null}
+                      <div className="flex flex-col gap-2.5 sm:gap-3">
+                        {paragraphs.map((paragraph, pIndex) => (
+                          <p
+                            key={pIndex}
+                            className="text-xs leading-relaxed font-normal text-slate-500 sm:text-[13.5px] sm:leading-relaxed dark:text-slate-400"
+                          >
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+
+                      {list && list.length > 0 ? (
+                        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-xs leading-relaxed text-slate-500 sm:text-[13.5px] dark:text-slate-400">
+                          {list.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : null}
+
+                      {notice ? (
+                        <Alert className="mt-4 border-orange-200/80 bg-[#FFF0E8]/70 dark:border-orange-900/50 dark:bg-[#FF5A22]/10">
+                          <AlertDescription className="text-slate-600 dark:text-slate-300">
+                            {notice}
+                          </AlertDescription>
+                        </Alert>
+                      ) : null}
+                    </div>
                   </div>
                 </article>
               </li>
             );
           })}
         </ol>
+
+        <div className="mt-10 flex justify-center sm:mt-12">
+          <a
+            href="#plans"
+            className="group inline-flex items-center gap-2.5 rounded-full border border-[#BCD8F6] bg-white px-6 py-2.5 text-xs font-semibold text-[#0B1E48] shadow-2xs transition-all hover:border-sky-400 hover:text-[#0284C7] hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none sm:text-sm dark:border-sky-800 dark:bg-card dark:text-slate-200"
+          >
+            <ArrowUp
+              className="h-4 w-4 text-[#0284C7] transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+              strokeWidth={2.4}
+              aria-hidden="true"
+            />
+            Back to {countryName} plans
+          </a>
+        </div>
       </div>
     </section>
   );

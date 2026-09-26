@@ -43,3 +43,28 @@ export type HowToChooseEsimContent = {
   /** Optional section-level notice */
   notice?: string;
 };
+
+export type DataNeedsTableRow = {
+  travelerType: string;
+  planningRange: string;
+  typicalUse: string;
+};
+
+export type DataNeedsContent = {
+  /** Optional non-heading eyebrow label */
+  eyebrow?: string;
+  /** e.g. "How Much Data Do You Need in {countryName}?" */
+  headingTemplate: string;
+  /** Lead paragraph; may include {countryName} */
+  intro: string;
+  columns: {
+    travelerType: string;
+    planningRange: string;
+    typicalUse: string;
+  };
+  rows: DataNeedsTableRow[];
+  /** Closing paragraphs after the table */
+  closingParagraphs: string[];
+  /** Optional section-level notice */
+  notice?: string;
+};

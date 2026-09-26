@@ -1,5 +1,6 @@
 import type {
   CountryPlansHeroContent,
+  DataNeedsContent,
   HowToChooseEsimContent,
 } from "./types";
 
@@ -55,5 +56,42 @@ export const franceHowToChooseContent: HowToChooseEsimContent = {
         "If you need a local number for calls, restaurant bookings or other services, filter for plans that clearly include voice and SMS. Confirm the number type and the countries covered before purchasing.",
       ],
     },
+  ],
+};
+
+/** France data-needs guide. Country-specific; not used inside the reusable UI. */
+export const franceDataNeedsContent: DataNeedsContent = {
+  eyebrow: "Data Guide",
+  headingTemplate: "How Much Data Do You Need in {countryName}?",
+  intro:
+    "Your actual use depends on app settings, video quality, background activity and how often you connect to WiFi. These broad ranges can help you choose a starting point.",
+  columns: {
+    travelerType: "Traveler type",
+    planningRange: "Suggested planning range",
+    typicalUse: "Typical use",
+  },
+  rows: [
+    {
+      travelerType: "Light user",
+      planningRange: "1 to 3 GB per week",
+      typicalUse:
+        "Google Maps, WhatsApp, email, web browsing and occasional social media",
+    },
+    {
+      travelerType: "Average traveler",
+      planningRange: "5 to 10 GB per week",
+      typicalUse:
+        "Frequent navigation, social media, music, travel apps and some short video",
+    },
+    {
+      travelerType: "Heavy user",
+      planningRange: "15 GB or more per week",
+      typicalUse:
+        "Video calls, streaming, remote work, frequent uploads and hotspot use",
+    },
+  ],
+  closingParagraphs: [
+    "Download offline maps, music and entertainment over WiFi before traveling if you want a smaller plan. Turn off automatic photo backups and app updates on mobile data to prevent background use from consuming your allowance.",
+    "An unlimited plan can be convenient, but it is not automatically the fastest option. Compare the high speed allowance, fair use terms, hotspot rules and reduced speed before deciding.",
   ],
 };
