@@ -8,6 +8,7 @@ import {
 import { api, fail, ok, type ApiResponse } from "../api";
 
 const hour = { revalidate: 3600 } as const;
+const twelveHours = { revalidate: 60 * 60 * 12 } as const;
 const noStore = { cache: "no-store" as const };
 
 /** Normalize API `data` which may be `{ plans, provider? }` or `[]`. */
@@ -38,7 +39,7 @@ export async function getPopularCountries() {
 
 export async function getRegions() {
   return api<Region[]>("/regions", {
-    next: { ...hour, tags: ["regions"] },
+    next: { ...twelveHours, tags: ["regions"] },
   });
 }
 
@@ -57,13 +58,15 @@ export async function getRegionCountries(slug: string) {
 export async function getCountryPackagesBySlug(slug: string) {
   return unwrapPlans(await api<PlansListPayload | Plan[]>(
     `/plans/country/${slug}`,
-    noStore,
+    { next: { ...twelveHours, tags: ["plans"] } },
   ));
 }
 
 export async function getRegionalPackagesBySlug(slug: string) {
   return unwrapPlans(
-    await api<PlansListPayload | Plan[]>(`/plans/region/${slug}`, noStore),
+    await api<PlansListPayload | Plan[]>(`/plans/region/${slug}`, {
+      next: { ...twelveHours, tags: ["plans"] },
+    }),
   );
 }
 
@@ -81,7 +84,9 @@ export async function getRegionalPackagesByProvider(
 
 export async function getGlobalPackages() {
   return unwrapPlans(
-    await api<PlansListPayload | Plan[]>(`/plans/global`, noStore),
+    await api<PlansListPayload | Plan[]>(`/plans/global`, {
+      next: { ...twelveHours, tags: ["plans"] },
+    }),
   );
 }
 

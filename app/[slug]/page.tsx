@@ -32,10 +32,12 @@ import {
 } from "@/lib/seo/country-plans-jsonld";
 import type { PlansScope } from "@/lib/hooks/use-plans";
 import {
+  getCountries,
   getCountryPackagesBySlug,
   getGlobalPackages,
   getRegionBySlug,
   getRegionalPackagesBySlug,
+  getRegions,
 } from "@/lib/services/plans/plans.services";
 import type { Plan } from "@/lib/types/plans.types";
 import type { ApiResponse } from "@/lib/services/api";
@@ -131,12 +133,28 @@ export async function generateMetadata({
   };
 }
 
-// export async function generateStaticParams() {
-//   const countries = await getCountries();
-//   return countries.map((country) => ({
-//     slug: country.slug,
-//   }));
-// }
+export async function generateStaticParams() {
+  const [countries, regions] = await Promise.all([
+    getCountries(),
+    getRegions(),
+  ]);
+
+  const slugs = new Set<string>(["global"]);
+
+  if (countries.success) {
+    for (const country of countries.data) {
+      if (country.slug) slugs.add(country.slug);
+    }
+  }
+
+  if (regions.success) {
+    for (const region of regions.data) {
+      if (region.slug) slugs.add(region.slug);
+    }
+  }
+
+  return [...slugs].map((slug) => ({ slug }));
+}
 
 export default async function page({ params }: PageProps) {
   const { slug } = await params;

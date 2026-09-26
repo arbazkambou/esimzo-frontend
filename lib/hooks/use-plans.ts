@@ -8,6 +8,8 @@ import {
 
 export type PlansScope = "country" | "region" | "global";
 
+const twelveHoursMs = 12 * 60 * 60 * 1000;
+
 export function usePlans(
   slug: string,
   initialData?: Plan[],
@@ -27,6 +29,8 @@ export function usePlans(
       return res.data;
     },
     initialData,
-    staleTime: 5 * 60 * 1000,
+    initialDataUpdatedAt: initialData ? Date.now() : undefined,
+    staleTime: twelveHoursMs,
+    gcTime: twelveHoursMs,
   });
 }

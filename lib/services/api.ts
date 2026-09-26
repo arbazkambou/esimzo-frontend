@@ -50,6 +50,11 @@ export async function api<T>(
   if (!headers.has("Accept")) {
     headers.set("Accept", "application/json");
   }
+  // Server-only. Undefined in the browser, so client traffic stays rate limited.
+  const internalKey = process.env.INTERNAL_API_KEY;
+  if (internalKey && !headers.has("x-internal-key")) {
+    headers.set("x-internal-key", internalKey);
+  }
 
   let requestBody = body as BodyInit | null | undefined;
   if (shouldStringify(body)) {
