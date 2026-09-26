@@ -1,5 +1,6 @@
 import type {
   CountryPlansHeroContent,
+  CountryVsRegionalContent,
   DataNeedsContent,
   EsimVsLocalContent,
   HowToChooseEsimContent,
@@ -183,4 +184,35 @@ export const franceEsimVsLocalContent: EsimVsLocalContent = {
   closingParagraphs: [
     "A travel eSIM is useful when you want data ready for arrival and do not need a French number. A local plan may suit a longer stay or a traveler who needs conventional calls, SMS and local service. Compare the complete package rather than assuming one type is always cheaper.",
   ],
+};
+
+/** France country vs regional Europe guide. Country-specific; not used inside the reusable UI. */
+export const franceCountryVsRegionalContent: CountryVsRegionalContent = {
+  eyebrow: "Country vs Regional",
+  headingTemplate:
+    "Should You Choose a {countryName} eSIM or a Regional Europe eSIM?",
+  countryOption: {
+    titleTemplate: "{countryName} eSIM",
+    paragraphs: [
+      "A {countryName} specific eSIM usually makes sense when most or all of your trip is within {countryName}. It may provide more plan choices or a better price for the amount of data you need.",
+    ],
+  },
+  regionalOption: {
+    titleTemplate: "Regional Europe eSIM",
+    paragraphs: [
+      "A regional Europe eSIM can be more convenient if the same trip includes Belgium, Luxembourg, Germany, Switzerland, Italy, Monaco, Spain or Andorra. You can keep one eSIM profile active while crossing borders instead of installing a separate plan in each country.",
+    ],
+    destinations: [
+      "Belgium",
+      "Luxembourg",
+      "Germany",
+      "Switzerland",
+      "Italy",
+      "Monaco",
+      "Spain",
+      "Andorra",
+    ],
+  },
+  notice:
+    "Always check the included destination list. Switzerland, Monaco and Andorra are not members of the European Union, and a plan marketed for Europe may not include every nearby country. Also verify whether the same data allowance, speed policy and network access apply throughout the region.",
 };

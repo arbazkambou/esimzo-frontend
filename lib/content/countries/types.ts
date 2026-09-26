@@ -121,3 +121,19 @@ export type EsimVsLocalContent = {
   closingParagraphs: string[];
   notice?: string;
 };
+
+export type CountryVsRegionalOption = {
+  /** e.g. "{countryName} eSIM" or "Regional Europe eSIM" */
+  titleTemplate: string;
+  paragraphs: string[];
+  destinations?: string[];
+};
+
+export type CountryVsRegionalContent = {
+  eyebrow?: string;
+  /** e.g. "Should You Choose a {countryName} eSIM or a Regional Europe eSIM?" */
+  headingTemplate: string;
+  countryOption: CountryVsRegionalOption;
+  regionalOption: CountryVsRegionalOption;
+  notice?: string;
+};

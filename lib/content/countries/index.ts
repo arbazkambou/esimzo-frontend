@@ -1,5 +1,6 @@
 import { defaultPlansHeroContent } from "./default";
 import {
+  franceCountryVsRegionalContent,
   franceDataNeedsContent,
   franceEsimVsLocalContent,
   franceHowToChooseContent,
@@ -9,6 +10,7 @@ import {
 } from "./france";
 import type {
   CountryPlansHeroContent,
+  CountryVsRegionalContent,
   DataNeedsContent,
   EsimVsLocalContent,
   HowToChooseEsimContent,
@@ -18,6 +20,8 @@ import type {
 
 export type {
   CountryPlansHeroContent,
+  CountryVsRegionalContent,
+  CountryVsRegionalOption,
   DataNeedsContent,
   DataNeedsTableRow,
   EsimVsLocalContent,
@@ -60,6 +64,11 @@ const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   france: franceEsimVsLocalContent,
 };
 
+const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
+  {
+    france: franceCountryVsRegionalContent,
+  };
+
 export function getCountryPlansHeroContent(
   slug: string,
 ): CountryPlansHeroContent {
@@ -99,4 +108,11 @@ export function getCountryEsimVsLocalContent(
   slug: string,
 ): EsimVsLocalContent | null {
   return countryEsimVsLocalContentBySlug[slug] ?? null;
+}
+
+/** Returns country vs regional content, or null when none exists. */
+export function getCountryVsRegionalContent(
+  slug: string,
+): CountryVsRegionalContent | null {
+  return countryVsRegionalContentBySlug[slug] ?? null;
 }
