@@ -11,6 +11,18 @@ import {
   franceTravelerTipsContent,
   franceUnlimitedPlansContent,
 } from "./france";
+import {
+  spainCountryVsRegionalContent,
+  spainDataNeedsContent,
+  spainEsimVsLocalContent,
+  spainFaqsContent,
+  spainHowToChooseContent,
+  spainNetworkCoverageContent,
+  spainPhoneCompatibilityContent,
+  spainPlansHeroContent,
+  spainTravelerTipsContent,
+  spainUnlimitedPlansContent,
+} from "./spain";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -49,15 +61,18 @@ export type {
 
 const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   france: francePlansHeroContent,
+  spain: spainPlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
   {
     france: franceHowToChooseContent,
+    spain: spainHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   france: franceDataNeedsContent,
+  spain: spainDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -65,6 +80,7 @@ const countryNetworkCoverageContentBySlug: Record<
   NetworkCoverageContent
 > = {
   france: franceNetworkCoverageContent,
+  spain: spainNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -72,15 +88,18 @@ const countryUnlimitedPlansContentBySlug: Record<
   UnlimitedPlansContent
 > = {
   france: franceUnlimitedPlansContent,
+  spain: spainUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   france: franceEsimVsLocalContent,
+  spain: spainEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
   {
     france: franceCountryVsRegionalContent,
+    spain: spainCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -88,14 +107,17 @@ const countryPhoneCompatibilityContentBySlug: Record<
   PhoneCompatibilityContent
 > = {
   france: francePhoneCompatibilityContent,
+  spain: spainPhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   france: franceTravelerTipsContent,
+  spain: spainTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   france: franceFaqsContent,
+  spain: spainFaqsContent,
 };
 
 function fillTemplate(
