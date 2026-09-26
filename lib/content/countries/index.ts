@@ -143,6 +143,30 @@ import {
   singaporeTravelerTipsContent,
   singaporeUnlimitedPlansContent,
 } from "./singapore";
+import {
+  canadaCountryVsRegionalContent,
+  canadaDataNeedsContent,
+  canadaEsimVsLocalContent,
+  canadaFaqsContent,
+  canadaHowToChooseContent,
+  canadaNetworkCoverageContent,
+  canadaPhoneCompatibilityContent,
+  canadaPlansHeroContent,
+  canadaTravelerTipsContent,
+  canadaUnlimitedPlansContent,
+} from "./canada";
+import {
+  mexicoCountryVsRegionalContent,
+  mexicoDataNeedsContent,
+  mexicoEsimVsLocalContent,
+  mexicoFaqsContent,
+  mexicoHowToChooseContent,
+  mexicoNetworkCoverageContent,
+  mexicoPhoneCompatibilityContent,
+  mexicoPlansHeroContent,
+  mexicoTravelerTipsContent,
+  mexicoUnlimitedPlansContent,
+} from "./mexico";
 import type {
   CountryFaqItem,
   CountryFaqsContent,
@@ -192,6 +216,8 @@ const countryPlansHeroContentBySlug: Record<string, CountryPlansHeroContent> = {
   thailand: thailandPlansHeroContent,
   "united-arab-emirates": unitedArabEmiratesPlansHeroContent,
   singapore: singaporePlansHeroContent,
+  canada: canadaPlansHeroContent,
+  mexico: mexicoPlansHeroContent,
 };
 
 const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
@@ -208,6 +234,8 @@ const countryHowToChooseContentBySlug: Record<string, HowToChooseEsimContent> =
     thailand: thailandHowToChooseContent,
     "united-arab-emirates": unitedArabEmiratesHowToChooseContent,
     singapore: singaporeHowToChooseContent,
+    canada: canadaHowToChooseContent,
+    mexico: mexicoHowToChooseContent,
   };
 
 const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
@@ -223,6 +251,8 @@ const countryDataNeedsContentBySlug: Record<string, DataNeedsContent> = {
   thailand: thailandDataNeedsContent,
   "united-arab-emirates": unitedArabEmiratesDataNeedsContent,
   singapore: singaporeDataNeedsContent,
+  canada: canadaDataNeedsContent,
+  mexico: mexicoDataNeedsContent,
 };
 
 const countryNetworkCoverageContentBySlug: Record<
@@ -241,6 +271,8 @@ const countryNetworkCoverageContentBySlug: Record<
   thailand: thailandNetworkCoverageContent,
   "united-arab-emirates": unitedArabEmiratesNetworkCoverageContent,
   singapore: singaporeNetworkCoverageContent,
+  canada: canadaNetworkCoverageContent,
+  mexico: mexicoNetworkCoverageContent,
 };
 
 const countryUnlimitedPlansContentBySlug: Record<
@@ -259,6 +291,8 @@ const countryUnlimitedPlansContentBySlug: Record<
   thailand: thailandUnlimitedPlansContent,
   "united-arab-emirates": unitedArabEmiratesUnlimitedPlansContent,
   singapore: singaporeUnlimitedPlansContent,
+  canada: canadaUnlimitedPlansContent,
+  mexico: mexicoUnlimitedPlansContent,
 };
 
 const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
@@ -274,6 +308,8 @@ const countryEsimVsLocalContentBySlug: Record<string, EsimVsLocalContent> = {
   thailand: thailandEsimVsLocalContent,
   "united-arab-emirates": unitedArabEmiratesEsimVsLocalContent,
   singapore: singaporeEsimVsLocalContent,
+  canada: canadaEsimVsLocalContent,
+  mexico: mexicoEsimVsLocalContent,
 };
 
 const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
@@ -290,6 +326,8 @@ const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
     thailand: thailandCountryVsRegionalContent,
     "united-arab-emirates": unitedArabEmiratesCountryVsRegionalContent,
     singapore: singaporeCountryVsRegionalContent,
+    canada: canadaCountryVsRegionalContent,
+    mexico: mexicoCountryVsRegionalContent,
   };
 
 const countryPhoneCompatibilityContentBySlug: Record<
@@ -308,6 +346,8 @@ const countryPhoneCompatibilityContentBySlug: Record<
   thailand: thailandPhoneCompatibilityContent,
   "united-arab-emirates": unitedArabEmiratesPhoneCompatibilityContent,
   singapore: singaporePhoneCompatibilityContent,
+  canada: canadaPhoneCompatibilityContent,
+  mexico: mexicoPhoneCompatibilityContent,
 };
 
 const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
@@ -323,6 +363,8 @@ const countryTravelerTipsContentBySlug: Record<string, TravelerTipsContent> = {
   thailand: thailandTravelerTipsContent,
   "united-arab-emirates": unitedArabEmiratesTravelerTipsContent,
   singapore: singaporeTravelerTipsContent,
+  canada: canadaTravelerTipsContent,
+  mexico: mexicoTravelerTipsContent,
 };
 
 const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
@@ -338,6 +380,8 @@ const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   thailand: thailandFaqsContent,
   "united-arab-emirates": unitedArabEmiratesFaqsContent,
   singapore: singaporeFaqsContent,
+  canada: canadaFaqsContent,
+  mexico: mexicoFaqsContent,
 };
 
 function fillTemplate(
