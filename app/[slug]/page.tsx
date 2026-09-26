@@ -8,12 +8,14 @@ import FAQSection from "@/components/sections/FAQSection";
 import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
 import NetworkCoverageSection from "@/components/sections/NetworkCoverageSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
+import PhoneCompatibilitySection from "@/components/sections/PhoneCompatibilitySection";
 import UnlimitedPlansSection from "@/components/sections/UnlimitedPlansSection";
 import {
   getCountryDataNeedsContent,
   getCountryEsimVsLocalContent,
   getCountryHowToChooseContent,
   getCountryNetworkCoverageContent,
+  getCountryPhoneCompatibilityContent,
   getCountryPlansHeroContent,
   getCountryUnlimitedPlansContent,
   getCountryVsRegionalContent,
@@ -77,6 +79,7 @@ export default async function page({ params }: PageProps) {
   const unlimitedPlansContent = getCountryUnlimitedPlansContent(slug);
   const esimVsLocalContent = getCountryEsimVsLocalContent(slug);
   const countryVsRegionalContent = getCountryVsRegionalContent(slug);
+  const phoneCompatibilityContent = getCountryPhoneCompatibilityContent(slug);
   const stats = derivePlansHeroStats(packages.data);
 
   return (
@@ -122,6 +125,12 @@ export default async function page({ params }: PageProps) {
           <CountryVsRegionalSection
             countryName={countryName}
             content={countryVsRegionalContent}
+          />
+        ) : null}
+        {phoneCompatibilityContent ? (
+          <PhoneCompatibilitySection
+            countryName={countryName}
+            content={phoneCompatibilityContent}
           />
         ) : null}
         <GetCountryProvidersAndTopDestinations slug={slug} />

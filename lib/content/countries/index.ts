@@ -5,6 +5,7 @@ import {
   franceEsimVsLocalContent,
   franceHowToChooseContent,
   franceNetworkCoverageContent,
+  francePhoneCompatibilityContent,
   francePlansHeroContent,
   franceUnlimitedPlansContent,
 } from "./france";
@@ -15,6 +16,7 @@ import type {
   EsimVsLocalContent,
   HowToChooseEsimContent,
   NetworkCoverageContent,
+  PhoneCompatibilityContent,
   UnlimitedPlansContent,
 } from "./types";
 
@@ -29,6 +31,7 @@ export type {
   HowToChooseEsimContent,
   HowToChooseEsimCriterion,
   NetworkCoverageContent,
+  PhoneCompatibilityContent,
   PlansHeroStats,
   UnlimitedPlansContent,
 } from "./types";
@@ -68,6 +71,13 @@ const countryVsRegionalContentBySlug: Record<string, CountryVsRegionalContent> =
   {
     france: franceCountryVsRegionalContent,
   };
+
+const countryPhoneCompatibilityContentBySlug: Record<
+  string,
+  PhoneCompatibilityContent
+> = {
+  france: francePhoneCompatibilityContent,
+};
 
 export function getCountryPlansHeroContent(
   slug: string,
@@ -115,4 +125,11 @@ export function getCountryVsRegionalContent(
   slug: string,
 ): CountryVsRegionalContent | null {
   return countryVsRegionalContentBySlug[slug] ?? null;
+}
+
+/** Returns phone compatibility content, or null when none exists. */
+export function getCountryPhoneCompatibilityContent(
+  slug: string,
+): PhoneCompatibilityContent | null {
+  return countryPhoneCompatibilityContentBySlug[slug] ?? null;
 }

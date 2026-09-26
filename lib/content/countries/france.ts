@@ -5,6 +5,7 @@ import type {
   EsimVsLocalContent,
   HowToChooseEsimContent,
   NetworkCoverageContent,
+  PhoneCompatibilityContent,
   UnlimitedPlansContent,
 } from "./types";
 
@@ -215,4 +216,14 @@ export const franceCountryVsRegionalContent: CountryVsRegionalContent = {
   },
   notice:
     "Always check the included destination list. Switzerland, Monaco and Andorra are not members of the European Union, and a plan marketed for Europe may not include every nearby country. Also verify whether the same data allowance, speed policy and network access apply throughout the region.",
+};
+
+/** France phone compatibility guide. Country-specific; not used inside the reusable UI. */
+export const francePhoneCompatibilityContent: PhoneCompatibilityContent = {
+  eyebrow: "Compatibility",
+  headingTemplate: "Will My Phone Work With an eSIM in {countryName}?",
+  paragraphs: [
+    "Your phone generally needs to support eSIM and be carrier unlocked. Compatibility can vary by model, country of purchase and device configuration, even when a phone family normally supports eSIM.",
+    "Check the exact model in the eSIMzo compatibility checker before purchasing. You can also look in your phone settings for an option to add an eSIM or mobile plan. If your device is locked to a carrier, contact that carrier before traveling.",
+  ],
 };

@@ -137,3 +137,13 @@ export type CountryVsRegionalContent = {
   regionalOption: CountryVsRegionalOption;
   notice?: string;
 };
+
+export type PhoneCompatibilityContent = {
+  eyebrow?: string;
+  /** e.g. "Will My Phone Work With an eSIM in {countryName}?" */
+  headingTemplate: string;
+  paragraphs: string[];
+  notice?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
