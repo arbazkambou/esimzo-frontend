@@ -6,9 +6,8 @@ import {
   Region,
 } from "@/lib/types/plans.types";
 import { api, fail, ok, type ApiResponse } from "../api";
+import { cacheRevalidate, cacheTags } from "../cache-keys";
 
-const hour = { revalidate: 3600 } as const;
-const twelveHours = { revalidate: 60 * 60 * 12 } as const;
 const noStore = { cache: "no-store" as const };
 
 /** Normalize API `data` which may be `{ plans, provider? }` or `[]`. */
@@ -27,19 +26,19 @@ function unwrapPlansPayload(data: PlansListPayload | Plan[]): {
 
 export async function getCountries() {
   return api<Country[]>("/countries", {
-    next: { ...hour, tags: ["countries"] },
+    next: { revalidate: cacheRevalidate.hour, tags: [cacheTags.countries] },
   });
 }
 
 export async function getPopularCountries() {
   return api<Country[]>("/countries/popular", {
-    next: { ...hour, tags: ["countries"] },
+    next: { revalidate: cacheRevalidate.hour, tags: [cacheTags.countries] },
   });
 }
 
 export async function getRegions() {
   return api<Region[]>("/regions", {
-    next: { ...twelveHours, tags: ["regions"] },
+    next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.regions] },
   });
 }
 
@@ -58,14 +57,14 @@ export async function getRegionCountries(slug: string) {
 export async function getCountryPackagesBySlug(slug: string) {
   return unwrapPlans(await api<PlansListPayload | Plan[]>(
     `/plans/country/${slug}`,
-    { next: { ...twelveHours, tags: ["plans"] } },
+    { next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.plans] } },
   ));
 }
 
 export async function getRegionalPackagesBySlug(slug: string) {
   return unwrapPlans(
     await api<PlansListPayload | Plan[]>(`/plans/region/${slug}`, {
-      next: { ...twelveHours, tags: ["plans"] },
+      next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.plans] },
     }),
   );
 }
@@ -85,7 +84,7 @@ export async function getRegionalPackagesByProvider(
 export async function getGlobalPackages() {
   return unwrapPlans(
     await api<PlansListPayload | Plan[]>(`/plans/global`, {
-      next: { ...twelveHours, tags: ["plans"] },
+      next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.plans] },
     }),
   );
 }
