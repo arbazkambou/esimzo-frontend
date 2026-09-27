@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Info, Check, X, Search, ZoomInIcon, BadgeInfo } from "lucide-react";
 import { Plan, Coverage } from "@/lib/types/plans.types";
-import { formatData, formatPrice, getEffectiveUsdPrice } from "@/lib/utils";
+import { formatPlanData, formatPrice, getEffectiveUsdPrice } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -102,7 +102,6 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
 
   const {
     name,
-    capacity,
     usdPrice,
     period,
     tethering,
@@ -155,7 +154,7 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col">
             <span className="text-3xl font-bold tracking-tight text-foreground">
-              {formatData(capacity)}
+              {formatPlanData(data)}
             </span>
           </div>
 
@@ -203,7 +202,7 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
             </DialogTitle>
             <div className="flex items-center gap-3 mt-2 flex-wrap">
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
-                {formatData(capacity)}
+                {formatPlanData(data)}
               </span>
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
                 {period} {period === 1 ? "Day" : "Days"}

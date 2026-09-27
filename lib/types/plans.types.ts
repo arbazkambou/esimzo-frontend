@@ -62,7 +62,12 @@ export type Plan = {
   promoPrice: number | null;
   promoPrices: Record<string, number> | null;
   capacity: number;
+  capacityInfo: string | null;
+  dataType: "fixed" | "daily" | "unlimited" | "unknown";
+  unlimitedAfterAllowance: boolean | null;
   period: number;
+  /** Post-allowance speed in kbps. */
+  reducedSpeed: number | null;
   isLowLatency: boolean | null;
   has5G: boolean | null;
   tethering: boolean | null;

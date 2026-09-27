@@ -15,9 +15,10 @@ import type {
   SortDirection,
 } from "@/lib/hooks/use-package-filters";
 import {
-  formatData,
+  formatPlanData,
   formatPrice,
   getEffectiveUsdPrice,
+  getHighSpeedDataMB,
   pricePerGB,
 } from "@/lib/utils";
 import {
@@ -163,7 +164,7 @@ export default function PlansTable({
                 >
                   <div className="flex items-center gap-1">
                     <span className="text-sm font-semibold text-foreground">
-                      {formatData(plan.capacity)}
+                      {formatPlanData(plan)}
                     </span>
                   </div>
                 </Link>
@@ -202,7 +203,10 @@ export default function PlansTable({
                   href={`/${slug}/${plan.provider.slug}-provider`}
                 >
                   <span className="text-sm font-medium text-muted-foreground">
-                    {pricePerGB(getEffectiveUsdPrice(plan), plan.capacity)}
+                    {pricePerGB(
+                      getEffectiveUsdPrice(plan),
+                      getHighSpeedDataMB(plan),
+                    )}
                   </span>
                 </Link>
               </TableCell>

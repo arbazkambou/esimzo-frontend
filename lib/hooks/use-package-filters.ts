@@ -9,7 +9,11 @@ import {
   parseAsArrayOf,
 } from "nuqs";
 import type { Plan } from "@/lib/types/plans.types";
-import { getEffectiveUsdPrice } from "@/lib/utils";
+import {
+  getEffectiveUsdPrice,
+  getHighSpeedDataMB,
+  isUnlimitedPlan,
+} from "@/lib/utils";
 
 // ── Sort options ──
 export type SortOption = "cheapest" | "best-value" | "most-data" | "longest";
@@ -36,18 +40,22 @@ function sortPlans(
           (getEffectiveUsdPrice(a) - getEffectiveUsdPrice(b)) * dir,
       );
     case "best-value": {
-      const value = (p: Plan) =>
-        p.capacity <= 0
+      const value = (p: Plan) => {
+        const highSpeedData = getHighSpeedDataMB(p);
+        return highSpeedData <= 0 || !Number.isFinite(highSpeedData)
           ? Infinity
-          : getEffectiveUsdPrice(p) / (p.capacity / 1024);
+          : getEffectiveUsdPrice(p) / (highSpeedData / 1024);
+      };
       return sorted.sort((a, b) => (value(a) - value(b)) * dir);
     }
     case "most-data":
       return sorted.sort((a, b) => {
-        if (a.capacity <= 0 && b.capacity <= 0) return 0;
-        if (a.capacity <= 0) return -1 * dir;
-        if (b.capacity <= 0) return 1 * dir;
-        return (b.capacity - a.capacity) * dir;
+        const dataA = getHighSpeedDataMB(a);
+        const dataB = getHighSpeedDataMB(b);
+        if (!Number.isFinite(dataA) && !Number.isFinite(dataB)) return 0;
+        if (!Number.isFinite(dataA)) return -1 * dir;
+        if (!Number.isFinite(dataB)) return 1 * dir;
+        return (dataB - dataA) * dir;
       });
     case "longest":
       return sorted.sort((a, b) => (b.period - a.period) * dir);
@@ -188,17 +196,20 @@ export function usePackageFilters(plans: Plan[] | undefined) {
 
     // Data range
     if (minData !== null) {
-      result = result.filter((p) => p.capacity <= 0 || p.capacity >= minData);
+      result = result.filter((p) => getHighSpeedDataMB(p) >= minData);
     }
     if (maxData !== null) {
-      result = result.filter((p) => p.capacity > 0 && p.capacity <= maxData);
+      result = result.filter((p) => {
+        const data = getHighSpeedDataMB(p);
+        return Number.isFinite(data) && data > 0 && data <= maxData;
+      });
     }
 
     // Boolean filters
     if (has5G) result = result.filter((p) => p.has5G);
     if (tethering) result = result.filter((p) => p.tethering);
     if (topUp) result = result.filter((p) => p.canTopUp);
-    if (unlimited) result = result.filter((p) => p.capacity <= 0);
+    if (unlimited) result = result.filter(isUnlimitedPlan);
 
     // Provider filter
     if (providers.length > 0) {
