@@ -59,16 +59,16 @@ export type Plan = {
   usdPrice: number;
   capacity: number;
   period: number;
-  isLowLatency: boolean;
-  has5G: boolean;
-  tethering: boolean;
-  canTopUp: boolean;
-  phoneNumber: boolean;
-  subscription: boolean;
-  payAsYouGo: boolean;
-  newUserOnly: boolean;
-  isConsecutive: boolean;
-  eKYC: boolean;
+  isLowLatency: boolean | null;
+  has5G: boolean | null;
+  tethering: boolean | null;
+  canTopUp: boolean | null;
+  phoneNumber: boolean | null;
+  subscription: boolean | null;
+  payAsYouGo: boolean | null;
+  newUserOnly: boolean | null;
+  isConsecutive: boolean | null;
+  eKYC: boolean | null;
   coverages: Coverage[];
   provider: {
     name: string;

@@ -12,17 +12,21 @@ import {
 } from "@/components/ui/dialog";
 
 // ── BoolBadge ──────────────────────────────────────────────────────────────
-function BoolBadge({ value, label }: { value: boolean; label: string }) {
+function BoolBadge({ value, label }: { value: boolean | null; label: string }) {
   return (
     <div className="flex items-center justify-between py-2.5">
       <span className="text-sm text-muted-foreground">{label}</span>
-      {value ? (
+      {value === true ? (
         <span className="flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary">
           <Check className="h-3 w-3" /> Yes
         </span>
-      ) : (
+      ) : value === false ? (
         <span className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
           <X className="h-3 w-3" /> No
+        </span>
+      ) : (
+        <span className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
+          <BadgeInfo className="h-3 w-3" /> Unknown
         </span>
       )}
     </div>
