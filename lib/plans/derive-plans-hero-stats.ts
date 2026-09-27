@@ -1,5 +1,6 @@
 import type { PlansHeroStats } from "@/lib/content/countries";
 import type { Plan } from "@/lib/types/plans.types";
+import { getEffectiveUsdPrice } from "@/lib/utils";
 
 /** Derive hero stats from the plans list already fetched for the page. */
 export function derivePlansHeroStats(plans: Plan[]): PlansHeroStats {
@@ -8,7 +9,7 @@ export function derivePlansHeroStats(plans: Plan[]): PlansHeroStats {
   const startingPrice =
     planCount === 0
       ? 0
-      : Math.min(...plans.map((p) => p.usdPrice));
+      : Math.min(...plans.map(getEffectiveUsdPrice));
 
   return {
     planCount,

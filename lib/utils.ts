@@ -16,6 +16,19 @@ export function formatPrice(usd: number): string {
   return `$${usd}`;
 }
 
+export function getEffectiveUsdPrice(plan: {
+  usdPrice: number;
+  promoEnabled: boolean;
+  promoPrice: number | null;
+}): number {
+  return plan.promoEnabled &&
+    plan.promoPrice != null &&
+    plan.promoPrice >= 0 &&
+    plan.promoPrice < plan.usdPrice
+    ? plan.promoPrice
+    : plan.usdPrice;
+}
+
 export function pricePerGB(usd: number, capacityMB: number): string {
   if (capacityMB <= 0) return "–";
   const gb = capacityMB / 1024;

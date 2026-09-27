@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Info, Check, X, Search, ZoomInIcon, BadgeInfo } from "lucide-react";
 import { Plan, Coverage } from "@/lib/types/plans.types";
-import { formatData, formatPrice } from "@/lib/utils";
+import { formatData, formatPrice, getEffectiveUsdPrice } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -111,6 +111,8 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
     isLowLatency,
     coverages = [],
   } = data;
+  const effectiveUsdPrice = getEffectiveUsdPrice(data);
+  const hasActivePromo = effectiveUsdPrice < usdPrice;
 
   // Reset search when dialog closes
   useEffect(() => {
@@ -168,10 +170,15 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
             </div>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col items-start">
             <span className="text-3xl font-bold text-primary">
-              {formatPrice(usdPrice)}
+              {formatPrice(effectiveUsdPrice)}
             </span>
+            {hasActivePromo && (
+              <span className="text-sm text-muted-foreground line-through">
+                {formatPrice(usdPrice)}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col gap-2 min-w-[140px]">
@@ -202,7 +209,7 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
                 {period} {period === 1 ? "Day" : "Days"}
               </span>
               <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
-                {formatPrice(usdPrice)}
+                {formatPrice(effectiveUsdPrice)}
               </span>
               {has5G && (
                 <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">

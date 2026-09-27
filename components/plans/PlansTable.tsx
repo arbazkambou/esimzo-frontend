@@ -14,7 +14,12 @@ import type {
   SortOption,
   SortDirection,
 } from "@/lib/hooks/use-package-filters";
-import { formatData, formatPrice, pricePerGB } from "@/lib/utils";
+import {
+  formatData,
+  formatPrice,
+  getEffectiveUsdPrice,
+  pricePerGB,
+} from "@/lib/utils";
 import {
   ArrowDown,
   ArrowUp,
@@ -197,7 +202,7 @@ export default function PlansTable({
                   href={`/${slug}/${plan.provider.slug}-provider`}
                 >
                   <span className="text-sm font-medium text-muted-foreground">
-                    {pricePerGB(plan.usdPrice, plan.capacity)}
+                    {pricePerGB(getEffectiveUsdPrice(plan), plan.capacity)}
                   </span>
                 </Link>
               </TableCell>
@@ -210,13 +215,18 @@ export default function PlansTable({
                   <span
                     className={cn(
                       "text-sm font-bold",
-                      plan.usdPrice === 0
+                      getEffectiveUsdPrice(plan) === 0
                         ? "text-green-600"
                         : "text-foreground",
                     )}
                   >
-                    {formatPrice(plan.usdPrice)}
+                    {formatPrice(getEffectiveUsdPrice(plan))}
                   </span>
+                  {getEffectiveUsdPrice(plan) < plan.usdPrice && (
+                    <span className="ml-1.5 text-xs text-muted-foreground line-through">
+                      {formatPrice(plan.usdPrice)}
+                    </span>
+                  )}
                 </Link>
               </TableCell>
 

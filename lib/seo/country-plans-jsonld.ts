@@ -5,7 +5,7 @@ import type {
   PlansHeroStats,
 } from "@/lib/content/countries";
 import type { Plan } from "@/lib/types/plans.types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getEffectiveUsdPrice } from "@/lib/utils";
 
 const SITE_URL = "https://esimzo.com";
 const ORGANIZATION_ID = `${SITE_URL}/#organization`;
@@ -64,7 +64,9 @@ export function buildCountryPlansJsonLd({
 
   const title = fillTemplate(heroContent.titleTemplate, values);
   const description = fillTemplate(heroContent.description, values);
-  const prices = plans.map((p) => p.usdPrice).filter((n) => Number.isFinite(n));
+  const prices = plans
+    .map(getEffectiveUsdPrice)
+    .filter((n) => Number.isFinite(n));
   const lowPrice = prices.length ? Math.min(...prices) : stats.startingPrice;
   const highPrice = prices.length ? Math.max(...prices) : stats.startingPrice;
 

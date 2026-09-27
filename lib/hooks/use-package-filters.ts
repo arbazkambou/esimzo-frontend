@@ -9,6 +9,7 @@ import {
   parseAsArrayOf,
 } from "nuqs";
 import type { Plan } from "@/lib/types/plans.types";
+import { getEffectiveUsdPrice } from "@/lib/utils";
 
 // ── Sort options ──
 export type SortOption = "cheapest" | "best-value" | "most-data" | "longest";
@@ -30,10 +31,15 @@ function sortPlans(
 
   switch (column) {
     case "cheapest":
-      return sorted.sort((a, b) => (a.usdPrice - b.usdPrice) * dir);
+      return sorted.sort(
+        (a, b) =>
+          (getEffectiveUsdPrice(a) - getEffectiveUsdPrice(b)) * dir,
+      );
     case "best-value": {
       const value = (p: Plan) =>
-        p.capacity <= 0 ? Infinity : p.usdPrice / (p.capacity / 1024);
+        p.capacity <= 0
+          ? Infinity
+          : getEffectiveUsdPrice(p) / (p.capacity / 1024);
       return sorted.sort((a, b) => (value(a) - value(b)) * dir);
     }
     case "most-data":

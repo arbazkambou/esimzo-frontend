@@ -58,6 +58,9 @@ export type Plan = {
   slug: string;
   usdPrice: number;
   prices: Record<string, number>;
+  promoEnabled: boolean;
+  promoPrice: number | null;
+  promoPrices: Record<string, number> | null;
   capacity: number;
   period: number;
   isLowLatency: boolean | null;
