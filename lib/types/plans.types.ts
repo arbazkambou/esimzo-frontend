@@ -52,6 +52,10 @@ export type Coverage = {
   networks?: Network[];
 };
 
+export type InternetBreakout = {
+  country: string;
+};
+
 export type Plan = {
   id: string;
   name: string;
@@ -81,6 +85,8 @@ export type Plan = {
   hasAds: boolean | null;
   packageType: string | null;
   providerPromoAvailable: boolean | null;
+  /** Omitted from list responses; null on detail responses means unknown. */
+  internetBreakouts?: InternetBreakout[] | null;
   coverages: Coverage[];
   provider: {
     name: string;
