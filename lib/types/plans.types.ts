@@ -78,6 +78,9 @@ export type Plan = {
   newUserOnly: boolean | null;
   isConsecutive: boolean | null;
   eKYC: boolean | null;
+  hasAds: boolean | null;
+  packageType: string | null;
+  providerPromoAvailable: boolean | null;
   coverages: Coverage[];
   provider: {
     name: string;
