@@ -81,6 +81,7 @@ const p_period = (p: Plan) => p.period ?? 1;
 const NUQS_OPTIONS = { shallow: true, throttleMs: 150 } as const;
 
 export type DataMode = "total" | "daily";
+export type PackageCategory = "all" | "data-only" | "data-voice";
 
 // ── Main hook ──
 export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
@@ -168,6 +169,34 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
   const [hideDataOnly, setHideDataOnly] = useQueryState(
     "hasVoice",
     parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [onlyDataOnly, setOnlyDataOnly] = useQueryState(
+    "dataOnly",
+    parseAsBoolean.withDefault(true).withOptions(NUQS_OPTIONS),
+  );
+
+  const packageCategory: PackageCategory = hideDataOnly
+    ? "data-voice"
+    : onlyDataOnly === false
+      ? "all"
+      : "data-only";
+
+  const setPackageCategory = useCallback(
+    (cat: PackageCategory) => {
+      startTransition(() => {
+        if (cat === "data-voice") {
+          void setOnlyDataOnly(false);
+          void setHideDataOnly(true);
+        } else if (cat === "data-only") {
+          void setHideDataOnly(false);
+          void setOnlyDataOnly(true);
+        } else {
+          void setHideDataOnly(false);
+          void setOnlyDataOnly(false);
+        }
+      });
+    },
+    [setHideDataOnly, setOnlyDataOnly, startTransition],
   );
   const [onlyHotspot, setOnlyHotspot] = useQueryState(
     "hotspot",
@@ -268,6 +297,7 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
       setHideDailyCaps(false);
       setHideSubscriptions(false);
       setHideDataOnly(false);
+      setOnlyDataOnly(true);
       setOnlyHotspot(false);
       setOnlyLocalBreakout(false);
       setOnlyPromo(false);
@@ -473,6 +503,16 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
             (s && (s.inbound || s.outbound)),
         );
       });
+    } else if (onlyDataOnly) {
+      result = result.filter((p) => {
+        const v = p.telephony?.voice;
+        const s = p.telephony?.sms;
+        return !Boolean(
+          p.phoneNumber ||
+            (v && (v.inbound || v.outbound)) ||
+            (s && (s.inbound || s.outbound)),
+        );
+      });
     }
     if (onlyHotspot) {
       result = result.filter((p) => p.tethering === true);
@@ -539,6 +579,7 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     hideDailyCaps,
     hideSubscriptions,
     hideDataOnly,
+    onlyDataOnly,
     onlyHotspot,
     onlyLocalBreakout,
     onlyPromo,
@@ -581,6 +622,7 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     hideDailyCaps,
     hideSubscriptions,
     hideDataOnly,
+    onlyDataOnly,
     onlyHotspot,
     onlyLocalBreakout,
     onlyPromo,
@@ -640,6 +682,9 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     hideDailyCaps,
     hideSubscriptions,
     hideDataOnly,
+    onlyDataOnly,
+    packageCategory,
+    setPackageCategory,
     onlyHotspot,
     tethering: onlyHotspot,
     onlyLocalBreakout,
@@ -766,6 +811,10 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     setCalls: (val: boolean) =>
       startTransition(() => {
         void setHideDataOnly(val);
+      }),
+    setOnlyDataOnly: (val: boolean) =>
+      startTransition(() => {
+        void setOnlyDataOnly(val);
       }),
     setNoExpiry: (val: boolean) =>
       startTransition(() => {

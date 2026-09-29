@@ -65,6 +65,9 @@ export default function AdvancedFiltersDialog({
     setHideSubscriptions,
     hideDataOnly,
     setHideDataOnly,
+    onlyDataOnly,
+    packageCategory,
+    setPackageCategory,
     onlyHotspot,
     setOnlyHotspot,
     onlyLocalBreakout,
@@ -90,6 +93,7 @@ export default function AdvancedFiltersDialog({
       hideDailyCaps,
       hideSubscriptions,
       hideDataOnly,
+      onlyDataOnly,
       onlyHotspot,
       onlyLocalBreakout,
       onlyPromo,
@@ -100,6 +104,7 @@ export default function AdvancedFiltersDialog({
     hideDailyCaps,
     hideSubscriptions,
     hideDataOnly,
+    onlyDataOnly,
     onlyHotspot,
     onlyLocalBreakout,
     onlyPromo,
@@ -412,7 +417,31 @@ export default function AdvancedFiltersDialog({
                   />
                 </div>
 
-                {/* 5. Hide data-only plans (no Voice / SMS) */}
+                {/* 5a. Only Data Only plans */}
+                <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-card p-3.5 transition-colors hover:border-border">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+                      <Wifi className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        Data Only packages (No Voice & SMS)
+                      </p>
+                      <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                        Only show pure mobile data packages without voice calling or phone numbers.
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={onlyDataOnly}
+                    onCheckedChange={(checked) => {
+                      setPackageCategory(checked ? "data-only" : "all");
+                    }}
+                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                </div>
+
+                {/* 5b. Data + Voice packages */}
                 <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-card p-3.5 transition-colors hover:border-border">
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
@@ -420,16 +449,18 @@ export default function AdvancedFiltersDialog({
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        Hide data-only plans (no Voice / SMS)
+                        Data + Voice packages (Voice & SMS)
                       </p>
                       <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                        Exclude plans that don&apos;t include voice calling or text messaging features.
+                        Only show packages that include voice calling or text messaging features alongside data.
                       </p>
                     </div>
                   </div>
                   <Switch
                     checked={hideDataOnly}
-                    onCheckedChange={setHideDataOnly}
+                    onCheckedChange={(checked) => {
+                      setPackageCategory(checked ? "data-voice" : "all");
+                    }}
                     className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                   />
                 </div>
