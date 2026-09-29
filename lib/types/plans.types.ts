@@ -1,16 +1,9 @@
-export type GetCountriesResponse = {
-  success: boolean;
-  data: Country[];
-};
-
-export type GetPopularResponse = {
-  success: boolean;
-  data: Country[];
-};
-
-export type GetRegionsResponse = {
-  success: boolean;
-  data: Region[];
+export type CountryRegion = {
+  id: string;
+  name: string;
+  slug: string;
+  code: string;
+  flag: string;
 };
 
 export type Region = {
@@ -22,11 +15,10 @@ export type Region = {
   countries: Country[];
 };
 
-/** Slim region nested on country list endpoints — no `countries` to avoid a cycle. */
-export type CountryRegion = Pick<
-  Region,
-  "id" | "name" | "slug" | "code" | "flag"
->;
+export type RegionsResponse = {
+  success: boolean;
+  data: Region[];
+};
 
 export type Country = {
   id: string;
@@ -56,6 +48,12 @@ export type InternetBreakout = {
   country: string;
 };
 
+export type Telephony = {
+  dialingCode?: string;
+  voice?: { inbound?: boolean; outbound?: boolean };
+  sms?: { inbound?: boolean; outbound?: boolean };
+};
+
 export type Plan = {
   id: string;
   name: string;
@@ -72,11 +70,14 @@ export type Plan = {
   period: number;
   /** Post-allowance speed in kbps. */
   reducedSpeed: number | null;
+  speedLimit?: number | null;
+  possibleThrottling?: boolean | null;
   isLowLatency: boolean | null;
   has5G: boolean | null;
   tethering: boolean | null;
   canTopUp: boolean | null;
   phoneNumber: boolean | null;
+  telephony?: Telephony | null;
   subscription: boolean | null;
   payAsYouGo: boolean | null;
   newUserOnly: boolean | null;

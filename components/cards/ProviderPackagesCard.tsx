@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Info, Check, X, Search, ZoomInIcon, BadgeInfo } from "lucide-react";
+import { Info, Check, X, Search, BadgeInfo } from "lucide-react";
 import { Plan, Coverage } from "@/lib/types/plans.types";
 import { formatPlanData, formatPrice, getEffectiveUsdPrice } from "@/lib/utils";
 import {
@@ -113,15 +113,15 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
   const effectiveUsdPrice = getEffectiveUsdPrice(data);
   const hasActivePromo = effectiveUsdPrice < usdPrice;
 
-  // Reset search when dialog closes
-  useEffect(() => {
-    if (!open) {
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
       setCoverageQuery("");
       setDebouncedCoverageQuery("");
     } else {
       setTimeout(() => searchRef.current?.focus(), 80);
     }
-  }, [open]);
+  };
 
   // 200ms debounce on coverage search
   useEffect(() => {
@@ -193,7 +193,7 @@ export const ProviderPackagesCard = ({ data }: { data: Plan }) => {
       </div>
 
       {/* ── Details Dialog ───────────────────────────────────────────────── */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-2xl! max-h-[75dvh] p-0 gap-0 flex flex-col overflow-hidden rounded-2xl border-border">
           {/* Header */}
           <DialogHeader className="px-5 pt-5 pb-4 border-b border-border shrink-0">

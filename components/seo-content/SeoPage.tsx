@@ -1,6 +1,6 @@
 import React from "react";
 
-function SeoPage({ data }: any) {
+function SeoPage(_props: { data?: unknown }) {
   return <div>SeoPage</div>;
 }
 

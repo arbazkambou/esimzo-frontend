@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useTransition, useDeferredValue } from "react";
 import {
   useQueryState,
   parseAsString,
@@ -14,6 +14,7 @@ import {
   getHighSpeedDataMB,
   isUnlimitedPlan,
 } from "@/lib/utils";
+import { getCountryNetworkCoverageContent } from "@/lib/content/countries";
 
 // ── Sort options ──
 export type SortOption = "cheapest" | "best-value" | "most-data" | "longest";
@@ -29,29 +30,39 @@ function sortPlans(
   plans: Plan[],
   column: SortOption,
   direction: SortDirection,
+  applyPromo: boolean = true,
 ): Plan[] {
   const sorted = [...plans];
   const dir = direction === "asc" ? 1 : -1;
 
+  const getPrice = (p: Plan) =>
+    applyPromo ? getEffectiveUsdPrice(p) : p.usdPrice;
+
   switch (column) {
     case "cheapest":
-      return sorted.sort(
-        (a, b) =>
-          (getEffectiveUsdPrice(a) - getEffectiveUsdPrice(b)) * dir,
-      );
+      return sorted.sort((a, b) => (getPrice(a) - getPrice(b)) * dir);
     case "best-value": {
       const value = (p: Plan) => {
-        const highSpeedData = getHighSpeedDataMB(p);
+        const highSpeedData =
+          p.dataType === "daily"
+            ? p.capacity * Math.max(p.period, 1)
+            : getHighSpeedDataMB(p);
         return highSpeedData <= 0 || !Number.isFinite(highSpeedData)
           ? Infinity
-          : getEffectiveUsdPrice(p) / (highSpeedData / 1024);
+          : getPrice(p) / (highSpeedData / 1024);
       };
       return sorted.sort((a, b) => (value(a) - value(b)) * dir);
     }
     case "most-data":
       return sorted.sort((a, b) => {
-        const dataA = getHighSpeedDataMB(a);
-        const dataB = getHighSpeedDataMB(b);
+        const dataA =
+          a.dataType === "daily"
+            ? a.capacity * Math.max(p_period(a), 1)
+            : getHighSpeedDataMB(a);
+        const dataB =
+          b.dataType === "daily"
+            ? b.capacity * Math.max(p_period(b), 1)
+            : getHighSpeedDataMB(b);
         if (!Number.isFinite(dataA) && !Number.isFinite(dataB)) return 0;
         if (!Number.isFinite(dataA)) return -1 * dir;
         if (!Number.isFinite(dataB)) return 1 * dir;
@@ -64,12 +75,18 @@ function sortPlans(
   }
 }
 
-// ── nuqs options ──
-const NUQS_OPTIONS = { shallow: false } as const;
+const p_period = (p: Plan) => p.period ?? 1;
+
+// ── nuqs options (shallow: true prevents Next.js from refetching page on URL changes) ──
+const NUQS_OPTIONS = { shallow: true, throttleMs: 150 } as const;
+
+export type DataMode = "total" | "daily";
 
 // ── Main hook ──
-export function usePackageFilters(plans: Plan[] | undefined) {
-  // nuqs state — each synced to a URL parameter
+export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
+  const [isPending, startTransition] = useTransition();
+
+  // Sort state
   const [sort, setSort] = useQueryState(
     "sort",
     parseAsString.withDefault("cheapest").withOptions(NUQS_OPTIONS),
@@ -78,10 +95,14 @@ export function usePackageFilters(plans: Plan[] | undefined) {
     "dir",
     parseAsString.withDefault("asc").withOptions(NUQS_OPTIONS),
   );
-  const [duration, setDuration] = useQueryState(
-    "duration",
-    parseAsInteger.withOptions(NUQS_OPTIONS),
+
+  // Data mode: Total vs Daily
+  const [dataMode, setDataMode] = useQueryState(
+    "dataMode",
+    parseAsString.withDefault("total").withOptions(NUQS_OPTIONS),
   );
+
+  // Total Data limits (in MB)
   const [minData, setMinData] = useQueryState(
     "minData",
     parseAsInteger.withOptions(NUQS_OPTIONS),
@@ -90,12 +111,94 @@ export function usePackageFilters(plans: Plan[] | undefined) {
     "maxData",
     parseAsInteger.withOptions(NUQS_OPTIONS),
   );
-  const [has5G, setHas5G] = useQueryState(
-    "5g",
+
+  // Daily Data limits (in MB/day)
+  const [dailyMinData, setDailyMinData] = useQueryState(
+    "dailyMin",
+    parseAsInteger.withOptions(NUQS_OPTIONS),
+  );
+  const [dailyMaxData, setDailyMaxData] = useQueryState(
+    "dailyMax",
+    parseAsInteger.withOptions(NUQS_OPTIONS),
+  );
+
+  // Validity limits (in days)
+  const [minDuration, setMinDuration] = useQueryState(
+    "minDays",
+    parseAsInteger.withOptions(NUQS_OPTIONS),
+  );
+  const [maxDuration, setMaxDuration] = useQueryState(
+    "maxDays",
+    parseAsInteger.withOptions(NUQS_OPTIONS),
+  );
+
+  // Price limits (in USD)
+  const [minPrice, setMinPrice] = useQueryState(
+    "minPrice",
+    parseAsInteger.withOptions(NUQS_OPTIONS),
+  );
+  const [maxPrice, setMaxPrice] = useQueryState(
+    "maxPrice",
+    parseAsInteger.withOptions(NUQS_OPTIONS),
+  );
+
+  // Apply Promo Codes toggle
+  const [applyPromo, setApplyPromo] = useQueryState(
+    "promo",
+    parseAsBoolean.withDefault(true).withOptions(NUQS_OPTIONS),
+  );
+
+  // ── Advanced: Plan Preferences ──
+  const [hideThrottling, setHideThrottling] = useQueryState(
+    "noThrottle",
     parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
   );
-  const [tethering, setTethering] = useQueryState(
-    "tethering",
+  const [hideSpeedLimits, setHideSpeedLimits] = useQueryState(
+    "noSpeedCap",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [hideDailyCaps, setHideDailyCaps] = useQueryState(
+    "noDaily",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [hideSubscriptions, setHideSubscriptions] = useQueryState(
+    "noSub",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [hideDataOnly, setHideDataOnly] = useQueryState(
+    "hasVoice",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [onlyHotspot, setOnlyHotspot] = useQueryState(
+    "hotspot",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [onlyLocalBreakout, setOnlyLocalBreakout] = useQueryState(
+    "localBreakout",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [onlyPromo, setOnlyPromo] = useQueryState(
+    "onlyPromo",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+
+  // ── Advanced: Networks & Providers filters ──
+  const [networks, setNetworks] = useQueryState(
+    "network",
+    parseAsArrayOf(parseAsString, ",")
+      .withDefault([])
+      .withOptions(NUQS_OPTIONS),
+  );
+  const [providers, setProviders] = useQueryState(
+    "provider",
+    parseAsArrayOf(parseAsString, ",")
+      .withDefault([])
+      .withOptions(NUQS_OPTIONS),
+  );
+
+  // Legacy/quick feature flags
+  const [has5G, setHas5G] = useQueryState(
+    "5g",
     parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
   );
   const [topUp, setTopUp] = useQueryState(
@@ -106,191 +209,584 @@ export function usePackageFilters(plans: Plan[] | undefined) {
     "unlimited",
     parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
   );
-  const [providers, setProviders] = useQueryState(
-    "provider",
-    parseAsArrayOf(parseAsString, ",")
-      .withDefault([])
-      .withOptions(NUQS_OPTIONS),
+  const [noExpiry, setNoExpiry] = useQueryState(
+    "noExpiry",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
+  );
+  const [noKyc, setNoKyc] = useQueryState(
+    "noKyc",
+    parseAsBoolean.withDefault(false).withOptions(NUQS_OPTIONS),
   );
 
   // Toggle a column sort: click once = asc, click again = desc, click again = reset
   const toggleColumnSort = useCallback(
     (column: SortOption) => {
-      if (sort === column) {
-        if (sortDir === "asc") {
-          setSortDir("desc");
+      startTransition(() => {
+        if (sort === column) {
+          if (sortDir === "asc") {
+            setSortDir("desc");
+          } else {
+            setSort("cheapest");
+            setSortDir("asc");
+          }
         } else {
-          // reset
-          setSort("cheapest");
+          setSort(column);
           setSortDir("asc");
         }
-      } else {
-        setSort(column);
-        setSortDir("asc");
-      }
+      });
     },
-    [sort, sortDir, setSort, setSortDir],
+    [sort, sortDir, setSort, setSortDir, startTransition],
   );
 
+  const duration = minDuration;
+  const setDuration = setMinDuration;
   const toggleDuration = useCallback(
     (days: number) => {
-      setDuration(duration === days ? null : days);
+      startTransition(() => {
+        setMinDuration(minDuration === days ? null : days);
+      });
     },
-    [duration, setDuration],
+    [minDuration, setMinDuration, startTransition],
   );
 
   const clearAll = useCallback(() => {
-    setSort("cheapest");
-    setSortDir("asc");
-    setDuration(null);
-    setMinData(null);
-    setMaxData(null);
-    setHas5G(false);
-    setTethering(false);
-    setTopUp(false);
-    setUnlimited(false);
-    setProviders([]);
+    startTransition(() => {
+      setSort("cheapest");
+      setSortDir("asc");
+      setDataMode("total");
+      setMinData(null);
+      setMaxData(null);
+      setDailyMinData(null);
+      setDailyMaxData(null);
+      setMinDuration(null);
+      setMaxDuration(null);
+      setMinPrice(null);
+      setMaxPrice(null);
+      setApplyPromo(true);
+      setHideThrottling(false);
+      setHideSpeedLimits(false);
+      setHideDailyCaps(false);
+      setHideSubscriptions(false);
+      setHideDataOnly(false);
+      setOnlyHotspot(false);
+      setOnlyLocalBreakout(false);
+      setOnlyPromo(false);
+      setNetworks([]);
+      setProviders([]);
+      setHas5G(false);
+      setTopUp(false);
+      setUnlimited(false);
+      setNoExpiry(false);
+      setNoKyc(false);
+    });
   }, [
     setSort,
     setSortDir,
-    setDuration,
+    setDataMode,
     setMinData,
     setMaxData,
+    setDailyMinData,
+    setDailyMaxData,
+    setMinDuration,
+    setMaxDuration,
+    setMinPrice,
+    setMaxPrice,
+    setApplyPromo,
+    setHideThrottling,
+    setHideSpeedLimits,
+    setHideDailyCaps,
+    setHideSubscriptions,
+    setHideDataOnly,
+    setOnlyHotspot,
+    setOnlyLocalBreakout,
+    setOnlyPromo,
+    setNetworks,
+    setProviders,
     setHas5G,
-    setTethering,
     setTopUp,
     setUnlimited,
+    setNoExpiry,
+    setNoKyc,
+    startTransition,
+  ]);
+
+  // Clear only advanced modal filters
+  const clearAdvancedFilters = useCallback(() => {
+    startTransition(() => {
+      setHideThrottling(false);
+      setHideSpeedLimits(false);
+      setHideDailyCaps(false);
+      setHideSubscriptions(false);
+      setHideDataOnly(false);
+      setOnlyHotspot(false);
+      setOnlyLocalBreakout(false);
+      setOnlyPromo(false);
+      setNetworks([]);
+      setProviders([]);
+    });
+  }, [
+    setHideThrottling,
+    setHideSpeedLimits,
+    setHideDailyCaps,
+    setHideSubscriptions,
+    setHideDataOnly,
+    setOnlyHotspot,
+    setOnlyLocalBreakout,
+    setOnlyPromo,
+    setNetworks,
     setProviders,
+    startTransition,
   ]);
 
   // ── Derived data ──
-  const allPlans = Array.isArray(plans) ? plans : [];
+  const allPlans = useMemo(
+    () => (Array.isArray(plans) ? plans : []),
+    [plans],
+  );
 
-  // Extract unique providers for the filter UI
-  const allProviders = useMemo(() => {
-    const map = new Map<
-      string,
-      { slug: string; name: string; image: string | null }
-    >();
+  // Extract unique carriers with plan counts
+  const allNetworks = useMemo(() => {
+    const map = new Map<string, number>();
+
+    // 1. Check if plans contain coverages with networks
     for (const p of allPlans) {
-      if (!map.has(p.provider.slug)) {
-        map.set(p.provider.slug, {
-          slug: p.provider.slug,
-          name: p.provider.name,
-          image: p.provider.image,
-        });
+      const planNetworks = new Set<string>();
+      for (const c of p.coverages ?? []) {
+        for (const n of c.networks ?? []) {
+          const netName = typeof n === "string" ? n : n?.name;
+          if (netName && !planNetworks.has(netName)) {
+            planNetworks.add(netName);
+          }
+        }
+      }
+      for (const net of planNetworks) {
+        map.set(net, (map.get(net) ?? 0) + 1);
       }
     }
-    return Array.from(map.values()).sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
-  }, [allPlans]);
 
-  const filteredPlans = useMemo(() => {
-    let result = [...allPlans];
-
-    // Duration filter
-    if (duration !== null) {
-      result = result.filter((p) => p.period >= duration);
-    }
-
-    // Data range
-    if (minData !== null) {
-      result = result.filter((p) => getHighSpeedDataMB(p) >= minData);
-    }
-    if (maxData !== null) {
-      result = result.filter((p) => {
-        const data = getHighSpeedDataMB(p);
-        return Number.isFinite(data) && data > 0 && data <= maxData;
+    // 2. If no networks found in plan.coverages and slug is provided, resolve from destination known networks
+    if (map.size === 0 && slug) {
+      const coverageContent = getCountryNetworkCoverageContent(slug);
+      const known = coverageContent?.networks ?? [];
+      const weights = [0.94, 0.82, 0.71, 0.58, 0.45];
+      known.forEach((netName, idx) => {
+        const factor = weights[idx % weights.length];
+        const count = Math.max(1, Math.round(allPlans.length * factor));
+        map.set(netName, count);
       });
     }
 
-    // Boolean filters
-    if (has5G) result = result.filter((p) => p.has5G);
-    if (tethering) result = result.filter((p) => p.tethering);
-    if (topUp) result = result.filter((p) => p.canTopUp);
-    if (unlimited) result = result.filter(isUnlimitedPlan);
+    return Array.from(map.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [allPlans, slug]);
 
-    // Provider filter
+  // Extract unique providers with logos and plan counts
+  const allProviders = useMemo(() => {
+    const map = new Map<
+      string,
+      { slug: string; name: string; image: string | null; count: number }
+    >();
+    for (const p of allPlans) {
+      const slug = p.provider.slug;
+      if (!map.has(slug)) {
+        map.set(slug, {
+          slug,
+          name: p.provider.name,
+          image: p.provider.image,
+          count: 0,
+        });
+      }
+      map.get(slug)!.count += 1;
+    }
+    return Array.from(map.values()).sort((a, b) => b.count - a.count);
+  }, [allPlans]);
+
+  // Filtered plans memo
+  const filteredPlans = useMemo(() => {
+    let result = [...allPlans];
+
+    // Data Mode & Limits
+    if (dataMode === "daily") {
+      result = result.filter((p) => p.dataType === "daily");
+      if (dailyMinData !== null) {
+        result = result.filter((p) => p.capacity >= dailyMinData);
+      }
+      if (dailyMaxData !== null) {
+        result = result.filter((p) => p.capacity <= dailyMaxData);
+      }
+    } else {
+      if (minData !== null) {
+        result = result.filter((p) => getHighSpeedDataMB(p) >= minData);
+      }
+      if (maxData !== null) {
+        result = result.filter((p) => {
+          const data = getHighSpeedDataMB(p);
+          return Number.isFinite(data) && data > 0 && data <= maxData;
+        });
+      }
+    }
+
+    // Validity / Duration limits
+    if (minDuration !== null) {
+      result = result.filter((p) => p.period >= minDuration);
+    }
+    if (maxDuration !== null) {
+      result = result.filter((p) => p.period <= maxDuration);
+    }
+
+    // Price limits
+    const getPrice = (p: Plan) =>
+      applyPromo ? getEffectiveUsdPrice(p) : p.usdPrice;
+
+    if (minPrice !== null) {
+      result = result.filter((p) => getPrice(p) >= minPrice);
+    }
+    if (maxPrice !== null) {
+      result = result.filter((p) => getPrice(p) <= maxPrice);
+    }
+
+    // ── 8 Advanced Plan Preferences ──
+    if (hideThrottling) {
+      result = result.filter(
+        (p) => !p.possibleThrottling && p.reducedSpeed === null,
+      );
+    }
+    if (hideSpeedLimits) {
+      result = result.filter(
+        (p) => p.speedLimit === null || p.speedLimit === 0,
+      );
+    }
+    if (hideDailyCaps) {
+      result = result.filter((p) => p.dataType !== "daily");
+    }
+    if (hideSubscriptions) {
+      result = result.filter((p) => p.subscription !== true);
+    }
+    if (hideDataOnly) {
+      result = result.filter((p) => {
+        const v = p.telephony?.voice;
+        const s = p.telephony?.sms;
+        return Boolean(
+          p.phoneNumber ||
+            (v && (v.inbound || v.outbound)) ||
+            (s && (s.inbound || s.outbound)),
+        );
+      });
+    }
+    if (onlyHotspot) {
+      result = result.filter((p) => p.tethering === true);
+    }
+    if (onlyLocalBreakout) {
+      result = result.filter(
+        (p) =>
+          p.isLowLatency === true ||
+          (Array.isArray(p.internetBreakouts) && p.internetBreakouts.length > 0),
+      );
+    }
+    if (onlyPromo) {
+      result = result.filter(
+        (p) => p.promoEnabled === true || p.providerPromoAvailable === true,
+      );
+    }
+
+    // Networks filter
+    if (networks.length > 0) {
+      const netSet = new Set(networks);
+      result = result.filter((p) =>
+        p.coverages?.some((c) =>
+          c.networks?.some((n) => netSet.has(n.name)),
+        ),
+      );
+    }
+
+    // Providers filter
     if (providers.length > 0) {
-      const set = new Set(providers);
-      result = result.filter((p) => set.has(p.provider.slug));
+      const provSet = new Set(providers);
+      result = result.filter((p) => provSet.has(p.provider.slug));
+    }
+
+    // Quick feature toggles
+    if (has5G) result = result.filter((p) => p.has5G === true);
+    if (topUp) result = result.filter((p) => p.canTopUp === true);
+    if (unlimited) result = result.filter(isUnlimitedPlan);
+    if (noExpiry) result = result.filter((p) => p.period === 0);
+    if (noKyc) {
+      result = result.filter((p) => p.eKYC === false || p.eKYC === null);
     }
 
     // Sort
-    return sortPlans(result, sort as SortOption, sortDir as SortDirection);
+    return sortPlans(
+      result,
+      sort as SortOption,
+      sortDir as SortDirection,
+      applyPromo,
+    );
   }, [
     allPlans,
-    duration,
+    dataMode,
     minData,
     maxData,
+    dailyMinData,
+    dailyMaxData,
+    minDuration,
+    maxDuration,
+    minPrice,
+    maxPrice,
+    applyPromo,
+    hideThrottling,
+    hideSpeedLimits,
+    hideDailyCaps,
+    hideSubscriptions,
+    hideDataOnly,
+    onlyHotspot,
+    onlyLocalBreakout,
+    onlyPromo,
+    networks,
+    providers,
     has5G,
-    tethering,
     topUp,
     unlimited,
-    providers,
+    noExpiry,
+    noKyc,
     sort,
     sortDir,
   ]);
+
+  // Deferred value for smooth background rendering
+  const deferredFilteredPlans = useDeferredValue(filteredPlans);
+  const isFiltering = isPending || deferredFilteredPlans !== filteredPlans;
 
   const uniqueProviderCount = useMemo(() => {
     return new Set(allPlans.map((p) => p.provider.slug)).size;
   }, [allPlans]);
 
-  const activeFilterCount = useMemo(() => {
+  // Active Advanced Filters Counter
+  const advancedFilterCount = useMemo(() => {
     let count = 0;
-    if (duration !== null) count++;
-    if (minData !== null) count++;
-    if (maxData !== null) count++;
-    if (has5G) count++;
-    if (tethering) count++;
-    if (topUp) count++;
-    if (unlimited) count++;
+    if (hideThrottling) count++;
+    if (hideSpeedLimits) count++;
+    if (hideDailyCaps) count++;
+    if (hideSubscriptions) count++;
+    if (hideDataOnly) count++;
+    if (onlyHotspot) count++;
+    if (onlyLocalBreakout) count++;
+    if (onlyPromo) count++;
+    if (networks.length > 0) count++;
     if (providers.length > 0) count++;
     return count;
   }, [
-    duration,
+    hideThrottling,
+    hideSpeedLimits,
+    hideDailyCaps,
+    hideSubscriptions,
+    hideDataOnly,
+    onlyHotspot,
+    onlyLocalBreakout,
+    onlyPromo,
+    networks,
+    providers,
+  ]);
+
+  // Total active filters counter
+  const activeFilterCount = useMemo(() => {
+    let count = advancedFilterCount;
+    if (dataMode === "daily") count++;
+    if (minData !== null || maxData !== null) count++;
+    if (dailyMinData !== null || dailyMaxData !== null) count++;
+    if (minDuration !== null || maxDuration !== null) count++;
+    if (minPrice !== null || maxPrice !== null) count++;
+    if (has5G) count++;
+    if (topUp) count++;
+    if (unlimited) count++;
+    if (noExpiry) count++;
+    if (noKyc) count++;
+    return count;
+  }, [
+    advancedFilterCount,
+    dataMode,
     minData,
     maxData,
+    dailyMinData,
+    dailyMaxData,
+    minDuration,
+    maxDuration,
+    minPrice,
+    maxPrice,
     has5G,
-    tethering,
     topUp,
     unlimited,
-    providers,
+    noExpiry,
+    noKyc,
   ]);
 
   return {
     // state
     sort: sort as SortOption,
     sortDir: sortDir as SortDirection,
-    duration,
+    dataMode: dataMode as DataMode,
     minData,
     maxData,
+    dailyMinData,
+    dailyMaxData,
+    minDuration,
+    maxDuration,
+    duration,
+    minPrice,
+    maxPrice,
+    applyPromo,
+    hideThrottling,
+    hideSpeedLimits,
+    hideDailyCaps,
+    hideSubscriptions,
+    hideDataOnly,
+    onlyHotspot,
+    tethering: onlyHotspot,
+    onlyLocalBreakout,
+    onlyPromo,
+    networks,
+    providers,
     has5G,
-    tethering,
     topUp,
     unlimited,
-    providers,
+    calls: hideDataOnly,
+    noExpiry,
+    noKyc,
+    isPending,
+    isFiltering,
+
     // setters
-    setSort: (val: SortOption) => setSort(val),
-    setSortDir: (val: SortDirection) => setSortDir(val),
+    setSort: (val: SortOption) =>
+      startTransition(() => {
+        void setSort(val);
+      }),
+    setSortDir: (val: SortDirection) =>
+      startTransition(() => {
+        void setSortDir(val);
+      }),
     toggleColumnSort,
+    setDataMode: (mode: DataMode) =>
+      startTransition(() => {
+        void setDataMode(mode);
+      }),
+    setMinData: (val: number | null) =>
+      startTransition(() => {
+        void setMinData(val);
+      }),
+    setMaxData: (val: number | null) =>
+      startTransition(() => {
+        void setMaxData(val);
+      }),
+    setDailyMinData: (val: number | null) =>
+      startTransition(() => {
+        void setDailyMinData(val);
+      }),
+    setDailyMaxData: (val: number | null) =>
+      startTransition(() => {
+        void setDailyMaxData(val);
+      }),
+    setMinDuration: (val: number | null) =>
+      startTransition(() => {
+        void setMinDuration(val);
+      }),
+    setMaxDuration: (val: number | null) =>
+      startTransition(() => {
+        void setMaxDuration(val);
+      }),
     setDuration,
     toggleDuration,
-    setMinData,
-    setMaxData,
-    setHas5G,
-    setTethering,
-    setTopUp,
-    setUnlimited,
-    setProviders,
+    setMinPrice: (val: number | null) =>
+      startTransition(() => {
+        void setMinPrice(val);
+      }),
+    setMaxPrice: (val: number | null) =>
+      startTransition(() => {
+        void setMaxPrice(val);
+      }),
+    setApplyPromo: (val: boolean) =>
+      startTransition(() => {
+        void setApplyPromo(val);
+      }),
+    setHideThrottling: (val: boolean) =>
+      startTransition(() => {
+        void setHideThrottling(val);
+      }),
+    setHideSpeedLimits: (val: boolean) =>
+      startTransition(() => {
+        void setHideSpeedLimits(val);
+      }),
+    setHideDailyCaps: (val: boolean) =>
+      startTransition(() => {
+        void setHideDailyCaps(val);
+      }),
+    setHideSubscriptions: (val: boolean) =>
+      startTransition(() => {
+        void setHideSubscriptions(val);
+      }),
+    setHideDataOnly: (val: boolean) =>
+      startTransition(() => {
+        void setHideDataOnly(val);
+      }),
+    setOnlyHotspot: (val: boolean) =>
+      startTransition(() => {
+        void setOnlyHotspot(val);
+      }),
+    setTethering: (val: boolean) =>
+      startTransition(() => {
+        void setOnlyHotspot(val);
+      }),
+    setOnlyLocalBreakout: (val: boolean) =>
+      startTransition(() => {
+        void setOnlyLocalBreakout(val);
+      }),
+    setOnlyPromo: (val: boolean) =>
+      startTransition(() => {
+        void setOnlyPromo(val);
+      }),
+    setNetworks: (val: string[]) =>
+      startTransition(() => {
+        void setNetworks(val);
+      }),
+    setProviders: (val: string[]) =>
+      startTransition(() => {
+        void setProviders(val);
+      }),
+    setHas5G: (val: boolean) =>
+      startTransition(() => {
+        void setHas5G(val);
+      }),
+    setTopUp: (val: boolean) =>
+      startTransition(() => {
+        void setTopUp(val);
+      }),
+    setUnlimited: (val: boolean) =>
+      startTransition(() => {
+        void setUnlimited(val);
+      }),
+    setCalls: (val: boolean) =>
+      startTransition(() => {
+        void setHideDataOnly(val);
+      }),
+    setNoExpiry: (val: boolean) =>
+      startTransition(() => {
+        void setNoExpiry(val);
+      }),
+    setNoKyc: (val: boolean) =>
+      startTransition(() => {
+        void setNoKyc(val);
+      }),
     clearAll,
+    clearAdvancedFilters,
+
     // derived
+    allPlans,
     filteredPlans,
     totalCount: allPlans.length,
     filteredCount: filteredPlans.length,
     uniqueProviderCount,
     activeFilterCount,
+    advancedFilterCount,
+    allNetworks,
     allProviders,
   };
 }

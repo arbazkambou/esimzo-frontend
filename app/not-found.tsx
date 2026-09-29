@@ -1,6 +1,6 @@
 import SearchList from "@/components/search/SearchList";
 import FluffyAnimal from "@/components/sections/FluffyAnimal";
-import { ArrowLeft, Wifi } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -60,9 +60,9 @@ export default function NotFound() {
 
             {/* Description */}
             <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Looks like the page you're looking for doesn't exist anymore — or
-              maybe it never did. But don’t worry, we’re here to keep you
-              connected. Let’s get you back on track!
+              Looks like the page you&apos;re looking for doesn&apos;t exist anymore &mdash; or
+              maybe it never did. But don&apos;t worry, we&apos;re here to keep you
+              connected. Let&apos;s get you back on track!
             </p>
 
             <SearchList variant="bar" />

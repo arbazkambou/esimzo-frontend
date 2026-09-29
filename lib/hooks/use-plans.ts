@@ -29,7 +29,7 @@ export function usePlans(
       return res.data;
     },
     initialData,
-    initialDataUpdatedAt: initialData ? Date.now() : undefined,
+    initialDataUpdatedAt: initialData ? () => Date.now() : undefined,
     staleTime: twelveHoursMs,
     gcTime: twelveHoursMs,
   });

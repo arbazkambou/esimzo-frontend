@@ -4,9 +4,9 @@ import { Suspense } from "react";
 import type { Plan } from "@/lib/types/plans.types";
 import { usePlans, type PlansScope } from "@/lib/hooks/use-plans";
 import { usePackageFilters } from "@/lib/hooks/use-package-filters";
-import SortFilterToolbar from "./SortFilterToolbar";
+import PlanFilterCard from "./PlanFilterCard";
 import PlansTable from "./PlansTable";
-import PlansTableSkeleton from "./PlansTableSkeleton";
+import PlansTableSkeleton, { TableSkeleton } from "./PlansTableSkeleton";
 import NoFilterResults from "./NoFilterResults";
 
 type Props = {
@@ -17,16 +17,18 @@ type Props = {
 
 function PlansContent({ slug, initialData, scope = "country" }: Props) {
   const { data: plans, isLoading } = usePlans(slug, initialData, scope);
-  const filters = usePackageFilters(plans);
+  const filters = usePackageFilters(plans, slug);
 
   if (isLoading) {
     return <PlansTableSkeleton />;
   }
 
   return (
-    <div>
-      <SortFilterToolbar filters={filters} />
-      {filters.filteredPlans.length > 0 ? (
+    <div className="space-y-6">
+      <PlanFilterCard filters={filters} />
+      {filters.isFiltering ? (
+        <TableSkeleton />
+      ) : filters.filteredPlans.length > 0 ? (
         <PlansTable
           plans={filters.filteredPlans}
           sort={filters.sort}

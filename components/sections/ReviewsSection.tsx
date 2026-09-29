@@ -164,7 +164,7 @@ export default function ReviewsSection() {
 
                 {/* Short, Punchy Quote */}
                 <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium leading-relaxed mb-4 min-h-[38px]">
-                  "{rev.quote}"
+                  &ldquo;{rev.quote}&rdquo;
                 </p>
 
                 {/* Bottom Row: User info & Provider tag */}
