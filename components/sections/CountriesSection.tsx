@@ -15,13 +15,13 @@ export default async function CountriesSection() {
       <div className="container max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center justify-center rounded-full bg-[#FFF0E8] dark:bg-[#FF5A22]/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A22] mb-3.5 select-none">
+          <div className="inline-flex items-center justify-center rounded-full bg-primary-soft dark:bg-primary/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary mb-3.5 select-none">
             ALL DESTINATIONS
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1E48] dark:text-white tracking-tight leading-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground dark:text-white tracking-tight leading-tight mb-3">
             Explore eSIM Plans by Country{" "}
-            <span className="text-[#0EA5E9] block">
+            <span className="text-primary block">
               (190+ Destinations)
             </span>
           </h2>
@@ -42,10 +42,10 @@ export default async function CountriesSection() {
         <div className="mt-10 sm:mt-12 flex justify-center">
           <Link
             href="#regions"
-            className="inline-flex items-center gap-2.5 rounded-full border border-[#BCD8F6] dark:border-sky-800/80 bg-white dark:bg-card px-6 py-2.5 text-xs sm:text-sm font-semibold text-[#0B1E48] dark:text-slate-200 hover:text-[#0284C7] hover:border-sky-400 shadow-2xs hover:shadow-xs transition-all group cursor-pointer"
+            className="inline-flex items-center gap-2.5 rounded-full border border-primary/20 dark:border-primary/30 bg-white dark:bg-card px-6 py-2.5 text-xs sm:text-sm font-semibold text-foreground dark:text-slate-200 hover:text-primary hover:border-primary shadow-2xs hover:shadow-xs transition-all group cursor-pointer"
           >
             <span>Explore Regional & Multi-Country Bundles</span>
-            <ArrowRight className="h-4 w-4 text-[#0284C7] transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>

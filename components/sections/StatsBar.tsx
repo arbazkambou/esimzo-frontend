@@ -63,40 +63,40 @@ export default function StatsBar() {
       value: inView ? `${plansCount.toLocaleString()}+` : "30,000+",
       label: "eSIM plans listed",
       icon: Database,
-      iconColor: "text-[#FF5A22]",
-      iconBg: "bg-[#FFF0E8] dark:bg-[#FF5A22]/20",
+      iconColor: "text-primary",
+      iconBg: "bg-primary-soft dark:bg-primary/20",
       iconHoverClass: "group-hover:-translate-y-0.5",
     },
     {
       value: inView ? `${countriesCount}+` : "200+",
       label: "countries covered",
       icon: Globe,
-      iconColor: "text-[#0EA5E9]",
-      iconBg: "bg-[#E8F5FF] dark:bg-[#0EA5E9]/20",
+      iconColor: "text-primary",
+      iconBg: "bg-primary-soft dark:bg-primary/20",
       iconHoverClass: "group-hover:rotate-12",
     },
     {
       value: (
         <span className="inline-flex items-center gap-1.5">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
           </span>
           <span>Daily</span>
         </span>
       ),
       label: "price updates",
       icon: RefreshCw,
-      iconColor: "text-[#10B981]",
-      iconBg: "bg-[#E8FBF2] dark:bg-[#10B981]/20",
+      iconColor: "text-success",
+      iconBg: "bg-success-soft dark:bg-success/20",
       iconHoverClass: "group-hover:rotate-180 transition-transform duration-700",
     },
     {
       value: inView ? `${unbiasedCount}% Unbiased` : "100% Unbiased",
       label: "No sponsored rankings",
       icon: ShieldCheck,
-      iconColor: "text-[#8B5CF6]",
-      iconBg: "bg-[#F2EDFE] dark:bg-[#8B5CF6]/20",
+      iconColor: "text-primary",
+      iconBg: "bg-primary-soft dark:bg-primary/20",
       iconHoverClass: "group-hover:scale-110",
     },
   ];
@@ -125,7 +125,7 @@ export default function StatsBar() {
 
                     {/* Stat Numbers and Label */}
                     <div className="min-w-0 text-left">
-                      <div className="text-base sm:text-lg font-extrabold tracking-tight text-[#0B1E48] dark:text-white leading-tight tabular-nums">
+                      <div className="text-base sm:text-lg font-extrabold tracking-tight text-foreground dark:text-white leading-tight tabular-nums">
                         {stat.value}
                       </div>
                       <div className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-medium leading-tight mt-0.5 whitespace-nowrap">

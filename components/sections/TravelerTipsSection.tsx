@@ -48,18 +48,18 @@ export default function TravelerTipsSection({
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full">
         <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
-            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#FFF0E8] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A22] select-none dark:bg-[#FF5A22]/15">
+            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15">
               <Lightbulb
                 className="h-3.5 w-3.5"
                 strokeWidth={2.2}
@@ -71,12 +71,12 @@ export default function TravelerTipsSection({
 
           <h2
             id="traveler-tips-heading"
-            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
+            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
             {titleHasCountrySuffix ? (
               <>
                 {titlePrefix}{" "}
-                <span className="text-[#FF5A22]">{countryName}</span>
+                <span className="text-primary">{countryName}</span>
               </>
             ) : (
               heading
@@ -91,7 +91,7 @@ export default function TravelerTipsSection({
         </header>
 
         {notice ? (
-          <Alert className="mb-8 border-sky-200/80 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/30">
+          <Alert className="mb-8 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/30">
             <AlertDescription className="text-slate-600 dark:text-slate-300">
               {notice}
             </AlertDescription>
@@ -108,13 +108,13 @@ export default function TravelerTipsSection({
               <li key={`${tip.title}-${index}`}>
                 <article className="flex h-full gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:gap-4 sm:p-5 dark:border-slate-800 dark:bg-card">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EBF5FE] text-[11px] font-extrabold text-[#0284C7] ring-1 ring-sky-100 dark:bg-sky-950/50 dark:text-sky-400 dark:ring-sky-900/60"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-[11px] font-extrabold text-primary ring-1 ring-primary/15 dark:bg-primary/20 dark:text-primary dark:ring-primary/20"
                     aria-hidden="true"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <h3 className="mb-2 text-sm font-bold leading-snug text-[#0B1E48] sm:text-[15px] dark:text-white">
+                    <h3 className="mb-2 text-sm font-bold leading-snug text-foreground sm:text-[15px] dark:text-white">
                       {tip.title}
                     </h3>
                     <div className="flex flex-col gap-2">

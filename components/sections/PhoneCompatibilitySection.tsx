@@ -47,18 +47,18 @@ export default function PhoneCompatibilitySection({
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full">
         <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
-            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#FFF0E8] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A22] select-none dark:bg-[#FF5A22]/15">
+            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15">
               <Smartphone
                 className="h-3.5 w-3.5"
                 strokeWidth={2.2}
@@ -70,12 +70,12 @@ export default function PhoneCompatibilitySection({
 
           <h2
             id="phone-compatibility-heading"
-            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
+            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
             {titleHasCountrySuffix ? (
               <>
                 {titlePrefix}{" "}
-                <span className="text-[#FF5A22]">{countryName}</span>?
+                <span className="text-primary">{countryName}</span>?
               </>
             ) : (
               heading
@@ -84,7 +84,7 @@ export default function PhoneCompatibilitySection({
         </header>
 
         {notice ? (
-          <Alert className="mb-8 border-sky-200/80 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/30">
+          <Alert className="mb-8 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/30">
             <AlertDescription className="text-slate-600 dark:text-slate-300">
               {notice}
             </AlertDescription>
@@ -94,7 +94,7 @@ export default function PhoneCompatibilitySection({
         <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] dark:border-slate-800 dark:bg-card">
           <div className="flex gap-4 p-5 sm:gap-5 sm:p-6">
             <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EBF5FE] text-[#0284C7] dark:bg-sky-950/50 dark:text-sky-400"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary dark:bg-primary/20 dark:text-primary"
               aria-hidden="true"
             >
               <Smartphone className="h-5 w-5" strokeWidth={2.2} />
@@ -115,7 +115,7 @@ export default function PhoneCompatibilitySection({
             <div className="border-t border-slate-100 px-5 py-4 sm:px-6 dark:border-slate-800">
               <a
                 href={content.ctaHref}
-                className="inline-flex items-center gap-2 rounded-full border border-[#BCD8F6] bg-white px-4 py-2 text-xs font-bold text-[#0284C7] transition-colors hover:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-sky-800 dark:bg-card dark:text-sky-400"
+                className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white px-4 py-2 text-xs font-bold text-primary transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-primary/30 dark:bg-card dark:text-primary"
               >
                 {content.ctaLabel}
               </a>

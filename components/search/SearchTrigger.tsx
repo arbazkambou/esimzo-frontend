@@ -30,7 +30,7 @@ export function SearchTrigger({
         <span className="flex-1 min-w-0 py-1 sm:py-1.5 text-xs min-[400px]:text-[13px] sm:text-sm text-slate-500 dark:text-slate-400 select-none truncate">
           {placeholder}
         </span>
-        <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#ff5a22] hover:bg-[#e84a12] px-3 min-[380px]:px-3.5 min-[440px]:px-5 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm pointer-events-none transition-transform group-hover:scale-[1.02] shrink-0 whitespace-nowrap">
+        <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-primary hover:bg-primary/90 px-3 min-[380px]:px-3.5 min-[440px]:px-5 sm:px-6 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm pointer-events-none transition-transform group-hover:scale-[1.02] shrink-0 whitespace-nowrap">
           <span>{buttonLabel}</span>
           <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
         </span>

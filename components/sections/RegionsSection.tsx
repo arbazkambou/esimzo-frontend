@@ -15,13 +15,13 @@ export default async function RegionsSection() {
       <div className="container max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center justify-center rounded-full bg-[#EBF5FE] dark:bg-[#0EA5E9]/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0284C7] dark:text-[#38BDF8] mb-3.5 select-none">
+          <div className="inline-flex items-center justify-center rounded-full bg-primary-soft dark:bg-primary/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary dark:text-primary mb-3.5 select-none">
             REGIONAL DESTINATIONS
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1E48] dark:text-white tracking-tight leading-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground dark:text-white tracking-tight leading-tight mb-3">
             Explore Regional eSIM Plans{" "}
-            <span className="text-[#0EA5E9] block">
+            <span className="text-primary block">
               (Multi-Country Bundles)
             </span>
           </h2>
@@ -54,7 +54,7 @@ export default async function RegionsSection() {
                     className="object-cover"
                   />
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#0B1E48] dark:text-white">
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-foreground dark:text-white">
                   {region.name}
                 </h3>
               </div>

@@ -27,10 +27,10 @@ import type {
 import AdvancedFiltersDialog from "./AdvancedFiltersDialog";
 
 // ── Presets Configuration ──
-const TOTAL_DATA_PRESETS = [5, 10, 20, 30, 50]; // in GB
+const TOTAL_DATA_PRESETS = [5, 10, 20, 30, 50]; // in GB (5 items + Unlimited = 6 chips)
 const DAILY_DATA_PRESETS = [1, 2, 3, 5]; // in GB/day
-const DURATION_PRESETS = [7, 14, 21, 30]; // in Days
-const PRICE_PRESETS = [10, 20, 30, 40]; // in USD
+const DURATION_PRESETS = [7, 14, 21, 30, 60]; // in Days (5 items + No Expiry = 6 chips)
+const PRICE_PRESETS = [10, 20, 30, 40, 50, 75]; // in USD (6 chips)
 
 const SORT_OPTIONS: {
   value: SortOption;
@@ -215,7 +215,7 @@ export default function PlanFilterCard({
     const currentMaxPrice = localPriceRange[1];
     if (currentMaxPrice >= 100) return null;
     const matched = PRICE_PRESETS.find((amt) => currentMaxPrice <= amt);
-    return matched ?? 40;
+    return matched ?? null;
   }, [localPriceRange]);
 
   // ── Debounced Commit Helpers for Sliders ──
@@ -524,178 +524,117 @@ export default function PlanFilterCard({
 
   return (
     <div className="w-full space-y-4">
-      {/* ── Main Filter Container (Matching Reference Design) ── */}
+      {/* ── Main Filter Container (Compact eSIMDB Style) ── */}
       <section
         aria-label="eSIM Plan Filters"
-        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/80 bg-card p-4 sm:p-6 md:p-7 shadow-xs transition-shadow"
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/80 bg-card p-4 sm:p-5 md:p-6 shadow-xs transition-shadow"
       >
-        {/* Header: Icon + Title/Subtitle + Advanced Filters Trigger */}
-        <div className="flex flex-col gap-3.5 pb-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:border-b sm:border-border/60">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-primary/10 text-primary">
-              <SlidersHorizontal className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-foreground tracking-tight">
-                Filter & Customize Plans
-              </h2>
-              <p className="text-xs text-muted-foreground line-clamp-1 sm:line-clamp-none">
-                Choose data allowance, trip duration, and price to find your best match
-              </p>
-            </div>
-          </div>
-
-          {/* Advanced Filters Button (Mobile-First: Min ~44px height, easy to tap with one hand) */}
-          <button
-            type="button"
-            onClick={() => setIsAdvancedModalOpen(true)}
-            className={cn(
-              "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl sm:rounded-full border px-4 py-2.5 text-xs font-semibold transition-all active:scale-95 shadow-2xs w-full sm:w-auto",
-              advancedFilterCount > 0
-                ? "border-primary bg-primary/10 text-primary hover:bg-primary/15"
-                : "border-primary/40 bg-background hover:bg-primary/5 text-primary hover:border-primary",
-            )}
-            aria-label="Open Advanced Filters"
-          >
-            <SlidersHorizontal className="h-4 w-4 text-primary" />
-            <span>Advanced Filters</span>
-            {advancedFilterCount > 0 && (
+        {/* Compact Top Badge: FILTER PLANS */}
+        <div className="flex items-center justify-center pb-2 sm:pb-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/40 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground shadow-2xs">
+            <span>Filter Plans</span>
+            {(activeFilterCount > 0 || unlimited || noExpiry || maxPrice === 0 || advancedFilterCount > 0) && (
               <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground shadow-xs">
-                {advancedFilterCount}
+                {(activeFilterCount || 0) + (unlimited ? 1 : 0) + (noExpiry ? 1 : 0) + (maxPrice === 0 ? 1 : 0) + (advancedFilterCount || 0)}
               </span>
             )}
-            <ChevronDown className="h-3.5 w-3.5 text-primary opacity-80" />
-          </button>
+          </span>
         </div>
 
-        {/* ── Main Filters: 3 Cards (Data, Duration, Price) ── */}
-        <div className="grid grid-cols-1 gap-4 pt-2 sm:pt-6 lg:grid-cols-3 lg:gap-5">
-          {/* ── CARD 1: DATA ── */}
-          <div className="flex flex-col justify-between rounded-xl sm:rounded-2xl border border-border/70 bg-muted/20 p-4 sm:p-5 transition-colors hover:border-border hover:bg-muted/30">
-            <div>
-              {/* Card Header: Icon, Label, Status (matching Card 2 & 3) */}
-              <div className="flex items-center justify-between gap-2 pb-3.5">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-background border border-border/60 text-primary shadow-2xs">
-                    <Wifi className="h-3.5 w-3.5" />
+        {/* ── Main Filters: 3 Columns (Data, Validity, Price) with Seamless Dividers ── */}
+        <div className="grid grid-cols-1 divide-y lg:divide-y-0 lg:divide-x divide-border/60 pt-2 lg:grid-cols-3">
+          {/* ── COLUMN 1: DATA ── */}
+          <div className="flex flex-col justify-between py-4 first:pt-0 last:pb-0 lg:py-0 lg:px-6 first:lg:pl-0 last:lg:pr-0">
+            <div className="flex flex-col gap-3">
+              {/* Header Row: Tabs on Left, Readout Badge on Right */}
+              <div className="h-8 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Total vs Daily Modern Segmented Control */}
+                  <div className="inline-flex items-center rounded-lg bg-muted/70 p-0.5 border border-border/50 text-xs shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => handleModeChange("total")}
+                      className={cn(
+                        "rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
+                        !isDaily
+                          ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      Total
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleModeChange("daily")}
+                      className={cn(
+                        "rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
+                        isDaily
+                          ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      Daily
+                    </button>
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                    Data
-                  </span>
+
+                  {/* Data Only vs Voice Segmented Control (if voice plans available) */}
+                  {planCounts.dataVoice > 0 && (
+                    <div className="inline-flex items-center rounded-lg bg-muted/70 p-0.5 border border-border/50 text-xs shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          startTransition(() => {
+                            setPackageCategory("data-only");
+                          });
+                        }}
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all",
+                          packageCategory === "data-only"
+                            ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                        aria-label="Data Only"
+                      >
+                        <Wifi className="h-3 w-3 shrink-0" />
+                        <span>Data</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          startTransition(() => {
+                            setPackageCategory("data-voice");
+                          });
+                        }}
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all",
+                          packageCategory === "data-voice"
+                            ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                        aria-label="Data and Voice"
+                      >
+                        <PhoneCall className="h-3 w-3 shrink-0" />
+                        <span>+ Voice</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <span>
-                    {dataStatusText ??
-                      (packageCategory === "data-voice"
-                        ? "Data + Voice"
-                        : packageCategory === "data-only"
-                          ? "Data Only"
-                          : "Any Data")}
-                  </span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                {/* Readout Badge */}
+                <div className="shrink-0 text-[11px]">
+                  {dataStatusText ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 border border-primary/25 px-2 py-0.5 font-bold text-primary">
+                      <span>Min:</span>
+                      <span>{dataStatusText}</span>
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground/60 font-medium">All Data</span>
+                  )}
                 </div>
               </div>
 
-              {/* Categorized Tabs: Data Only vs Data + Voice (Only shown if page has voice plans) */}
-              {planCounts.dataVoice > 0 && (
-                <div className="grid grid-cols-2 p-1 bg-background border border-border/70 rounded-xl shadow-2xs mb-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      startTransition(() => {
-                        setPackageCategory("data-only");
-                      });
-                    }}
-                    className={cn(
-                      "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all min-h-[34px]",
-                      packageCategory === "data-only"
-                        ? "bg-primary text-primary-foreground shadow-xs [&_svg]:text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40 [&_svg]:text-primary",
-                    )}
-                    aria-label="Filter Data Only packages"
-                  >
-                    <Wifi className="h-3.5 w-3.5" />
-                    <span>Data Only</span>
-                    <span
-                      className={cn(
-                        "text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5",
-                        packageCategory === "data-only"
-                          ? "bg-white/20 text-white"
-                          : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {planCounts.dataOnly}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      startTransition(() => {
-                        setPackageCategory("data-voice");
-                      });
-                    }}
-                    className={cn(
-                      "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all min-h-[34px]",
-                      packageCategory === "data-voice"
-                        ? "bg-primary text-primary-foreground shadow-xs [&_svg]:text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40 [&_svg]:text-primary",
-                    )}
-                    aria-label="Filter Data + Voice packages"
-                  >
-                    <PhoneCall className="h-3.5 w-3.5" />
-                    <span>Data + Voice</span>
-                    <span
-                      className={cn(
-                        "text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5",
-                        packageCategory === "data-voice"
-                          ? "bg-white/20 text-white"
-                          : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {planCounts.dataVoice}
-                    </span>
-                  </button>
-                </div>
-              )}
-
-              {/* Subheader: Allowance Label on Left, Total/Daily Switch on Right */}
-              <div className="flex items-center justify-between text-xs pb-2.5">
-                <span className="text-[11px] font-medium text-muted-foreground">
-                  Allowance
-                </span>
-
-                <div className="inline-flex rounded-full bg-background p-0.5 border border-border/70 text-xs font-medium shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => handleModeChange("total")}
-                    className={cn(
-                      "rounded-full px-2.5 py-0.5 transition-all text-[11px] font-semibold min-h-[26px]",
-                      !isDaily
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    Total
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleModeChange("daily")}
-                    className={cn(
-                      "rounded-full px-2.5 py-0.5 transition-all text-[11px] font-semibold min-h-[26px]",
-                      isDaily
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    Daily
-                  </button>
-                </div>
-              </div>
-
-              {/* Data Filter Chips (3-Column Symmetrical Grid) */}
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pb-4">
+              {/* Chips Grid (Symmetrical 3x2, placed ABOVE slider) */}
+              <div className="grid grid-cols-3 gap-1.5">
                 {(isDaily ? DAILY_DATA_PRESETS : TOTAL_DATA_PRESETS).map((gb) => {
                   const count = isDaily
                     ? planCounts.dailyData[gb] ?? 0
@@ -710,12 +649,12 @@ export default function PlanFilterCard({
                       onClick={() => handleDataPresetClick(gb)}
                       disabled={count === 0}
                       className={cn(
-                        "inline-flex min-h-[38px] items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95",
+                        "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                          : "border-border/70 bg-background text-foreground/80 hover:border-primary/50 hover:bg-card hover:text-foreground",
+                          ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                          : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                         count === 0 &&
-                          "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground",
+                          "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
                       )}
                       aria-label={`Filter by ${label}`}
                     >
@@ -725,7 +664,7 @@ export default function PlanFilterCard({
                       ) : (
                         <span
                           className={cn(
-                            "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ml-1",
+                            "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                             isSelected
                               ? "bg-white/20 text-white"
                               : "bg-muted text-muted-foreground/80",
@@ -757,13 +696,13 @@ export default function PlanFilterCard({
                   }}
                   disabled={planCounts.unlimited === 0}
                   className={cn(
-                    "inline-flex min-h-[38px] items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95",
+                    "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                     isDaily && "col-span-2",
                     unlimited
-                      ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                      : "border-border/70 bg-background text-foreground/80 hover:border-primary/50 hover:bg-card hover:text-foreground",
+                      ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                      : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                     planCounts.unlimited === 0 &&
-                      "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground",
+                      "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
                   )}
                   aria-label="Filter by Unlimited Data"
                 >
@@ -773,7 +712,7 @@ export default function PlanFilterCard({
                   ) : (
                     <span
                       className={cn(
-                        "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ml-1",
+                        "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                         unlimited
                           ? "bg-white/20 text-white"
                           : "bg-muted text-muted-foreground/80",
@@ -786,8 +725,8 @@ export default function PlanFilterCard({
               </div>
             </div>
 
-            {/* Data Range Slider */}
-            <div className="pt-2 border-t border-border/40">
+            {/* Slider Row (Now placed BELOW the chips, aligned across all cards) */}
+            <div className="pt-3 mt-3 border-t border-border/50">
               <SliderPrimitive.Root
                 value={localDataRange}
                 onValueChange={handleDataSliderChange}
@@ -798,59 +737,49 @@ export default function PlanFilterCard({
                 className="relative flex w-full touch-none select-none items-center py-2"
                 aria-label="Data range slider"
               >
-                <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-border/70">
+                <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
                   <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
                 </SliderPrimitive.Track>
                 <SliderPrimitive.Thumb
                   aria-label="Minimum data"
-                  className="block h-4.5 w-4.5 rounded-full border-2 border-primary bg-background shadow-xs transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
+                  className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
                 />
                 <SliderPrimitive.Thumb
                   aria-label="Maximum data"
-                  className="block h-4.5 w-4.5 rounded-full border-2 border-primary bg-background shadow-xs transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
+                  className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
                 />
               </SliderPrimitive.Root>
-              <div className="flex justify-between text-[11px] font-medium text-muted-foreground pt-0.5">
+              <div className="flex items-center justify-between text-[11px] pt-1 font-medium text-muted-foreground">
                 <span>0 GB</span>
                 <span>{isDaily ? "10 GB+/day" : "50 GB+"}</span>
               </div>
             </div>
           </div>
 
-          {/* ── CARD 2: DURATION ── */}
-          <div className="flex flex-col justify-between rounded-xl sm:rounded-2xl border border-border/70 bg-muted/20 p-4 sm:p-5 transition-colors hover:border-border hover:bg-muted/30">
-            <div>
-              {/* Card Header: Icon, Label, Any Trip Trigger */}
-              <div className="flex items-center justify-between gap-2 pb-3.5">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-background border border-border/60 text-primary shadow-2xs">
-                    <Calendar className="h-3.5 w-3.5" />
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                    Duration
-                  </span>
-                </div>
-
-                <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <span>{validityStatusText ?? "Any Trip"}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                </div>
-              </div>
-
-              {/* Subheader Spacer */}
-              <div className="flex items-center justify-between text-xs pb-2.5">
-                <span className="text-[11px] font-medium text-muted-foreground">
-                  Quick Select
+          {/* ── COLUMN 2: DURATION / VALIDITY ── */}
+          <div className="flex flex-col justify-between py-4 first:pt-0 last:pb-0 lg:py-0 lg:px-6 first:lg:pl-0 last:lg:pr-0">
+            <div className="flex flex-col gap-3">
+              {/* Header Row: Label on Left, Readout Badge on Right */}
+              <div className="h-8 flex items-center justify-between gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Validity
                 </span>
-                {validityStatusText && (
-                  <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                    {validityStatusText}
-                  </span>
-                )}
+
+                {/* Readout Badge */}
+                <div className="shrink-0 text-[11px]">
+                  {validityStatusText ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 border border-primary/25 px-2 py-0.5 font-bold text-primary">
+                      <span>Min:</span>
+                      <span>{validityStatusText}</span>
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground/60 font-medium">All Durations</span>
+                  )}
+                </div>
               </div>
 
-              {/* Duration Filter Chips (3-Column Symmetrical Grid matching Data card) */}
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2 pb-4">
+              {/* Chips Grid (Symmetrical 3x2, placed ABOVE slider) */}
+              <div className="grid grid-cols-3 gap-1.5">
                 {DURATION_PRESETS.map((days) => {
                   const count = planCounts.duration[days] ?? 0;
                   const isSelected = activeDurationPreset === days;
@@ -862,12 +791,12 @@ export default function PlanFilterCard({
                       onClick={() => handleValidityPresetClick(days)}
                       disabled={count === 0}
                       className={cn(
-                        "inline-flex min-h-[38px] items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95",
+                        "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                          : "border-border/70 bg-background text-foreground/80 hover:border-primary/50 hover:bg-card hover:text-foreground",
+                          ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                          : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                         count === 0 &&
-                          "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground",
+                          "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
                       )}
                       aria-label={`Filter by ${days}+ Days`}
                     >
@@ -877,7 +806,7 @@ export default function PlanFilterCard({
                       ) : (
                         <span
                           className={cn(
-                            "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ml-1",
+                            "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                             isSelected
                               ? "bg-white/20 text-white"
                               : "bg-muted text-muted-foreground/80",
@@ -890,7 +819,7 @@ export default function PlanFilterCard({
                   );
                 })}
 
-                {/* No Expiry Chip (Spans 2 columns to complete Row 2 perfectly) */}
+                {/* No Expiry Chip */}
                 <button
                   type="button"
                   onClick={() => {
@@ -907,12 +836,12 @@ export default function PlanFilterCard({
                   }}
                   disabled={planCounts.noExpiry === 0}
                   className={cn(
-                    "inline-flex min-h-[38px] items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 col-span-2",
+                    "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                     noExpiry
-                      ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                      : "border-border/70 bg-background text-foreground/80 hover:border-primary/50 hover:bg-card hover:text-foreground",
+                      ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                      : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                     planCounts.noExpiry === 0 &&
-                      "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground",
+                      "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
                   )}
                   aria-label="Filter by No Expiry"
                 >
@@ -922,7 +851,7 @@ export default function PlanFilterCard({
                   ) : (
                     <span
                       className={cn(
-                        "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ml-1",
+                        "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                         noExpiry
                           ? "bg-white/20 text-white"
                           : "bg-muted text-muted-foreground/80",
@@ -935,8 +864,8 @@ export default function PlanFilterCard({
               </div>
             </div>
 
-            {/* Duration Range Slider */}
-            <div className="pt-2 border-t border-border/40">
+            {/* Slider Row (Now placed BELOW the chips, aligned across all cards) */}
+            <div className="pt-3 mt-3 border-t border-border/50">
               <SliderPrimitive.Root
                 value={localValidityRange}
                 onValueChange={handleValiditySliderChange}
@@ -947,64 +876,49 @@ export default function PlanFilterCard({
                 className="relative flex w-full touch-none select-none items-center py-2"
                 aria-label="Trip duration range slider"
               >
-                <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-border/70">
+                <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
                   <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
                 </SliderPrimitive.Track>
                 <SliderPrimitive.Thumb
                   aria-label="Minimum duration"
-                  className="block h-4.5 w-4.5 rounded-full border-2 border-primary bg-background shadow-xs transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
+                  className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
                 />
                 <SliderPrimitive.Thumb
                   aria-label="Maximum duration"
-                  className="block h-4.5 w-4.5 rounded-full border-2 border-primary bg-background shadow-xs transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
+                  className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
                 />
               </SliderPrimitive.Root>
-              <div className="flex justify-between text-[11px] font-medium text-muted-foreground pt-0.5">
+              <div className="flex items-center justify-between text-[11px] pt-1 font-medium text-muted-foreground">
                 <span>1 Day</span>
                 <span>90+ Days</span>
               </div>
             </div>
           </div>
 
-          {/* ── CARD 3: PRICE ── */}
-          <div className="flex flex-col justify-between rounded-xl sm:rounded-2xl border border-border/70 bg-muted/20 p-4 sm:p-5 transition-colors hover:border-border hover:bg-muted/30">
-            <div>
-              {/* Card Header: Icon, Label, Any Price Trigger */}
-              <div className="flex items-center justify-between gap-2 pb-3.5">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-background border border-border/60 text-primary shadow-2xs">
-                    <Tag className="h-3.5 w-3.5" />
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                    Price
-                  </span>
-                </div>
-
-                <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <span>{priceStatusText ?? "Any Price"}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                </div>
-              </div>
-
-              {/* Subheader Spacer */}
-              <div className="flex items-center justify-between text-xs pb-2.5">
-                <span className="text-[11px] font-medium text-muted-foreground">
-                  Budget
+          {/* ── COLUMN 3: PRICE ── */}
+          <div className="flex flex-col justify-between py-4 first:pt-0 last:pb-0 lg:py-0 lg:px-6 first:lg:pl-0 last:lg:pr-0">
+            <div className="flex flex-col gap-3">
+              {/* Header Row: Label on Left, Readout Badge on Right */}
+              <div className="h-8 flex items-center justify-between gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Price
                 </span>
-                {priceStatusText && (
-                  <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                    {priceStatusText}
-                  </span>
-                )}
+
+                {/* Readout Badge */}
+                <div className="shrink-0 text-[11px]">
+                  {priceStatusText ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 border border-primary/25 px-2 py-0.5 font-bold text-primary">
+                      <span>Max:</span>
+                      <span>{priceStatusText}</span>
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground/60 font-medium">All Budgets</span>
+                  )}
+                </div>
               </div>
 
-              {/* Price Filter Chips (Grid matching Data card) */}
-              <div
-                className={cn(
-                  "grid gap-1.5 sm:gap-2 pb-4",
-                  planCounts.free > 0 ? "grid-cols-3" : "grid-cols-2",
-                )}
-              >
+              {/* Chips Grid (Symmetrical 3x2, placed ABOVE slider) */}
+              <div className="grid grid-cols-3 gap-1.5">
                 {planCounts.free > 0 && (
                   <button
                     type="button"
@@ -1023,10 +937,10 @@ export default function PlanFilterCard({
                       });
                     }}
                     className={cn(
-                      "inline-flex min-h-[38px] items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95",
+                      "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                       maxPrice === 0
-                        ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                        : "border-border/70 bg-background text-foreground/80 hover:border-primary/50 hover:bg-card hover:text-foreground",
+                        ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                        : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                     )}
                     aria-label="Filter by Free Plans"
                   >
@@ -1036,7 +950,7 @@ export default function PlanFilterCard({
                     ) : (
                       <span
                         className={cn(
-                          "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ml-1",
+                          "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                           maxPrice === 0
                             ? "bg-white/20 text-white"
                             : "bg-muted text-muted-foreground/80",
@@ -1048,7 +962,7 @@ export default function PlanFilterCard({
                   </button>
                 )}
 
-                {PRICE_PRESETS.map((amt, idx) => {
+                {PRICE_PRESETS.slice(0, planCounts.free > 0 ? 5 : 6).map((amt) => {
                   const count = planCounts.price[amt] ?? 0;
                   const isSelected =
                     activePricePreset === amt &&
@@ -1062,15 +976,12 @@ export default function PlanFilterCard({
                       onClick={() => handlePricePresetClick(amt)}
                       disabled={count === 0}
                       className={cn(
-                        "inline-flex min-h-[38px] items-center justify-between rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95",
+                        "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                          : "border-border/70 bg-background text-foreground/80 hover:border-primary/50 hover:bg-card hover:text-foreground",
+                          ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                          : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                         count === 0 &&
-                          "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground",
-                        planCounts.free > 0 &&
-                          idx === PRICE_PRESETS.length - 1 &&
-                          "col-span-2",
+                          "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
                       )}
                       aria-label={`Filter by Under $${amt}`}
                     >
@@ -1080,7 +991,7 @@ export default function PlanFilterCard({
                       ) : (
                         <span
                           className={cn(
-                            "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ml-1",
+                            "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                             isSelected
                               ? "bg-white/20 text-white"
                               : "bg-muted text-muted-foreground/80",
@@ -1095,8 +1006,8 @@ export default function PlanFilterCard({
               </div>
             </div>
 
-            {/* Price Range Slider */}
-            <div className="pt-2 border-t border-border/40">
+            {/* Slider Row (Now placed BELOW the chips, aligned across all cards) */}
+            <div className="pt-3 mt-3 border-t border-border/50">
               <SliderPrimitive.Root
                 value={localPriceRange}
                 onValueChange={handlePriceSliderChange}
@@ -1107,19 +1018,19 @@ export default function PlanFilterCard({
                 className="relative flex w-full touch-none select-none items-center py-2"
                 aria-label="Price range slider"
               >
-                <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-border/70">
+                <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
                   <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
                 </SliderPrimitive.Track>
                 <SliderPrimitive.Thumb
                   aria-label="Minimum price"
-                  className="block h-4.5 w-4.5 rounded-full border-2 border-primary bg-background shadow-xs transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
+                  className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
                 />
                 <SliderPrimitive.Thumb
                   aria-label="Maximum price"
-                  className="block h-4.5 w-4.5 rounded-full border-2 border-primary bg-background shadow-xs transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
+                  className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-md transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-grab active:cursor-grabbing"
                 />
               </SliderPrimitive.Root>
-              <div className="flex justify-between text-[11px] font-medium text-muted-foreground pt-0.5">
+              <div className="flex items-center justify-between text-[11px] pt-1 font-medium text-muted-foreground">
                 <span>$0</span>
                 <span>$100+</span>
               </div>
@@ -1127,23 +1038,39 @@ export default function PlanFilterCard({
           </div>
         </div>
 
-        {/* ── APPLIED FILTERS (Placed Below Filter Cards as Requested) ── */}
-        <div className="mt-6 border-t border-border/60 pt-4">
+        {/* ── BOTTOM ACTIONS: Advanced Filters (Left), Applied Filters, Reset All (Right) ── */}
+        <div className="mt-5 border-t border-border/60 pt-3.5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            {/* Left: Filter Funnel Icon + Applied Filters Label & Chips */}
+            {/* Left: Advanced Filters Button + Applied Filter Chips */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground shrink-0 mr-1">
-                <Filter className="h-4 w-4 text-primary" />
-                <span>Applied Filters:</span>
-              </div>
+              <button
+                type="button"
+                onClick={() => setIsAdvancedModalOpen(true)}
+                className={cn(
+                  "inline-flex min-h-[34px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all active:scale-95 shadow-2xs",
+                  advancedFilterCount > 0
+                    ? "border-primary bg-primary/10 text-primary hover:bg-primary/15"
+                    : "border-border/70 bg-background hover:bg-muted/40 text-foreground hover:border-foreground/30",
+                )}
+                aria-label="Open Advanced Filters"
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
+                <span>Advanced Filters</span>
+                {advancedFilterCount > 0 && (
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground shadow-xs">
+                    {advancedFilterCount}
+                  </span>
+                )}
+              </button>
 
-              {activeFilterCount === 0 && !unlimited && !noExpiry && maxPrice !== 0 ? (
-                <span className="text-xs text-muted-foreground/70 italic">
-                  No filters applied
-                </span>
-              ) : (
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Data Range Pill / Unlimited Pill */}
+              {(activeFilterCount > 0 || unlimited || noExpiry || maxPrice === 0) && (
+                <>
+                  <div className="flex items-center gap-1 text-[11px] font-semibold text-muted-foreground mr-0.5 ml-1">
+                    <Filter className="h-3 w-3 text-primary" />
+                    <span>Active:</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                  {/* Data Range Pill / Unlimited Pill (Brand Orange) */}
                   {unlimited ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary dark:bg-primary/20 dark:text-primary">
                       <span>Data: Unlimited</span>
@@ -1183,7 +1110,7 @@ export default function PlanFilterCard({
                     )
                   )}
 
-                  {/* Validity Pill / No Expiry Pill */}
+                  {/* Validity Pill / No Expiry Pill (Duration Filter) */}
                   {noExpiry ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary dark:bg-primary/20 dark:text-primary">
                       <span>Duration: No Expiry</span>
@@ -1218,7 +1145,7 @@ export default function PlanFilterCard({
                     )
                   )}
 
-                  {/* Price Pill / Free Pill */}
+                  {/* Price Pill / Free Pill (Price Filter) */}
                   {maxPrice === 0 ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary dark:bg-primary/20 dark:text-primary">
                       <span>Price: Free ($0)</span>
@@ -1418,39 +1345,31 @@ export default function PlanFilterCard({
                     );
                   })}
                 </div>
-              )}
-            </div>
+              </>
+            )}
+          </div>
 
-            {/* Right: Clear All & Reset Filters Button (Positioned at END of filter component) */}
-            <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-              {(activeFilterCount > 0 || unlimited || noExpiry || maxPrice === 0) && (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleClearAll}
-                    className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
-                  >
-                    Clear All
-                  </button>
-                  <span className="text-border h-4 w-px bg-border hidden sm:block" />
-                </>
-              )}
-
-              {/* Reset Filters Pill Button matching Reference Design */}
+            {/* Right: Reset All Action */}
+            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
               <button
                 type="button"
                 onClick={handleClearAll}
                 disabled={activeFilterCount === 0 && !unlimited && !noExpiry && maxPrice !== 0}
                 className={cn(
-                  "inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all active:scale-95 shadow-2xs",
+                  "inline-flex min-h-[34px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all active:scale-95 shadow-2xs",
                   activeFilterCount > 0 || unlimited || noExpiry || maxPrice === 0
-                    ? "border-primary/50 text-primary hover:bg-primary/5 hover:border-primary cursor-pointer"
+                    ? "border-primary/40 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary cursor-pointer"
                     : "border-border/60 text-muted-foreground/40 cursor-not-allowed opacity-50",
                 )}
                 aria-label="Reset all filters"
               >
                 <RotateCcw className="h-3.5 w-3.5 text-primary" />
-                <span>Reset Filters</span>
+                <span>Reset All</span>
+                {(activeFilterCount > 0 || unlimited || noExpiry || maxPrice === 0) && (
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground shadow-xs">
+                    {(activeFilterCount || 0) + (unlimited ? 1 : 0) + (noExpiry ? 1 : 0) + (maxPrice === 0 ? 1 : 0)}
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -1518,8 +1437,8 @@ export default function PlanFilterCard({
 
             <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground border-l border-border/70 pl-3">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
               </span>
               <span>
                 Showing <strong className="text-foreground">{filteredCount}</strong> of{" "}

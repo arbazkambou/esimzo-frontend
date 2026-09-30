@@ -49,18 +49,18 @@ export default function DataNeedsSection({ countryName, content }: Props) {
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full">
         <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
-            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#EBF5FE] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0284C7] select-none dark:bg-[#0EA5E9]/15 dark:text-[#38BDF8]">
+            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15 dark:text-primary">
               <Gauge
                 className="h-3.5 w-3.5"
                 strokeWidth={2.2}
@@ -72,12 +72,12 @@ export default function DataNeedsSection({ countryName, content }: Props) {
 
           <h2
             id="data-needs-heading"
-            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
+            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
             {titleHasCountrySuffix ? (
               <>
                 {titlePrefix}{" "}
-                <span className="text-[#FF5A22]">{countryName}</span>?
+                <span className="text-primary">{countryName}</span>?
               </>
             ) : (
               heading
@@ -90,7 +90,7 @@ export default function DataNeedsSection({ countryName, content }: Props) {
         </header>
 
         {sectionNotice ? (
-          <Alert className="mb-8 border-sky-200/80 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/30">
+          <Alert className="mb-8 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/30">
             <AlertDescription className="text-slate-600 dark:text-slate-300">
               {sectionNotice}
             </AlertDescription>
@@ -104,22 +104,22 @@ export default function DataNeedsSection({ countryName, content }: Props) {
               {countryName}
             </caption>
             <thead>
-              <tr className="border-b border-slate-200/80 bg-[#F8FBFE] dark:border-slate-800 dark:bg-slate-900/40">
+              <tr className="border-b border-slate-200/80 bg-muted dark:border-slate-800 dark:bg-slate-900/40">
                 <th
                   scope="col"
-                  className="px-4 py-3.5 text-xs font-extrabold tracking-wide text-[#0B1E48] sm:px-5 sm:text-sm dark:text-white"
+                  className="px-4 py-3.5 text-xs font-extrabold tracking-wide text-foreground sm:px-5 sm:text-sm dark:text-white"
                 >
                   {content.columns.travelerType}
                 </th>
                 <th
                   scope="col"
-                  className="px-4 py-3.5 text-xs font-extrabold tracking-wide text-[#0B1E48] sm:px-5 sm:text-sm dark:text-white"
+                  className="px-4 py-3.5 text-xs font-extrabold tracking-wide text-foreground sm:px-5 sm:text-sm dark:text-white"
                 >
                   {content.columns.planningRange}
                 </th>
                 <th
                   scope="col"
-                  className="px-4 py-3.5 text-xs font-extrabold tracking-wide text-[#0B1E48] sm:px-5 sm:text-sm dark:text-white"
+                  className="px-4 py-3.5 text-xs font-extrabold tracking-wide text-foreground sm:px-5 sm:text-sm dark:text-white"
                 >
                   {content.columns.typicalUse}
                 </th>
@@ -133,11 +133,11 @@ export default function DataNeedsSection({ countryName, content }: Props) {
                 >
                   <th
                     scope="row"
-                    className="px-4 py-4 align-top text-xs font-bold text-[#0B1E48] sm:px-5 sm:text-sm dark:text-white"
+                    className="px-4 py-4 align-top text-xs font-bold text-foreground sm:px-5 sm:text-sm dark:text-white"
                   >
                     {row.travelerType}
                   </th>
-                  <td className="px-4 py-4 align-top text-xs font-semibold text-[#FF5A22] sm:px-5 sm:text-sm dark:text-[#FF5A22]">
+                  <td className="px-4 py-4 align-top text-xs font-semibold text-primary sm:px-5 sm:text-sm dark:text-primary">
                     {row.planningRange}
                   </td>
                   <td className="px-4 py-4 align-top text-xs leading-relaxed font-normal text-slate-500 sm:px-5 sm:text-[13.5px] dark:text-slate-400">

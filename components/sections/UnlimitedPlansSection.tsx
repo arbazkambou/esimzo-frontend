@@ -52,18 +52,18 @@ export default function UnlimitedPlansSection({
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full">
         <header className="mb-8 text-center sm:mb-10">
           {content.eyebrow ? (
-            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#FFF0E8] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A22] select-none dark:bg-[#FF5A22]/15">
+            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15">
               <InfinityIcon
                 className="h-3.5 w-3.5"
                 strokeWidth={2.2}
@@ -75,12 +75,12 @@ export default function UnlimitedPlansSection({
 
           <h2
             id="unlimited-plans-heading"
-            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
+            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
             {titleHasCountrySuffix ? (
               <>
                 {titlePrefix}{" "}
-                <span className="text-[#FF5A22]">{countryName}</span>?
+                <span className="text-primary">{countryName}</span>?
               </>
             ) : (
               heading
@@ -102,7 +102,7 @@ export default function UnlimitedPlansSection({
         </header>
 
         {notice ? (
-          <Alert className="mb-8 border-sky-200/80 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/30">
+          <Alert className="mb-8 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/30">
             <AlertDescription className="text-slate-600 dark:text-slate-300">
               {notice}
             </AlertDescription>
@@ -111,14 +111,14 @@ export default function UnlimitedPlansSection({
 
         {checklist.length > 0 ? (
           <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] dark:border-slate-800 dark:bg-card">
-            <div className="flex items-start gap-3 border-b border-slate-100 bg-[#F8FBFE] px-5 py-4 sm:items-center sm:px-6 sm:py-5 dark:border-slate-800 dark:bg-slate-900/40">
+            <div className="flex items-start gap-3 border-b border-slate-100 bg-muted px-5 py-4 sm:items-center sm:px-6 sm:py-5 dark:border-slate-800 dark:bg-slate-900/40">
               <span
-                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#0284C7] shadow-2xs ring-1 ring-sky-100 dark:bg-card dark:text-sky-400 dark:ring-sky-900/60 sm:mt-0"
+                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-primary shadow-2xs ring-1 ring-primary/15 dark:bg-card dark:text-primary dark:ring-primary/20 sm:mt-0"
                 aria-hidden="true"
               >
                 <CheckCircle2 className="h-4.5 w-4.5" strokeWidth={2.2} />
               </span>
-              <p className="text-sm font-extrabold leading-snug tracking-tight text-[#0B1E48] sm:text-base dark:text-white">
+              <p className="text-sm font-extrabold leading-snug tracking-tight text-foreground sm:text-base dark:text-white">
                 {checklistIntro}
               </p>
             </div>
@@ -127,15 +127,15 @@ export default function UnlimitedPlansSection({
               {checklist.map((item, index) => (
                 <li
                   key={`${item}-${index}`}
-                  className="flex items-start gap-3 rounded-xl border border-slate-100 bg-[#F8FBFE]/70 p-4 dark:border-slate-800 dark:bg-slate-900/30"
+                  className="flex items-start gap-3 rounded-xl border border-slate-100 bg-muted/70 p-4 dark:border-slate-800 dark:bg-slate-900/30"
                 >
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-[11px] font-extrabold text-[#0284C7] ring-1 ring-sky-100 dark:bg-card dark:text-sky-400 dark:ring-sky-900/60"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-[11px] font-extrabold text-primary ring-1 ring-primary/15 dark:bg-card dark:text-primary dark:ring-primary/20"
                     aria-hidden="true"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <p className="pt-1 text-xs leading-relaxed font-semibold text-[#0B1E48] sm:text-[13.5px] dark:text-white">
+                  <p className="pt-1 text-xs leading-relaxed font-semibold text-foreground sm:text-[13.5px] dark:text-white">
                     {item}
                   </p>
                 </li>
@@ -143,13 +143,13 @@ export default function UnlimitedPlansSection({
             </ol>
 
             {closing ? (
-              <div className="flex flex-col gap-4 border-t border-orange-100 bg-[#FFF0E8]/60 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-[#FF5A22]/20 dark:bg-[#FF5A22]/10">
-                <p className="text-xs leading-relaxed font-semibold text-[#E04A1A] sm:max-w-xl sm:text-[13.5px] dark:text-[#FF5A22]">
+              <div className="flex flex-col gap-4 border-t border-primary/15 bg-primary-soft/60 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-primary/20 dark:bg-primary/10">
+                <p className="text-xs leading-relaxed font-semibold text-primary sm:max-w-xl sm:text-[13.5px] dark:text-primary">
                   {closing}
                 </p>
                 <a
                   href="#plans"
-                  className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-[#FF5A22]/30 bg-white px-4 py-2 text-xs font-bold text-[#FF5A22] transition-colors hover:bg-[#FF5A22] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:bg-card"
+                  className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-white px-4 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:bg-card"
                 >
                   <ArrowUp
                     className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
@@ -162,7 +162,7 @@ export default function UnlimitedPlansSection({
             ) : null}
           </div>
         ) : closing ? (
-          <p className="text-center text-xs leading-relaxed font-semibold text-[#E04A1A] sm:text-[13.5px] dark:text-[#FF5A22]">
+          <p className="text-center text-xs leading-relaxed font-semibold text-primary sm:text-[13.5px] dark:text-primary">
             {closing}
           </p>
         ) : null}

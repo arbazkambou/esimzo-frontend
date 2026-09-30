@@ -94,9 +94,9 @@ export default function Navbar({ searchSlot, mobileMenuSlot }: NavbarProps) {
               >
                 {link.label}
                 {isActive ? (
-                  <span className="absolute inset-x-2 -bottom-1 h-[2.5px] bg-[#ff5a22] rounded-full" />
+                  <span className="absolute inset-x-2 -bottom-1 h-[2.5px] bg-primary rounded-full" />
                 ) : (
-                  <span className="absolute inset-x-2 -bottom-1 h-[2px] bg-[#ff5a22]/50 scale-x-0 transition-transform group-hover:scale-x-100 origin-left rounded-full" />
+                  <span className="absolute inset-x-2 -bottom-1 h-[2px] bg-primary/50 scale-x-0 transition-transform group-hover:scale-x-100 origin-left rounded-full" />
                 )}
               </Link>
             );

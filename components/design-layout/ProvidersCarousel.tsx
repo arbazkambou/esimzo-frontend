@@ -22,22 +22,22 @@ export default function ProvidersCarousel({
       className="py-16 sm:py-24 bg-white dark:bg-background relative overflow-hidden"
     >
       {/* Soft ambient gradient glow matching screenshot */}
-      <div className="absolute -left-28 -top-28 w-96 h-96 rounded-full bg-sky-100/50 dark:bg-sky-950/20 blur-3xl pointer-events-none" />
-      <div className="absolute -right-28 -bottom-28 w-96 h-96 rounded-full bg-sky-100/40 dark:bg-sky-950/15 blur-3xl pointer-events-none" />
+      <div className="absolute -left-28 -top-28 w-96 h-96 rounded-full bg-primary-soft/50 dark:bg-primary/20 blur-3xl pointer-events-none" />
+      <div className="absolute -right-28 -bottom-28 w-96 h-96 rounded-full bg-primary-soft/40 dark:bg-primary/15 blur-3xl pointer-events-none" />
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           {/* Eyebrow badge matching screenshot */}
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EBF5FF] dark:bg-sky-950/50 border border-[#D6E8FF] dark:border-sky-900/60 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0084FF] dark:text-sky-400 shadow-2xs mb-4 select-none">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft dark:bg-primary/20 border border-primary/20 dark:border-primary/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-primary dark:text-primary shadow-2xs mb-4 select-none">
             <BarChart3 className="h-3.5 w-3.5 stroke-[2.5]" />
             <span>eSIM PROVIDERS</span>
           </div>
 
           {/* Heading matching screenshot */}
-          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#0B1E48] dark:text-white tracking-tight leading-tight mb-3">
+          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-foreground dark:text-white tracking-tight leading-tight mb-3">
             Compare 50+ eSIM providers{" "}
-            <span className="text-[#FF5A22]">in one place</span>
+            <span className="text-primary">in one place</span>
           </h2>
 
           {/* Subtitle matching screenshot */}
@@ -65,7 +65,7 @@ export default function ProvidersCarousel({
                 <Link
                   key={provider.id || provider.slug}
                   href={`/provider/${provider.slug}`}
-                  className="group mx-2 sm:mx-2.5 flex items-center justify-between gap-3.5 rounded-[20px] border border-slate-200/90 bg-white dark:bg-card dark:border-slate-800 px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-[#FF5A22]/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 shrink-0 min-w-[170px] sm:min-w-[190px]"
+                  className="group mx-2 sm:mx-2.5 flex items-center justify-between gap-3.5 rounded-[20px] border border-slate-200/90 bg-white dark:bg-card dark:border-slate-800 px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 shrink-0 min-w-[170px] sm:min-w-[190px]"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Logo Squircle Box */}
@@ -78,7 +78,7 @@ export default function ProvidersCarousel({
                           loading="lazy"
                         />
                       ) : (
-                        <span className="font-extrabold text-sm text-[#0B1E48] dark:text-white">
+                        <span className="font-extrabold text-sm text-foreground dark:text-white">
                           {provider.name.charAt(0).toUpperCase()}
                         </span>
                       )}
@@ -86,7 +86,7 @@ export default function ProvidersCarousel({
 
                     {/* Name & Subtitle */}
                     <div className="flex flex-col text-left min-w-0">
-                      <span className="text-xs sm:text-[13px] font-bold text-[#0B1E48] dark:text-white group-hover:text-[#FF5A22] transition-colors truncate leading-tight">
+                      <span className="text-xs sm:text-[13px] font-bold text-foreground dark:text-white group-hover:text-primary transition-colors truncate leading-tight">
                         {provider.name}
                       </span>
                       <span className="text-[11px] text-slate-400 font-normal truncate leading-tight mt-0.5">
@@ -98,7 +98,7 @@ export default function ProvidersCarousel({
                   </div>
 
                   {/* Circular Chevron Button */}
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100/90 dark:bg-slate-800 text-slate-400 group-hover:text-[#FF5A22] group-hover:bg-[#FFF0E8] transition-colors ml-1">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100/90 dark:bg-slate-800 text-slate-400 group-hover:text-primary group-hover:bg-primary-soft transition-colors ml-1">
                     <ChevronRight className="h-3 w-3 stroke-[2.5]" />
                   </div>
                 </Link>
@@ -109,12 +109,12 @@ export default function ProvidersCarousel({
 
         {/* Soft Blue Callout Banner matching screenshot */}
         <div className="mt-10 sm:mt-12 max-w-xl mx-auto px-4">
-          <div className="flex items-center gap-3.5 sm:gap-4 rounded-full bg-[#F0F7FF] dark:bg-card border border-[#E0EFFF] dark:border-slate-800 py-3.5 px-6 sm:px-8 shadow-[0_2px_12px_rgba(0,122,255,0.04)]">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#00C48C] text-white shadow-xs">
+          <div className="flex items-center gap-3.5 sm:gap-4 rounded-full bg-primary-soft dark:bg-card border border-primary/20 dark:border-slate-800 py-3.5 px-6 sm:px-8 shadow-[0_2px_12px_rgba(0,122,255,0.04)]">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success text-white shadow-xs">
               <Check className="h-4 w-4 stroke-[3]" />
             </div>
             <div className="text-left min-w-0">
-              <div className="text-xs sm:text-[13px] font-bold text-[#0B1E48] dark:text-white leading-tight">
+              <div className="text-xs sm:text-[13px] font-bold text-foreground dark:text-white leading-tight">
                 Compare plans from 50+ providers
               </div>
               <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
@@ -129,7 +129,7 @@ export default function ProvidersCarousel({
         <div className="mt-6 flex justify-center">
           <Link
             href="/plans"
-            className="inline-flex items-center gap-2 rounded-full border-2 border-[#1B68F8] bg-white dark:bg-card px-7 py-3 text-xs sm:text-sm font-bold text-[#1B68F8] hover:bg-[#1B68F8] hover:text-white shadow-xs hover:shadow-md transition-all duration-200 group cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white dark:bg-card px-7 py-3 text-xs sm:text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-xs hover:shadow-md transition-all duration-200 group cursor-pointer"
           >
             <span>Compare plans from 50+ providers</span>
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

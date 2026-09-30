@@ -67,13 +67,13 @@ export default function TopDestinationsSection() {
       <div className="container max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center justify-center rounded-full bg-[#EBF5FE] dark:bg-[#0EA5E9]/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0284C7] dark:text-[#38BDF8] mb-3.5 select-none">
+          <div className="inline-flex items-center justify-center rounded-full bg-primary-soft dark:bg-primary/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary dark:text-primary mb-3.5 select-none">
             TOP DESTINATIONS
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1E48] dark:text-white tracking-tight leading-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground dark:text-white tracking-tight leading-tight mb-3">
             Popular Travel eSIM Destinations{" "}
-            <span className="text-[#FF5A22] block">
+            <span className="text-primary block">
               (Today’s Best-Value Picks)
             </span>
           </h2>
@@ -89,11 +89,11 @@ export default function TopDestinationsSection() {
             <Link
               key={dest.title}
               href={dest.href}
-              className="group flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white dark:bg-card dark:border-slate-800 p-3.5 sm:p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-[2.5px] hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-md hover:shadow-sky-500/5 hover:bg-[#F8FBFE] dark:hover:bg-slate-800/90 active:scale-[0.985] transition-all duration-[240ms] ease-out"
+              className="group flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white dark:bg-card dark:border-slate-800 p-3.5 sm:p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-[2.5px] hover:border-primary dark:hover:border-primary hover:shadow-md hover:shadow-primary/5 hover:bg-primary-soft dark:hover:bg-slate-800/90 active:scale-[0.985] transition-all duration-[240ms] ease-out"
             >
               {/* Flag / Globe icon */}
               {dest.isGlobal ? (
-                <div className="flex h-7 w-10 shrink-0 items-center justify-center rounded-[5px] bg-[#EBF5FE] text-[#0284C7] border border-sky-100 dark:border-sky-900 group-hover:scale-[1.04] transition-transform duration-[240ms] ease-out">
+                <div className="flex h-7 w-10 shrink-0 items-center justify-center rounded-[5px] bg-primary-soft text-primary border border-primary/15 dark:border-primary/30 group-hover:scale-[1.04] transition-transform duration-[240ms] ease-out">
                   <Globe className="h-4 w-4" />
                 </div>
               ) : (
@@ -110,7 +110,7 @@ export default function TopDestinationsSection() {
 
               {/* Destination info */}
               <div className="min-w-0 flex-1">
-                <div className="text-xs sm:text-[13px] font-bold text-[#0B1E48] dark:text-white truncate group-hover:text-[#0284C7] transition-colors duration-[240ms] ease-out">
+                <div className="text-xs sm:text-[13px] font-bold text-foreground dark:text-white truncate group-hover:text-primary transition-colors duration-[240ms] ease-out">
                   {dest.title}
                 </div>
                 <div className="text-[11px] text-slate-400 dark:text-slate-400 truncate font-normal mt-0.5">
@@ -118,7 +118,7 @@ export default function TopDestinationsSection() {
                 </div>
               </div>
 
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F0F7FE] dark:bg-sky-950/40 text-[#0284C7] dark:text-sky-400 group-hover:bg-[#0284C7] group-hover:text-white transition-all duration-[240ms] ease-out ml-1">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-soft dark:bg-primary/20 text-primary dark:text-primary group-hover:bg-primary group-hover:text-white transition-all duration-[240ms] ease-out ml-1">
                 <ChevronRight className="h-3.5 w-3.5 transition-transform duration-[240ms] ease-out group-hover:translate-x-[3px]" />
               </div>
             </Link>
@@ -129,10 +129,10 @@ export default function TopDestinationsSection() {
         <div className="mt-8 sm:mt-10 flex flex-col items-center gap-2">
           <Link
             href="#countries"
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-card px-5 py-2 text-xs sm:text-[13px] font-semibold text-[#0B1E48] dark:text-slate-200 hover:text-[#0284C7] hover:border-sky-300 shadow-2xs hover:shadow-xs transition-all group"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-card px-5 py-2 text-xs sm:text-[13px] font-semibold text-foreground dark:text-slate-200 hover:text-primary hover:border-primary/30 shadow-2xs hover:shadow-xs transition-all group"
           >
             <span>Looking for a specific destination?</span>
-            <ArrowRight className="h-3.5 w-3.5 text-[#0284C7] group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="h-3.5 w-3.5 text-primary group-hover:translate-x-0.5 transition-transform" />
           </Link>
           <span className="text-[11.5px] sm:text-xs text-slate-400 dark:text-slate-400 font-normal">
             Browse all countries below

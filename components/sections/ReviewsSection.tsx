@@ -23,7 +23,7 @@ const reviews: Review[] = [
     name: "Marcus C.",
     location: "USA",
     avatarInitial: "M",
-    avatarBg: "bg-blue-500 text-white",
+    avatarBg: "bg-primary text-white",
     destination: "Japan",
     flagUrl: "https://flagcdn.com/w40/jp.png",
     provider: "Airalo",
@@ -35,7 +35,7 @@ const reviews: Review[] = [
     name: "Elena R.",
     location: "Germany",
     avatarInitial: "E",
-    avatarBg: "bg-purple-500 text-white",
+    avatarBg: "bg-brand-navy text-white",
     destination: "Europe",
     flagUrl: "https://flagcdn.com/w40/eu.png",
     provider: "Nomad",
@@ -59,7 +59,7 @@ const reviews: Review[] = [
     name: "Sophie M.",
     location: "France",
     avatarInitial: "S",
-    avatarBg: "bg-emerald-500 text-white",
+    avatarBg: "bg-success text-white",
     destination: "Thailand",
     flagUrl: "https://flagcdn.com/w40/th.png",
     provider: "Ubigi",
@@ -71,7 +71,7 @@ const reviews: Review[] = [
     name: "Tariq K.",
     location: "Canada",
     avatarInitial: "T",
-    avatarBg: "bg-rose-500 text-white",
+    avatarBg: "bg-primary/80 text-white",
     destination: "UAE",
     flagUrl: "https://flagcdn.com/w40/ae.png",
     provider: "Yesim",
@@ -83,7 +83,7 @@ const reviews: Review[] = [
     name: "David H.",
     location: "Australia",
     avatarInitial: "D",
-    avatarBg: "bg-teal-500 text-white",
+    avatarBg: "bg-muted-foreground text-white",
     destination: "Turkey",
     flagUrl: "https://flagcdn.com/w40/tr.png",
     provider: "GigSky",
@@ -102,13 +102,13 @@ export default function ReviewsSection() {
       <div className="container max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center justify-center rounded-full bg-[#EBF5FE] dark:bg-[#0EA5E9]/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0284C7] dark:text-[#38BDF8] mb-3.5 select-none">
+          <div className="inline-flex items-center justify-center rounded-full bg-primary-soft dark:bg-primary/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary dark:text-primary mb-3.5 select-none">
             VERIFIED TRAVELER REVIEWS
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1E48] dark:text-white tracking-tight leading-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground dark:text-white tracking-tight leading-tight mb-3">
             Real Traveler Reviews{" "}
-            <span className="text-[#FF5A22] block">
+            <span className="text-primary block">
               (From People Who Actually Landed)
             </span>
           </h2>
@@ -135,7 +135,7 @@ export default function ReviewsSection() {
             {reviews.map((rev) => (
               <div
                 key={rev.id}
-                className="w-[300px] sm:w-[340px] shrink-0 mx-2.5 sm:mx-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-[2.5px] hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-md hover:shadow-sky-500/5 hover:bg-[#F8FBFE] dark:hover:bg-slate-800/90 transition-all duration-[240ms] ease-out flex flex-col justify-between group"
+                className="w-[300px] sm:w-[340px] shrink-0 mx-2.5 sm:mx-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-[2.5px] hover:border-primary dark:hover:border-primary hover:shadow-md hover:shadow-primary/5 hover:bg-primary-soft dark:hover:bg-slate-800/90 transition-all duration-[240ms] ease-out flex flex-col justify-between group"
               >
                 {/* Top Row: Stars + Destination Badge */}
                 <div className="flex items-center justify-between gap-2 mb-3">
@@ -148,7 +148,7 @@ export default function ReviewsSection() {
                     ))}
                   </div>
 
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F0F7FE] dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/60 px-2.5 py-0.5 text-[11px] font-semibold text-[#0284C7] dark:text-sky-300">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft dark:bg-primary/20 border border-primary/15 dark:border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold text-primary dark:text-primary">
                     <div className="relative h-3.5 w-5 shrink-0 overflow-hidden rounded-[3px] border border-slate-200/60">
                       <Image
                         src={rev.flagUrl}
@@ -176,10 +176,10 @@ export default function ReviewsSection() {
                       {rev.avatarInitial}
                     </div>
                     <div className="min-w-0 flex items-center gap-1">
-                      <span className="text-xs font-bold text-[#0B1E48] dark:text-white truncate">
+                      <span className="text-xs font-bold text-foreground dark:text-white truncate">
                         {rev.name}
                       </span>
-                      <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />
+                      <CheckCircle2 className="h-3 w-3 text-success shrink-0" />
                     </div>
                   </div>
 

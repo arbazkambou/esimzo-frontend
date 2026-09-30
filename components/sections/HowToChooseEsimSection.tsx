@@ -47,18 +47,18 @@ export default function HowToChooseEsimSection({
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full">
         <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
-            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#FFF0E8] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A22] select-none dark:bg-[#FF5A22]/15">
+            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15">
               <Compass
                 className="h-3.5 w-3.5"
                 strokeWidth={2.2}
@@ -70,12 +70,12 @@ export default function HowToChooseEsimSection({
 
           <h2
             id="how-to-choose-heading"
-            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
+            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
             {titleHasCountrySuffix ? (
               <>
                 {titlePrefix}{" "}
-                <span className="text-[#FF5A22]">{countryName}</span>
+                <span className="text-primary">{countryName}</span>
               </>
             ) : (
               heading
@@ -88,7 +88,7 @@ export default function HowToChooseEsimSection({
         </header>
 
         {sectionNotice ? (
-          <Alert className="mb-8 border-sky-200/80 bg-sky-50/70 dark:border-sky-900 dark:bg-sky-950/30">
+          <Alert className="mb-8 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/30">
             <AlertDescription className="text-slate-600 dark:text-slate-300">
               {sectionNotice}
             </AlertDescription>
@@ -109,22 +109,22 @@ export default function HowToChooseEsimSection({
 
             return (
               <li key={`${criterion.heading}-${index}`}>
-                <article className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-sky-300 hover:shadow-sm sm:p-6 dark:border-slate-800 dark:bg-card dark:hover:border-sky-600">
+                <article className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-200 hover:border-primary/30 hover:shadow-sm sm:p-6 dark:border-slate-800 dark:bg-card dark:hover:border-primary">
                   <div
-                    className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#FF5A22] via-sky-400 to-transparent opacity-80"
+                    className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-primary via-primary/70 to-transparent opacity-80"
                     aria-hidden="true"
                   />
 
                   <div className="flex items-start gap-3.5 sm:gap-4">
                     <div
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EBF5FE] text-xs font-extrabold tracking-wide text-[#0284C7] ring-1 ring-sky-100 transition-colors group-hover:bg-[#FFF0E8] group-hover:text-[#FF5A22] group-hover:ring-orange-100 dark:bg-sky-950/50 dark:text-sky-400 dark:ring-sky-900/60 dark:group-hover:bg-[#FF5A22]/15 dark:group-hover:text-[#FF5A22] dark:group-hover:ring-[#FF5A22]/25 sm:h-10 sm:w-10"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-xs font-extrabold tracking-wide text-primary ring-1 ring-primary/15 transition-colors group-hover:bg-primary-soft group-hover:text-primary group-hover:ring-primary/15 dark:bg-primary/20 dark:text-primary dark:ring-primary/20 dark:group-hover:bg-primary/15 dark:group-hover:text-primary dark:group-hover:ring-primary/25 sm:h-10 sm:w-10"
                       aria-hidden="true"
                     >
                       {String(index + 1).padStart(2, "0")}
                     </div>
 
                     <div className="min-w-0 flex-1 pt-0.5">
-                      <h3 className="mb-2.5 text-base font-bold leading-snug text-[#0B1E48] sm:mb-3 sm:text-[17px] dark:text-white">
+                      <h3 className="mb-2.5 text-base font-bold leading-snug text-foreground sm:mb-3 sm:text-[17px] dark:text-white">
                         {criterion.heading}
                       </h3>
 
@@ -148,7 +148,7 @@ export default function HowToChooseEsimSection({
                       ) : null}
 
                       {notice ? (
-                        <Alert className="mt-4 border-orange-200/80 bg-[#FFF0E8]/70 dark:border-orange-900/50 dark:bg-[#FF5A22]/10">
+                        <Alert className="mt-4 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/10">
                           <AlertDescription className="text-slate-600 dark:text-slate-300">
                             {notice}
                           </AlertDescription>
@@ -165,10 +165,10 @@ export default function HowToChooseEsimSection({
         <div className="mt-10 flex justify-center sm:mt-12">
           <a
             href="#plans"
-            className="group inline-flex items-center gap-2.5 rounded-full border border-[#BCD8F6] bg-white px-6 py-2.5 text-xs font-semibold text-[#0B1E48] shadow-2xs transition-all hover:border-sky-400 hover:text-[#0284C7] hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none sm:text-sm dark:border-sky-800 dark:bg-card dark:text-slate-200"
+            className="group inline-flex items-center gap-2.5 rounded-full border border-primary/20 bg-white px-6 py-2.5 text-xs font-semibold text-foreground shadow-2xs transition-all hover:border-primary hover:text-primary hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none sm:text-sm dark:border-primary/30 dark:bg-card dark:text-slate-200"
           >
             <ArrowUp
-              className="h-4 w-4 text-[#0284C7] transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+              className="h-4 w-4 text-primary transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
               strokeWidth={2.4}
               aria-hidden="true"
             />

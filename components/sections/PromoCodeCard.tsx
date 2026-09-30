@@ -78,14 +78,14 @@ export function PromoCodeCard({ code, title, discount, isPercentage }: Props) {
         onClick={handleCopy}
         className="group flex w-full items-center justify-between rounded-2xl bg-white/95 px-4 py-3 shadow-inner transition-all hover:bg-white active:scale-[0.98] cursor-pointer"
       >
-        <span className="flex-1 text-center text-sm font-bold tracking-[0.15em] text-[#b5179e] uppercase">
+        <span className="flex-1 text-center text-sm font-bold tracking-[0.15em] text-primary uppercase">
           {code}
         </span>
         <span
           className={`ml-3 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl transition-all ${
             copied
-              ? "bg-green-100 text-green-600"
-              : "bg-primary/10 text-[#b5179e] group-hover:bg-primary/20"
+              ? "bg-success-soft text-success"
+              : "bg-primary/10 text-primary group-hover:bg-primary/20"
           }`}
         >
           {copied ? (

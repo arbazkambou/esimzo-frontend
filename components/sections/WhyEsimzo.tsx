@@ -24,9 +24,9 @@ const features: FeatureCard[] = [
     description:
       "eSIMzo doesn’t sell “top spots.” Plans are sorted by measurable factors like price, validity, value per GB, and traveler ratings.",
     icon: Scale,
-    iconBg: "bg-[#FFF0E8] dark:bg-[#FF5A22]/20",
-    iconBorder: "border-[#FFE4D6] dark:border-slate-800",
-    iconColor: "text-[#FF5A22]",
+    iconBg: "bg-primary-soft dark:bg-primary/20",
+    iconBorder: "border-primary/20 dark:border-slate-800",
+    iconColor: "text-primary",
     tag: "100% Unbiased",
   },
   {
@@ -34,9 +34,9 @@ const features: FeatureCard[] = [
     description:
       "A cheap-looking plan can be expensive when you do the math. eSIMzo highlights the value so you can compare cleanly.",
     icon: Calculator,
-    iconBg: "bg-[#EAF6FF] dark:bg-[#0EA5E9]/20",
-    iconBorder: "border-[#D0E9FE] dark:border-slate-800",
-    iconColor: "text-[#0EA5E9]",
+    iconBg: "bg-primary-soft dark:bg-primary/20",
+    iconBorder: "border-primary/20 dark:border-slate-800",
+    iconColor: "text-primary",
     tag: "Cost Breakdown",
   },
   {
@@ -44,9 +44,9 @@ const features: FeatureCard[] = [
     description:
       "“Unlimited” often means “high-speed up to a cap, then slow.” Sometimes the post-cap speed is so low that maps and messaging become painful. We surface the fair-use limits and the slow-speed rules when providers disclose them.",
     icon: Gauge,
-    iconBg: "bg-[#FFF0E8] dark:bg-[#FF5A22]/20",
-    iconBorder: "border-[#FFE4D6] dark:border-slate-800",
-    iconColor: "text-[#FF5A22]",
+    iconBg: "bg-primary-soft dark:bg-primary/20",
+    iconBorder: "border-primary/20 dark:border-slate-800",
+    iconColor: "text-primary",
     tag: "Fair-Use Rules",
   },
   {
@@ -54,9 +54,9 @@ const features: FeatureCard[] = [
     description:
       "Two “Japan” plans can behave very differently depending on the network they roam on. Same destination, different partner carrier, different experience. That’s why reviews and coverage notes matter — and why we show them.",
     icon: RadioTower,
-    iconBg: "bg-[#F5EDFE] dark:bg-purple-950/40",
-    iconBorder: "border-[#E9D7FD] dark:border-slate-800",
-    iconColor: "text-[#A855F7]",
+    iconBg: "bg-primary-soft dark:bg-primary/20",
+    iconBorder: "border-primary/20 dark:border-slate-800",
+    iconColor: "text-primary",
     tag: "Carrier Insights",
   },
   {
@@ -64,9 +64,9 @@ const features: FeatureCard[] = [
     description:
       "Some plans block hotspot even if your phone supports it. If a provider restricts tethering, we flag it.",
     icon: Wifi,
-    iconBg: "bg-[#E8FBF2] dark:bg-[#10B981]/20",
-    iconBorder: "border-[#D1F7E2] dark:border-slate-800",
-    iconColor: "text-[#10B981]",
+    iconBg: "bg-success-soft dark:bg-success/20",
+    iconBorder: "border-success/20 dark:border-slate-800",
+    iconColor: "text-success",
     tag: "Tethering Flags",
   },
   {
@@ -74,9 +74,9 @@ const features: FeatureCard[] = [
     description:
       "If activation fails, if support is slow, if speeds drop too hard — you’ll see that in the feedback.",
     icon: MessageSquareQuote,
-    iconBg: "bg-[#F1F5F9] dark:bg-slate-800",
-    iconBorder: "border-[#E2E8F0] dark:border-slate-700",
-    iconColor: "text-[#475569] dark:text-slate-300",
+    iconBg: "bg-muted dark:bg-slate-800",
+    iconBorder: "border-border dark:border-slate-700",
+    iconColor: "text-muted-foreground dark:text-slate-300",
     tag: "Raw Feedback",
   },
 ];
@@ -89,7 +89,7 @@ export default function WhyEsimzo() {
     >
       {/* Decorative World Map Grid / Globe Watermark clipped at top right */}
       <div className="hidden xl:block absolute -top-10 -right-16 w-[360px] h-[360px] opacity-[0.045] pointer-events-none select-none">
-        <svg viewBox="0 0 200 200" fill="none" className="w-full h-full text-[#0B1E48]">
+        <svg viewBox="0 0 200 200" fill="none" className="w-full h-full text-foreground">
           <circle cx="100" cy="100" r="90" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" />
           <ellipse cx="100" cy="100" rx="45" ry="90" stroke="currentColor" strokeWidth="1.5" />
           <line x1="10" y1="100" x2="190" y2="100" stroke="currentColor" strokeWidth="1.5" />
@@ -104,14 +104,14 @@ export default function WhyEsimzo() {
           {/* Centered Main Header */}
           <div className="text-center max-w-2xl mx-auto">
             {/* Badge */}
-            <div className="inline-flex items-center justify-center rounded-full bg-[#EBF5FE] dark:bg-[#0EA5E9]/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0284C7] dark:text-[#38BDF8] mb-3.5 select-none">
+            <div className="inline-flex items-center justify-center rounded-full bg-primary-soft dark:bg-primary/15 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary dark:text-primary mb-3.5 select-none">
               WHY ESIMZO
             </div>
 
             {/* Main Heading strictly formatted in 2 clean lines */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1E48] dark:text-white tracking-tight leading-tight mb-3">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground dark:text-white tracking-tight leading-tight mb-3">
               Built For Travelers Who Need Their Phone To Work{" "}
-              <span className="text-[#FF5A22] block">
+              <span className="text-primary block">
                 (Not For Affiliate Rankings)
               </span>
             </h2>
@@ -131,7 +131,7 @@ export default function WhyEsimzo() {
             return (
               <div
                 key={feature.title}
-                className="group relative rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-sky-300 dark:hover:border-sky-600 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
+                className="group relative rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-primary/30 dark:hover:border-primary hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
               >
                 <div>
                   {/* Top Row: Squircle Icon on Left, Filter Tag on Right */}
@@ -142,13 +142,13 @@ export default function WhyEsimzo() {
                       <Icon className={`h-5 w-5 sm:h-5.5 sm:w-5.5 ${feature.iconColor}`} strokeWidth={2.2} />
                     </div>
 
-                    <span className="text-[11px] font-semibold text-[#0284C7] dark:text-sky-300 bg-[#EBF5FE] dark:bg-sky-950/50 px-3 py-0.5 rounded-full border border-sky-100 dark:border-sky-900 select-none">
+                    <span className="text-[11px] font-semibold text-primary dark:text-primary bg-primary-soft dark:bg-primary/20 px-3 py-0.5 rounded-full border border-primary/15 dark:border-primary/30 select-none">
                       {feature.tag}
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base font-bold text-[#0B1E48] dark:text-white leading-snug mb-2">
+                  <h3 className="text-base font-bold text-foreground dark:text-white leading-snug mb-2">
                     {feature.title}
                   </h3>
 

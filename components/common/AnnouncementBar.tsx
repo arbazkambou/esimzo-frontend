@@ -18,7 +18,7 @@ export default function AnnouncementBar() {
   return (
     <aside
       aria-label="Announcement"
-      className="w-full bg-[#0B1528] text-white text-xs md:text-sm font-medium transition-all"
+      className="w-full bg-brand-navy text-white text-xs md:text-sm font-medium transition-all"
     >
       <div className="container flex items-center justify-between py-1.5 sm:py-2 px-3 sm:px-4">
         <Link

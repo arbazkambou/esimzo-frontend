@@ -40,13 +40,13 @@ function OptionPanel({
 
   const iconWrap =
     accent === "orange"
-      ? "bg-[#FFF0E8] text-[#FF5A22] dark:bg-[#FF5A22]/15"
-      : "bg-[#EBF5FE] text-[#0284C7] dark:bg-sky-950/50 dark:text-sky-400";
+      ? "bg-primary-soft text-primary dark:bg-primary/15"
+      : "bg-primary-soft text-primary dark:bg-primary/20 dark:text-primary";
 
   const chip =
     accent === "orange"
-      ? "border-orange-200/90 bg-[#FFF0E8] text-[#E04A1A] dark:border-[#FF5A22]/30 dark:bg-[#FF5A22]/15 dark:text-[#FF5A22]"
-      : "border-sky-100 bg-[#F8FBFE] text-[#0B1E48] dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-white";
+      ? "border-primary/20 bg-primary-soft text-primary dark:border-primary/30 dark:bg-primary/15 dark:text-primary"
+      : "border-primary/15 bg-muted text-foreground dark:border-primary/20 dark:bg-primary/20 dark:text-white";
 
   return (
     <article className="flex h-full flex-col rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:p-6 dark:border-slate-800 dark:bg-card">
@@ -57,7 +57,7 @@ function OptionPanel({
         >
           {icon}
         </span>
-        <h3 className="text-base font-extrabold leading-snug text-[#0B1E48] sm:text-lg dark:text-white">
+        <h3 className="text-base font-extrabold leading-snug text-foreground sm:text-lg dark:text-white">
           {title}
         </h3>
       </div>
@@ -121,18 +121,18 @@ export default function CountryVsRegionalSection({
       className="relative overflow-hidden bg-background py-14 sm:py-20"
     >
       <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-orange-100/25 blur-3xl dark:bg-orange-950/20"
+        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-sky-100/35 blur-3xl dark:bg-sky-950/25"
+        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
         aria-hidden="true"
       />
 
       <div className="relative z-10 w-full">
         <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
-            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-[#EBF5FE] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0284C7] select-none dark:bg-[#0EA5E9]/15 dark:text-[#38BDF8]">
+            <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15 dark:text-primary">
               <Globe2
                 className="h-3.5 w-3.5"
                 strokeWidth={2.2}
@@ -144,12 +144,12 @@ export default function CountryVsRegionalSection({
 
           <h2
             id="country-vs-regional-heading"
-            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-[#0B1E48] sm:text-3xl lg:text-4xl dark:text-white"
+            className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
             {canHighlightCountry ? (
               <>
                 {heading.slice(0, countryIndex)}
-                <span className="text-[#FF5A22]">{countryName}</span>
+                <span className="text-primary">{countryName}</span>
                 {heading.slice(countryIndex + countryName.length)}
               </>
             ) : (
@@ -179,8 +179,8 @@ export default function CountryVsRegionalSection({
 
         {notice ? (
           <aside className="mt-6 sm:mt-8">
-            <Alert className="rounded-2xl border-orange-200/80 bg-[#FFF0E8]/70 px-5 py-4 dark:border-orange-900/50 dark:bg-[#FF5A22]/10 sm:px-6 sm:py-5">
-              <Info className="text-[#FF5A22]" aria-hidden="true" />
+            <Alert className="rounded-2xl border-primary/20 bg-primary-soft/70 px-5 py-4 dark:border-primary/30 dark:bg-primary/10 sm:px-6 sm:py-5">
+              <Info className="text-primary" aria-hidden="true" />
               <AlertDescription className="text-xs leading-relaxed text-slate-600 sm:text-[13.5px] dark:text-slate-300">
                 {notice}
               </AlertDescription>
