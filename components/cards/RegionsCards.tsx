@@ -54,7 +54,7 @@ export default function RegionsCards({ region }: RegionsCardsProps) {
               </div>
             </div>
           </div>
-          <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary group-hover:text-white transition-all duration-300">
+          <div className="bg-primary/10 p-2 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
             <ChevronRight className="w-4 h-4" />
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function RegionsCards({ region }: RegionsCardsProps) {
                   e.stopPropagation(); // Stop the Card click from firing
                   setIsExpanded(!isExpanded);
                 }}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-[11px] font-bold text-primary hover:bg-primary hover:text-white transition-all"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-[11px] font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 {isExpanded ? (
                   <>

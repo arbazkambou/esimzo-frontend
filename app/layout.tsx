@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/sections/Footer";
 import QueryProvider from "@/components/providers/QueryProvider";
@@ -9,9 +9,11 @@ import NextTopLoader from "nextjs-toploader";
 import { SearchDialogProvider } from "@/components/search/SearchDialogProvider";
 import { SearchDialog } from "@/components/search/SearchDialog";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -48,16 +50,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={poppins.variable}>
       <body
-        className={`${plusJakartaSans.variable} font-sans antialiased flex min-h-screen flex-col`}
+        className={`${poppins.className} font-sans antialiased flex min-h-screen flex-col`}
       >
-        <NextTopLoader color="#F47854" showSpinner={false} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:text-text-primary focus:shadow-elevated"
+        >
+          Skip to content
+        </a>
+        <NextTopLoader color="var(--primary)" showSpinner={false} />
         <QueryProvider>
           <NuqsAdapter>
             <SearchDialogProvider>
               <NavWrapper />
-              <main className="grow">{children}</main>
+              <main id="main-content" className="grow">
+                {children}
+              </main>
               <Footer />
               <SearchDialog />
             </SearchDialogProvider>

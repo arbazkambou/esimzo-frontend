@@ -34,7 +34,7 @@ export default function GlobalRegionCard({
         </div>
       </div>
 
-      <div className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 shrink-0 items-center justify-center rounded-full bg-primary-soft dark:bg-primary/20 text-primary dark:text-primary group-hover:bg-primary group-hover:text-white transition-all duration-[240ms] ease-out ml-auto">
+      <div className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 shrink-0 items-center justify-center rounded-full bg-primary-soft dark:bg-primary/20 text-primary dark:text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-[240ms] ease-out ml-auto">
         <ChevronRight
           size={15}
           className="transition-transform duration-[240ms] ease-out group-hover:translate-x-[3px]"

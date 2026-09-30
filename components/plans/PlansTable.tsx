@@ -72,14 +72,14 @@ export default function PlansTable({
   slug,
 }: Props) {
   return (
-    <div className="mt-4 rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+    <div className="mt-4 rounded-xl border border-border bg-surface overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/30 hover:bg-muted/30 border-border border">
-            <TableHead className="min-w-[220px]">
+          <TableRow className="bg-muted hover:bg-muted border-border-subtle border">
+            <TableHead className="min-w-[220px] sticky left-0 z-10 bg-muted text-label">
               <div className="flex items-center gap-1">
                 Plan Name & Provider
-                <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />
+                <ArrowUpDown className="h-3 w-3 text-text-muted" />
               </div>
             </TableHead>
             {SORTABLE_COLUMNS.map((col) => (
@@ -87,10 +87,10 @@ export default function PlansTable({
                 <button
                   onClick={() => onSort(col.id)}
                   className={cn(
-                    "inline-flex items-center gap-1 text-xs font-medium transition-colors",
+                    "inline-flex items-center gap-1 text-label transition-colors",
                     sort === col.id
-                      ? "text-primary"
-                      : "text-foreground hover:text-primary",
+                      ? "text-primary-text font-semibold"
+                      : "text-text-primary hover:text-primary-text",
                   )}
                 >
                   {col.label}

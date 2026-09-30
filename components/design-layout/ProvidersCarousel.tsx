@@ -129,7 +129,7 @@ export default function ProvidersCarousel({
         <div className="mt-6 flex justify-center">
           <Link
             href="/plans"
-            className="inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white dark:bg-card px-7 py-3 text-xs sm:text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-xs hover:shadow-md transition-all duration-200 group cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white dark:bg-card px-7 py-3 text-xs sm:text-sm font-bold text-primary hover:bg-primary hover:text-primary-foreground shadow-xs hover:shadow-md transition-all duration-200 group cursor-pointer"
           >
             <span>Compare plans from 50+ providers</span>
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

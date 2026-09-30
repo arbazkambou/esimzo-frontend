@@ -15,11 +15,11 @@ import { PromoCodeCard } from "./PromoCodeCard";
 export const ProviderDetails = ({ provider }: { provider: Provider }) => {
   return (
     <div className="flex flex-col gap-4">
-      <section className="w-full rounded-3xl border border-border bg-card p-6 shadow-sm">
+      <section className="w-full rounded-xl border border-border bg-card p-[var(--card-pad-lg)] shadow-card">
         <div className="flex flex-col items-start gap-6">
           {/* Logo and Title Group */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="relative h-20 w-20 overflow-hidden rounded-2xl border border-border bg-muted p-2 shadow-inner">
+            <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-border bg-muted p-1.5">
               {provider.image && (
                 <Image
                   src={provider.image}
@@ -33,12 +33,12 @@ export const ProviderDetails = ({ provider }: { provider: Provider }) => {
 
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                <h1 className="text-h1">
                   {provider.name}
                 </h1>
                 <BadgeCheck className="text-primary h-6 w-6 fill-primary/10" />
               </div>
-              <p className="text-sm font-medium text-secondary-foreground uppercase tracking-wide">
+              <p className="text-label text-primary-text uppercase tracking-[0.06em]">
                 {provider.certified ? "Verified Provider" : ""}
               </p>
             </div>
@@ -46,7 +46,7 @@ export const ProviderDetails = ({ provider }: { provider: Provider }) => {
 
           {/* Description Section */}
           <div className="space-y-4">
-            <p className="text-lg leading-relaxed text-muted-foreground">
+            <p className="text-body-lg text-text-secondary">
               {provider.info}
             </p>
           </div>
@@ -54,12 +54,11 @@ export const ProviderDetails = ({ provider }: { provider: Provider }) => {
           {provider.providerLinks.length === 0 ? (
             <></>
           ) : provider.providerLinks.length === 1 ? (
-            <Button className="w-full px-6 py-6 text-base font-bold rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] border-none! cursor-pointer ring-0!">
+            <Button asChild size="lg" className="w-full">
               <Link
                 href={provider.providerLinks[0].link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2"
               >
                 Visit Official Website
                 <ExternalLink size={18} />
@@ -68,7 +67,7 @@ export const ProviderDetails = ({ provider }: { provider: Provider }) => {
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="w-full px-6 py-6 text-base font-bold rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] border-none! cursor-pointer ring-0!">
+                <Button size="lg" className="w-full">
                   <span className="flex items-center gap-2">
                     Official Website
                   </span>
@@ -79,19 +78,19 @@ export const ProviderDetails = ({ provider }: { provider: Provider }) => {
               <DropdownMenuContent
                 align="start"
                 sideOffset={8}
-                className="w-(--radix-dropdown-menu-trigger-width) p-2 rounded-2xl border border-border bg-popover shadow-lg flex flex-col gap-1.5"
+                className="w-(--radix-dropdown-menu-trigger-width) p-2 rounded-lg border border-border bg-popover shadow-elevated flex flex-col gap-1.5"
               >
                 {provider.providerLinks.map((item, index) => (
                   <DropdownMenuItem
                     key={index}
                     asChild
-                    className="rounded-full p-0 bg-primary/10! hover:bg-primary/20! hover:text-primary!"
+                    className="rounded-md p-0 bg-primary-soft! hover:bg-primary-muted! hover:text-primary-text!"
                   >
                     <Link
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full bg-primary/20 cursor-pointer hover:bg-primary/10 text-primary font-semibold text-sm transition-colors"
+                      className="flex items-center justify-center gap-2 w-full px-5 py-3 rounded-md bg-primary-soft cursor-pointer hover:bg-primary-muted text-primary-text font-semibold text-body-sm transition-colors min-h-11"
                     >
                       {item.name.includes("Plans")
                         ? item.name

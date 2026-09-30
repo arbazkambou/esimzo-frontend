@@ -5,7 +5,7 @@ import {
   SortOption,
   type UsePackageFiltersReturn,
 } from "@/lib/hooks/use-package-filters";
-import { Filter, Flame } from "lucide-react";
+import { Check, Filter, Flame } from "lucide-react";
 import MoreFiltersPopover from "./MoreFiltersPopover";
 
 type Props = {
@@ -21,13 +21,22 @@ const SORT_OPTIONS: {
   {
     value: "best-value",
     label: "Best price/GB",
-    icon: <Flame className="h-3.5 w-3.5" />,
+    icon: <Flame className="h-3.5 w-3.5" strokeWidth={1.75} />,
   },
   { value: "most-data", label: "Largest GB" },
   { value: "longest", label: "Longest validity" },
 ];
 
 const DURATION_PRESETS = [7, 14, 21, 30];
+
+const chipBase =
+  "inline-flex items-center gap-1.5 min-h-9 rounded-sm border px-3 py-1.5 text-body-sm font-medium transition-[color,background-color,border-color] duration-[var(--transition-fast)] focus-visible:shadow-[var(--focus-ring)]";
+
+const chipIdle =
+  "border-border bg-surface text-text-secondary hover:border-border-strong";
+
+const chipSelected =
+  "border-primary bg-primary-soft text-primary-text";
 
 export default function SortFilterToolbar({ filters }: Props) {
   const {
@@ -43,87 +52,81 @@ export default function SortFilterToolbar({ filters }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Top row: Stats + Sort */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Stats */}
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">
+        <p className="text-body-sm text-text-muted" aria-live="polite">
+          <span className="font-semibold text-text-primary tabular">
             {uniqueProviders}
           </span>{" "}
           providers &{" "}
-          <span className="font-semibold text-foreground">{totalCount}</span>{" "}
+          <span className="font-semibold text-text-primary tabular">
+            {totalCount}
+          </span>{" "}
           data plans
           {filteredCount !== totalCount && (
-            <span className="ml-1 text-xs">({filteredCount} shown)</span>
+            <span className="ml-1 text-caption">({filteredCount} shown)</span>
           )}
         </p>
 
-        {/* Sort buttons */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Sort:</span>
-          <div className="flex gap-1">
-            {SORT_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setSort(opt.value)}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
-                  sort === opt.value
-                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-                )}
-              >
-                {opt.icon}
-                {opt.label}
-              </button>
-            ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-label text-text-muted">Sort:</span>
+          <div className="flex flex-wrap gap-1.5">
+            {SORT_OPTIONS.map((opt) => {
+              const selected = sort === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => setSort(opt.value)}
+                  aria-pressed={selected}
+                  className={cn(chipBase, selected ? chipSelected : chipIdle)}
+                >
+                  {selected && (
+                    <Check className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                  )}
+                  {opt.icon}
+                  {opt.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Bottom row: Duration presets + More Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Duration presets */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            Filter by travel duration:
-          </span>
-          <div className="flex gap-1.5">
-            {DURATION_PRESETS.map((days) => (
-              <button
-                key={days}
-                onClick={() => setDuration(duration === days ? null : days)}
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
-                  duration === days
-                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-                )}
-              >
-                {days}+ Days Trip
-                {duration === days && <span className="ml-1">✕</span>}
-              </button>
-            ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-label text-text-muted">Travel duration:</span>
+          <div className="flex flex-wrap gap-1.5">
+            {DURATION_PRESETS.map((days) => {
+              const selected = duration === days;
+              return (
+                <button
+                  key={days}
+                  onClick={() => setDuration(duration === days ? null : days)}
+                  aria-pressed={selected}
+                  className={cn(chipBase, selected ? chipSelected : chipIdle)}
+                >
+                  {selected && (
+                    <Check className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                  )}
+                  {days}+ days
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* More Filters */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">More Filters:</span>
-          <MoreFiltersPopover filters={filters}>
-            <button
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
-                activeFilterCount > 0
-                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-              )}
-            >
-              <Filter className="h-3.5 w-3.5" />
-              Filters{activeFilterCount > 0 && ` (${activeFilterCount})`}
-            </button>
-          </MoreFiltersPopover>
-        </div>
+        <MoreFiltersPopover filters={filters}>
+          <button
+            className={cn(
+              chipBase,
+              activeFilterCount > 0 ? chipSelected : chipIdle,
+              "min-h-11"
+            )}
+            aria-pressed={activeFilterCount > 0}
+          >
+            <Filter className="h-3.5 w-3.5" strokeWidth={1.75} />
+            Filters{activeFilterCount > 0 && ` (${activeFilterCount})`}
+          </button>
+        </MoreFiltersPopover>
       </div>
     </div>
   );

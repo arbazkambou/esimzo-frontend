@@ -118,7 +118,7 @@ export default function TopDestinationsSection() {
                 </div>
               </div>
 
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-soft dark:bg-primary/20 text-primary dark:text-primary group-hover:bg-primary group-hover:text-white transition-all duration-[240ms] ease-out ml-1">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-soft dark:bg-primary/20 text-primary dark:text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-[240ms] ease-out ml-1">
                 <ChevronRight className="h-3.5 w-3.5 transition-transform duration-[240ms] ease-out group-hover:translate-x-[3px]" />
               </div>
             </Link>

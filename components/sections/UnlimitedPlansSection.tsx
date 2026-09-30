@@ -149,7 +149,7 @@ export default function UnlimitedPlansSection({
                 </p>
                 <a
                   href="#plans"
-                  className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-white px-4 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:bg-card"
+                  className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-white px-4 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:bg-card"
                 >
                   <ArrowUp
                     className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { type LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type BaseProps = {
   children: React.ReactNode;
@@ -25,9 +27,6 @@ type LinkVariant = BaseProps & {
 
 type Props = ButtonVariant | LinkVariant;
 
-const baseStyles =
-  "group inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold items-center gap-2 rounded-full border border-border hover:bg-foreground px-6 py-2.5 text-sm font-semibold text-background! transition-all hover:border-background/40 bg-primary hover:text-background! active:scale-95 disabled:pointer-events-none disabled:opacity-50";
-
 export default function PrimaryButton({
   children,
   icon: Icon,
@@ -39,7 +38,10 @@ export default function PrimaryButton({
     <>
       {children}
       {Icon && (
-        <Icon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        <Icon
+          className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+          strokeWidth={1.75}
+        />
       )}
     </>
   );
@@ -47,21 +49,22 @@ export default function PrimaryButton({
   if (variant === "link") {
     const { href } = rest as LinkVariant;
     return (
-      <Link href={href} className={`${baseStyles} ${className}`}>
-        {content}
-      </Link>
+      <Button asChild size="lg" className={cn("group", className)}>
+        <Link href={href}>{content}</Link>
+      </Button>
     );
   }
 
   const { onClick, type = "button", disabled } = rest as ButtonVariant;
   return (
-    <button
+    <Button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseStyles} ${className}`}
+      size="lg"
+      className={cn("group", className)}
     >
       {content}
-    </button>
+    </Button>
   );
 }

@@ -557,7 +557,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
                         !isDaily
-                          ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                          ? "border-primary bg-primary-soft text-primary-text font-semibold"
                           : "text-muted-foreground hover:text-foreground",
                       )}
                     >
@@ -569,7 +569,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
                         isDaily
-                          ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                          ? "border-primary bg-primary-soft text-primary-text font-semibold"
                           : "text-muted-foreground hover:text-foreground",
                       )}
                     >
@@ -590,7 +590,7 @@ export default function PlanFilterCard({
                         className={cn(
                           "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all",
                           packageCategory === "data-only"
-                            ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                            ? "border-primary bg-primary-soft text-primary-text font-semibold"
                             : "text-muted-foreground hover:text-foreground",
                         )}
                         aria-label="Data Only"
@@ -608,7 +608,7 @@ export default function PlanFilterCard({
                         className={cn(
                           "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all",
                           packageCategory === "data-voice"
-                            ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                            ? "border-primary bg-primary-soft text-primary-text font-semibold"
                             : "text-muted-foreground hover:text-foreground",
                         )}
                         aria-label="Data and Voice"
@@ -651,7 +651,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                          ? "border-primary bg-primary-soft text-primary-text font-medium"
                           : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                         count === 0 &&
                           "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
@@ -666,7 +666,7 @@ export default function PlanFilterCard({
                           className={cn(
                             "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                             isSelected
-                              ? "bg-white/20 text-white"
+                              ? "bg-primary-muted text-primary-text"
                               : "bg-muted text-muted-foreground/80",
                           )}
                         >
@@ -699,7 +699,7 @@ export default function PlanFilterCard({
                     "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                     isDaily && "col-span-2",
                     unlimited
-                      ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                      ? "border-primary bg-primary-soft text-primary-text font-medium"
                       : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                     planCounts.unlimited === 0 &&
                       "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
@@ -714,7 +714,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                         unlimited
-                          ? "bg-white/20 text-white"
+                          ? "bg-primary-muted text-primary-text"
                           : "bg-muted text-muted-foreground/80",
                       )}
                     >
@@ -793,7 +793,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                          ? "border-primary bg-primary-soft text-primary-text font-medium"
                           : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                         count === 0 &&
                           "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
@@ -808,7 +808,7 @@ export default function PlanFilterCard({
                           className={cn(
                             "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                             isSelected
-                              ? "bg-white/20 text-white"
+                              ? "bg-primary-muted text-primary-text"
                               : "bg-muted text-muted-foreground/80",
                           )}
                         >
@@ -838,7 +838,7 @@ export default function PlanFilterCard({
                   className={cn(
                     "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                     noExpiry
-                      ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                      ? "border-primary bg-primary-soft text-primary-text font-medium"
                       : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                     planCounts.noExpiry === 0 &&
                       "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
@@ -853,7 +853,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                         noExpiry
-                          ? "bg-white/20 text-white"
+                          ? "bg-primary-muted text-primary-text"
                           : "bg-muted text-muted-foreground/80",
                       )}
                     >
@@ -939,7 +939,7 @@ export default function PlanFilterCard({
                     className={cn(
                       "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                       maxPrice === 0
-                        ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                        ? "border-primary bg-primary-soft text-primary-text font-medium"
                         : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                     )}
                     aria-label="Filter by Free Plans"
@@ -952,7 +952,7 @@ export default function PlanFilterCard({
                         className={cn(
                           "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                           maxPrice === 0
-                            ? "bg-white/20 text-white"
+                            ? "bg-primary-muted text-primary-text"
                             : "bg-muted text-muted-foreground/80",
                         )}
                       >
@@ -978,7 +978,7 @@ export default function PlanFilterCard({
                       className={cn(
                         "inline-flex h-[30px] items-center justify-between rounded-full border px-2.5 py-1 text-xs font-medium transition-all active:scale-95",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/95 font-semibold"
+                          ? "border-primary bg-primary-soft text-primary-text font-medium"
                           : "border-border/70 bg-background text-foreground/80 hover:border-foreground/20 hover:bg-muted/40",
                         count === 0 &&
                           "cursor-not-allowed opacity-35 hover:border-border hover:text-muted-foreground hover:bg-background",
@@ -993,7 +993,7 @@ export default function PlanFilterCard({
                           className={cn(
                             "text-[9px] font-medium px-1.5 py-0.2 rounded-full shrink-0 ml-1",
                             isSelected
-                              ? "bg-white/20 text-white"
+                              ? "bg-primary-muted text-primary-text"
                               : "bg-muted text-muted-foreground/80",
                           )}
                         >
@@ -1404,7 +1404,7 @@ export default function PlanFilterCard({
                     className={cn(
                       "inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all active:scale-95 shadow-2xs whitespace-nowrap",
                       isActive
-                        ? "border-primary bg-primary text-primary-foreground shadow-xs [&_svg]:text-primary-foreground"
+                        ? "border-primary bg-primary-soft text-primary-text [&_svg]:text-primary-text"
                         : "border-border/80 bg-background text-foreground/80 hover:bg-muted/70 hover:text-foreground [&_svg]:text-primary",
                     )}
                   >

@@ -209,10 +209,10 @@ export default function CompareAndSurf({
 
             <Link
               href={ctaHref}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary px-9 py-3.5 sm:px-11 sm:py-4 text-sm sm:text-base font-bold text-white shadow-xl shadow-primary/30 transition-all duration-200 hover:shadow-2xl hover:scale-[1.02] active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-md bg-primary hover:bg-primary-hover active:bg-primary-active px-7 h-[var(--btn-h-lg)] text-button text-primary-foreground transition-colors duration-[var(--transition-base)] cursor-pointer focus-visible:shadow-[var(--focus-ring)]"
             >
               <span>{ctaLabel}</span>
-              <ArrowRight className="h-4 w-4 stroke-[2.5]" />
+              <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Link>
           </div>
 

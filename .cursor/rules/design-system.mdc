@@ -1,0 +1,40 @@
+---
+description: eSIMzo design system — orange/peach/navy tokens, components, a11y
+globs: "**/*.{tsx,ts,css}"
+alwaysApply: true
+---
+
+# eSIMzo Design System
+
+Premium eSIM comparison platform. Keep orange / peach / navy. No new hues, gradients, heavy shadows, or decorative borders.
+
+## Critical rules
+
+- Orange (`--primary`) = action/selection only. Navy = structure, headings, prices, footer. Peach = background tint only.
+- **Text on orange fills is NAVY** (`text-primary-foreground` / `#0b1221`), never white. Orange text/links use `text-primary-text` (`#b93815`).
+- One style per type: underline tabs, one PlanCard, one chip style, no pill buttons (`rounded-md` not `rounded-full` on buttons).
+- State never by color alone (border weight, check icon, label, underline).
+- No hard-coded hex, px spacing, or one-off shadows — use tokens / theme classes.
+- Do not refactor unrelated logic, routing, data fetching, or copy.
+
+## Tokens
+
+Use CSS vars from `:root` in `globals.css`. Tailwind v4 maps them in `@theme inline`. Prefer:
+
+- Colors: `bg-primary`, `text-primary-foreground`, `text-primary-text`, `bg-primary-soft`, `bg-brand-navy`, `text-text-secondary`, `border-border-strong`
+- Shadows: `shadow-subtle`, `shadow-card`, `shadow-elevated`, `shadow-modal` (not `shadow-lg/xl/2xl`)
+- Radius: buttons/inputs `rounded-md`; cards `rounded-lg`; dialogs `rounded-xl`; hero panels `rounded-2xl`
+- Spacing: `py-[var(--section-y)]`, `p-[var(--card-pad)]`, `gap-[var(--grid-gap)]`
+- Type: `text-display` … `text-caption`, `text-price`, `tabular` for prices/tables
+
+## Components
+
+- **Button:** primary = orange + navy text; secondary = peach + primary-text; outline/ghost per spec; `onDark` for navy sections; heights sm/md/lg = 36/44/52; `isLoading` supported.
+- **Tabs:** underline only (active = navy + 2px orange underline). Pill segmented control only for binary toggles.
+- **PlanCard:** single card everywhere — data → price → validity → network → ≤3 features → CTA. Selected = primary-soft + 2px primary border + check + "Selected".
+- **Filters:** chips + sidebar desktop; bottom sheet mobile; no large filter buttons.
+- **Footer:** brand-navy bg. **Header:** white, border bottom, shadow-subtle after scroll.
+
+## Migration
+
+Replace `text-white` on orange → `text-primary-foreground`. Replace `text-orange-*` / `#ff6b35` / `#e85a28` text → `text-primary-text`. Replace pill tabs → underline ProductTabs. Keep all existing CSS variable names.

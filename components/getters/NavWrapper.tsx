@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+
 import Navbar from "../sections/Navbar";
 import { SearchTrigger } from "../search/SearchTrigger";
 import { NavbarMobileMenu } from "../sections/NavbarMobileMenu";
