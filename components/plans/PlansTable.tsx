@@ -7,15 +7,19 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
+  Calendar,
   ChevronRight,
+  Database,
   Fingerprint,
   Info,
+  MapPin,
   MessageSquare,
   Phone,
   Radio,
   RefreshCw,
   Repeat,
   Smartphone,
+  Tag,
   UserPlus,
   Wifi,
   Zap,
@@ -35,17 +39,8 @@ import {
   pricePerGB,
 } from "@/lib/utils";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -55,6 +50,10 @@ type Props = {
   sortDir: SortDirection;
   onSort: (sort: SortOption) => void;
   slug: string;
+  /** Total matching plans (before the initial 100-plan cap). */
+  totalPlanCount?: number;
+  /** True when the list is truncated for initial load performance. */
+  isCapped?: boolean;
 };
 
 type ColumnSort = {
@@ -75,15 +74,15 @@ function getSpeedLabel(plan: Plan): "4G" | "5G" | "4G/5G" | null {
   return null;
 }
 
-type FeatureIcon = {
+type FeatureChip = {
   key: string;
   label: string;
   detail: string;
   icon: ReactNode;
 };
 
-function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
-  const features: FeatureIcon[] = [];
+function getPlanFeatureChips(plan: Plan): FeatureChip[] {
+  const features: FeatureChip[] = [];
   const speed = getSpeedLabel(plan);
   const hasVoice =
     plan.phoneNumber === true ||
@@ -101,7 +100,7 @@ function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
         speed === "4G/5G"
           ? "Supports 4G and 5G where available on partner networks."
           : "Runs on 4G/LTE networks.",
-      icon: <Radio className="h-3.5 w-3.5" aria-hidden />,
+      icon: <Radio className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.tethering) {
@@ -109,7 +108,7 @@ function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
       key: "hotspot",
       label: "Hotspot",
       detail: "Personal hotspot / tethering is supported on this plan.",
-      icon: <Smartphone className="h-3.5 w-3.5" aria-hidden />,
+      icon: <Smartphone className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (hasVoice && hasSms) {
@@ -117,37 +116,38 @@ function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
       key: "calls-sms",
       label: "Calls + SMS",
       detail: "Includes voice calls and SMS (check countries covered).",
-      icon: <Phone className="h-3.5 w-3.5" aria-hidden />,
+      icon: <Phone className="h-3 w-3 shrink-0" aria-hidden />,
     });
   } else if (hasVoice) {
     features.push({
       key: "calls",
       label: "Calls",
       detail: "Includes voice calling (check inbound/outbound coverage).",
-      icon: <Phone className="h-3.5 w-3.5" aria-hidden />,
+      icon: <Phone className="h-3 w-3 shrink-0" aria-hidden />,
     });
   } else if (hasSms) {
     features.push({
       key: "sms",
       label: "SMS",
       detail: "Includes SMS messaging.",
-      icon: <MessageSquare className="h-3.5 w-3.5" aria-hidden />,
+      icon: <MessageSquare className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.canTopUp) {
     features.push({
       key: "topup",
-      label: "Top-up",
+      label: "Top Up",
       detail: "You can buy more data on this plan after purchase.",
-      icon: <RefreshCw className="h-3.5 w-3.5" aria-hidden />,
+      icon: <RefreshCw className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.isLowLatency) {
     features.push({
       key: "latency",
       label: "Low latency",
-      detail: "Local breakout / lower latency routing for better call and app performance.",
-      icon: <Zap className="h-3.5 w-3.5" aria-hidden />,
+      detail:
+        "Local breakout / lower latency routing for better call and app performance.",
+      icon: <Zap className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.eKYC) {
@@ -155,15 +155,16 @@ function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
       key: "ekyc",
       label: "eKYC",
       detail: "Identity verification (eKYC) is required before activation.",
-      icon: <Fingerprint className="h-3.5 w-3.5" aria-hidden />,
+      icon: <Fingerprint className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.subscription) {
     features.push({
       key: "sub",
       label: "Subscription",
-      detail: "This is a recurring subscription plan, not a one-time prepaid pack.",
-      icon: <Repeat className="h-3.5 w-3.5" aria-hidden />,
+      detail:
+        "This is a recurring subscription plan, not a one-time prepaid pack.",
+      icon: <Repeat className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.payAsYouGo) {
@@ -171,7 +172,7 @@ function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
       key: "payg",
       label: "Pay-as-you-go",
       detail: "Pay-as-you-go pricing — usage is billed as you consume data.",
-      icon: <Wifi className="h-3.5 w-3.5" aria-hidden />,
+      icon: <Wifi className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
   if (plan.newUserOnly) {
@@ -179,43 +180,49 @@ function getPlanFeatureIcons(plan: Plan): FeatureIcon[] {
       key: "new",
       label: "New users",
       detail: "Available only for new customers of this provider.",
-      icon: <UserPlus className="h-3.5 w-3.5" aria-hidden />,
+      icon: <UserPlus className="h-3 w-3 shrink-0" aria-hidden />,
     });
   }
 
   return features;
 }
 
-function PlanFeatureIcons({ plan }: { plan: Plan }) {
-  const features = getPlanFeatureIcons(plan);
+/** Text + icon chips for the features column */
+function PlanFeatureChips({ plan }: { plan: Plan }) {
+  const features = getPlanFeatureChips(plan);
   if (features.length === 0) return null;
 
+  const visible = features.slice(0, 3);
+  const overflow = features.length - visible.length;
+
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className="flex min-w-0 flex-nowrap items-center gap-1 overflow-x-auto scrollbar-none">
-        {features.map((feature) => (
-          <Tooltip key={feature.key}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                aria-label={feature.label}
-                className="inline-flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40 text-text-secondary transition-colors hover:border-border-strong hover:bg-muted hover:text-brand-navy"
-              >
-                {feature.icon}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-[16rem]">
-              <p className="text-xs font-semibold text-white">{feature.label}</p>
-              <p className="mt-0.5 text-xs text-white/90">{feature.detail}</p>
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </div>
-    </TooltipProvider>
+    <div className="flex min-w-0 flex-wrap items-center gap-1">
+      {visible.map((feature) => (
+        <Tooltip key={feature.key}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-tint px-2 py-0.5 text-[11px] font-medium text-text-secondary transition-colors hover:border-border-strong hover:text-brand-navy"
+            >
+              {feature.icon}
+              <span>{feature.label}</span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[16rem]">
+            {feature.detail}
+          </TooltipContent>
+        </Tooltip>
+      ))}
+      {overflow > 0 && (
+        <span className="text-[11px] font-medium text-text-muted">
+          +{overflow}
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -224,30 +231,37 @@ function FairUseInfo({ plan }: { plan: Plan }) {
   if (!note) return null;
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            aria-label={`Fair use details: ${note}`}
-            className="ml-1 inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
-          >
-            <Info className="h-3.5 w-3.5" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-[16rem]">
-          <p className="text-xs font-semibold text-white">Fair use / speed</p>
-          <p className="mt-0.5 text-xs text-white/90">{note}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          aria-label={`Fair use details: ${note}`}
+          className="ml-1 inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
+        >
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[16rem]">
+        {note}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
+/** Derive a compact location label from coverage codes */
+function getCoverageLabel(plan: Plan): string | null {
+  if (!plan.coverages || plan.coverages.length === 0) return null;
+  const codes = plan.coverages.map((c) => c.code).filter(Boolean);
+  if (codes.length === 0) return null;
+  if (codes.length <= 3) return codes.join(", ");
+  return `${codes.slice(0, 2).join(", ")} +${codes.length - 2}`;
+}
+
+/** Mobile card */
 function PlanMobileCard({
   plan,
   href,
@@ -257,93 +271,110 @@ function PlanMobileCard({
 }) {
   const effective = getEffectiveUsdPrice(plan);
   const hasPromo = effective < plan.usdPrice;
-  const perGb = pricePerGB(effective, getHighSpeedDataMB(plan));
   const periodLabel =
     plan.period === 0
       ? "No expiry"
       : `${plan.period} ${plan.period === 1 ? "day" : "days"}`;
+  const coverageLabel = getCoverageLabel(plan);
+  const features = getPlanFeatureChips(plan);
 
   return (
     <Link
       href={href}
       className={cn(
-        "group flex flex-col gap-2.5 rounded-lg border border-border bg-card p-3 shadow-card transition-[border-color,box-shadow,background-color]",
-        "hover:border-border-strong hover:shadow-elevated",
+        "group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-[border-color,box-shadow,background-color] duration-150",
+        "hover:border-border-strong",
         "focus-visible:shadow-[var(--focus-ring)] outline-none",
       )}
     >
-      <div className="flex min-w-0 items-center gap-2">
+      {/* ── Provider header ── */}
+      <div className="flex min-w-0 items-start gap-3 px-3.5 pt-3.5 pb-3 sm:px-4 sm:pt-4">
         {plan.provider.image ? (
-          <div className="relative size-8 shrink-0 overflow-hidden rounded-md border border-border bg-background">
+          <div className="relative size-10 shrink-0 overflow-hidden rounded-lg border border-border bg-white sm:size-11 sm:rounded-xl">
             <Image
               src={plan.provider.image}
               alt=""
               fill
-              className="object-contain p-0.5"
+              className="object-contain p-1"
               aria-hidden
             />
           </div>
         ) : (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-soft text-caption font-bold text-primary-text">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-sm font-bold text-primary-text sm:size-11 sm:rounded-xl">
             {plan.provider.name.charAt(0)}
           </div>
         )}
-        <div className="min-w-0">
-          <p className="truncate text-caption font-medium text-text-secondary">
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-brand-navy">
             {plan.provider.name}
           </p>
-          <p className="truncate text-body-sm font-semibold text-brand-navy">
+          <p className="line-clamp-2 text-xs leading-snug text-text-secondary">
             {plan.name}
           </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 rounded-md border border-border-subtle bg-muted/30 px-2.5 py-2">
-        <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-            Data
-          </p>
-          <div className="mt-0.5 flex items-center">
-            <p className="truncate text-body-sm font-bold tabular text-brand-navy">
-              {formatPlanData(plan)}
+          {coverageLabel && (
+            <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-text-muted">
+              <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+              <span className="truncate">{coverageLabel}</span>
             </p>
-            <FairUseInfo plan={plan} />
-          </div>
+          )}
         </div>
-        <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-            Validity
-          </p>
-          <p className="mt-0.5 truncate text-body-sm font-semibold tabular text-brand-navy">
-            {periodLabel}
-          </p>
-        </div>
-        <div className="min-w-0 text-right">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-            Price
-          </p>
-          <div className="mt-0.5 flex flex-wrap items-baseline justify-end gap-x-1.5">
-            <span className="text-body-sm font-bold tabular text-primary-text">
-              {formatPrice(effective)}
-            </span>
-            {hasPromo ? (
-              <span className="text-xs tabular text-destructive line-through decoration-destructive/80">
-                {formatPrice(plan.usdPrice)}
-              </span>
-            ) : perGb !== "–" ? (
-              <span className="text-xs text-text-muted">{perGb}/GB</span>
-            ) : null}
-          </div>
-        </div>
-      </div>
 
-      <div className="flex items-center justify-between gap-2">
-        <PlanFeatureIcons plan={plan} />
-        <span className="inline-flex shrink-0 items-center gap-0.5 text-caption font-semibold text-primary-text">
-          View
-          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-card text-primary transition-[background-color,border-color] duration-150 group-hover:border-[#FFE0D1] group-hover:bg-[#FFF1EB]">
+          <ChevronRight className="h-4 w-4" />
         </span>
       </div>
+
+      {/* ── Stats: Data | Validity | Price ── */}
+      <div className="grid grid-cols-3 border-t border-border">
+        {/* Data */}
+        <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
+          <div className="flex items-center gap-1 text-text-muted">
+            <Database className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span className="text-[10px] font-medium">Data</span>
+            <FairUseInfo plan={plan} />
+          </div>
+          <span className="text-sm font-medium tabular text-brand-navy">
+            {formatPlanData(plan)}
+          </span>
+        </div>
+
+        {/* Validity */}
+        <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
+          <div className="flex items-center gap-1 text-text-muted">
+            <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span className="text-[10px] font-medium">Validity</span>
+          </div>
+          <span className="truncate text-sm font-medium tabular text-brand-navy">
+            {periodLabel}
+          </span>
+        </div>
+
+        {/* Price */}
+        <div className="flex min-w-0 flex-col gap-1 px-3 py-3">
+          <div className="flex items-center gap-1 text-text-muted">
+            <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span className="text-[10px] font-medium">Price</span>
+          </div>
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+            <span className="truncate text-sm font-medium tabular text-brand-navy">
+              {formatPrice(effective)}
+            </span>
+            {hasPromo && (
+              <span className="truncate text-[11px] tabular text-primary line-through">
+                {formatPrice(plan.usdPrice)}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Features ── */}
+      {features.length > 0 && (
+        <div className="border-t border-border px-3.5 py-2.5 sm:px-4">
+          <PlanFeatureChips plan={plan} />
+        </div>
+      )}
     </Link>
   );
 }
@@ -354,16 +385,36 @@ export default function PlansTable({
   sortDir,
   onSort,
   slug,
+  totalPlanCount,
+  isCapped = false,
 }: Props) {
+  const matchCount = totalPlanCount ?? plans.length;
+
   return (
     <div className="mt-2 space-y-3 sm:mt-4">
       {/* Mobile / tablet card list */}
       <div className="flex flex-col gap-2.5 lg:hidden">
         <p className="px-0.5 text-caption text-text-secondary">
-          <span className="tabular font-semibold text-brand-navy">
-            {plans.length}
-          </span>{" "}
-          plans match your filters
+          {isCapped ? (
+            <>
+              Showing{" "}
+              <span className="tabular font-semibold text-brand-navy">
+                {plans.length}
+              </span>{" "}
+              of{" "}
+              <span className="tabular font-semibold text-brand-navy">
+                {matchCount}
+              </span>{" "}
+              plans
+            </>
+          ) : (
+            <>
+              <span className="tabular font-semibold text-brand-navy">
+                {plans.length}
+              </span>{" "}
+              plans match your filters
+            </>
+          )}
         </p>
         {plans.map((plan) => (
           <PlanMobileCard
@@ -375,52 +426,85 @@ export default function PlansTable({
       </div>
 
       {/* Desktop comparison table */}
-      <div className="hidden overflow-hidden rounded-lg border border-border bg-card shadow-card lg:block">
-        <Table className="table-fixed">
+      <div className="hidden overflow-hidden rounded-2xl border border-border bg-card shadow-[0_4px_20px_rgba(11,18,33,0.04)] lg:block">
+        <table className="w-full table-fixed border-collapse">
           <colgroup>
-            <col className="w-[32%]" />
+            {/* Plan & Provider — most space */}
+            <col className="w-[31%]" />
+            {/* Data */}
+            <col className="w-[9%]" />
+            {/* Validity */}
+            <col className="w-[11%]" />
+            {/* Price/GB */}
             <col className="w-[10%]" />
-            <col className="w-[12%]" />
-            <col className="w-[12%]" />
-            <col className="w-[12%]" />
-            <col className="w-[22%]" />
+            {/* Price */}
+            <col className="w-[11%]" />
+            {/* Features */}
+            <col className="w-[21%]" />
+            {/* Action */}
+            <col className="w-[7%]" />
           </colgroup>
-          <TableHeader>
-            <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
-              <TableHead className="sticky left-0 z-10 bg-muted/50 px-3 text-caption font-bold uppercase tracking-wider text-text-secondary">
-                Plan & provider
-              </TableHead>
-              {SORTABLE_COLUMNS.map((col) => (
-                <TableHead key={col.id} className="px-3">
-                  <button
-                    type="button"
-                    onClick={() => onSort(col.id)}
-                    className={cn(
-                      "inline-flex items-center gap-1 text-caption font-bold uppercase tracking-wider transition-colors",
-                      sort === col.id
-                        ? "text-primary-text"
-                        : "text-text-secondary hover:text-brand-navy",
-                    )}
+
+          {/* ── Table Header ── */}
+          <thead>
+            <tr className="border-b border-border bg-muted/60">
+              {/* Plan & Provider — non-sortable */}
+              <th
+                scope="col"
+                className="px-5 py-4 text-left text-sm font-semibold text-brand-navy"
+              >
+                Plan &amp; Provider
+              </th>
+
+              {/* Sortable columns */}
+              {SORTABLE_COLUMNS.map((col) => {
+                const isActive = sort === col.id;
+                return (
+                  <th
+                    key={col.id}
+                    scope="col"
+                    className="px-3 py-4 text-left"
                   >
-                    {col.label}
-                    {sort === col.id ? (
-                      sortDir === "asc" ? (
-                        <ArrowUp className="h-3.5 w-3.5 text-primary" />
+                    <button
+                      type="button"
+                      onClick={() => onSort(col.id)}
+                      className={cn(
+                        "inline-flex items-center gap-1 text-sm font-semibold transition-colors duration-150",
+                        isActive
+                          ? "text-primary-text"
+                          : "text-brand-navy hover:text-primary-text",
+                      )}
+                    >
+                      <span>{col.label}</span>
+                      {isActive ? (
+                        sortDir === "asc" ? (
+                          <ArrowUp className="h-3.5 w-3.5 text-primary" />
+                        ) : (
+                          <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                        )
                       ) : (
-                        <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                      )
-                    ) : (
-                      <ArrowUpDown className="h-3.5 w-3.5 text-text-muted" />
-                    )}
-                  </button>
-                </TableHead>
-              ))}
-              <TableHead className="px-3 text-caption font-bold uppercase tracking-wider text-text-secondary">
+                        <ArrowUpDown className="h-3.5 w-3.5 text-text-muted" />
+                      )}
+                    </button>
+                  </th>
+                );
+              })}
+
+              {/* Features — non-sortable */}
+              <th
+                scope="col"
+                className="px-3 py-4 text-left text-sm font-semibold text-brand-navy"
+              >
                 Features
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+              </th>
+
+              {/* Action — empty header */}
+              <th scope="col" className="px-3 py-4" aria-hidden />
+            </tr>
+          </thead>
+
+          {/* ── Table Body ── */}
+          <tbody>
             {plans.map((plan) => {
               const href = `/${slug}/${plan.provider.slug}-provider`;
               const effective = getEffectiveUsdPrice(plan);
@@ -429,117 +513,144 @@ export default function PlansTable({
                 plan.period === 0
                   ? "No expiry"
                   : `${plan.period} ${plan.period === 1 ? "Day" : "Days"}`;
-              const linkClass =
-                "block no-underline text-inherit hover:no-underline";
+              const coverageLabel = getCoverageLabel(plan);
 
               return (
-                <TableRow
+                <tr
                   key={plan.id}
-                  className="group border-border transition-colors hover:bg-primary-soft/40"
+                  className="group border-b border-border last:border-b-0 transition-colors duration-150 hover:bg-surface-tint"
                 >
-                  <TableCell className="sticky left-0 z-10 bg-card px-3 group-hover:bg-primary-soft/40">
-                    <Link href={href} className={cn(linkClass, "flex items-center gap-3")}>
+                  {/* ── Plan & Provider ── */}
+                  <td className="px-5 py-4">
+                    <Link
+                      href={href}
+                      className="flex min-w-0 items-center gap-3 no-underline"
+                    >
+                      {/* Provider logo */}
                       {plan.provider.image ? (
-                        <div className="relative size-10 shrink-0 overflow-hidden rounded-md border border-border bg-background">
+                        <div className="relative size-11 shrink-0 overflow-hidden rounded-lg border border-border bg-white">
                           <Image
                             src={plan.provider.image}
                             alt=""
                             fill
-                            className="object-contain p-0.5"
+                            className="object-contain p-1"
                             aria-hidden
                           />
                         </div>
                       ) : (
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary-soft text-sm font-bold text-primary-text">
+                        <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-sm font-bold text-primary-text">
                           {plan.provider.name.charAt(0)}
                         </div>
                       )}
-                      <div className="min-w-0">
-                        <p className="truncate text-caption font-medium text-text-secondary">
+
+                      {/* Provider / plan info */}
+                      <div className="min-w-0 flex-1">
+                        {/* Provider name */}
+                        <p className="truncate text-sm font-semibold text-brand-navy">
                           {plan.provider.name}
                         </p>
-                        <p className="truncate text-body-sm font-semibold text-brand-navy">
+                        {/* Plan name */}
+                        <p className="mt-0.5 truncate text-xs font-normal text-text-secondary">
                           {plan.name}
                         </p>
+                        {/* Location */}
+                        {coverageLabel && (
+                          <p className="mt-0.5 flex items-center gap-0.5 truncate text-[11px] text-text-muted">
+                            <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                            {coverageLabel}
+                          </p>
+                        )}
                       </div>
                     </Link>
-                  </TableCell>
+                  </td>
 
-                  <TableCell className="px-3">
-                    <Link
-                      href={href}
-                      className={cn(linkClass, "inline-flex items-center")}
-                    >
-                      <span className="text-body-sm font-semibold tabular text-brand-navy">
+                  {/* ── Data ── */}
+                  <td className="px-3 py-4">
+                    <Link href={href} className="inline-flex items-center no-underline">
+                      <span className="text-sm font-semibold tabular text-brand-navy">
                         {formatPlanData(plan)}
                       </span>
                       <FairUseInfo plan={plan} />
                     </Link>
-                  </TableCell>
+                  </td>
 
-                  <TableCell className="px-3">
-                    <Link
-                      href={href}
-                      className={cn(linkClass, "inline-flex items-center gap-1")}
-                    >
-                      <span className="text-body-sm font-medium tabular text-brand-navy">
+                  {/* ── Validity ── */}
+                  <td className="px-3 py-4">
+                    <Link href={href} className="inline-flex items-center gap-1 no-underline">
+                      <span className="text-sm font-medium tabular text-brand-navy">
                         {periodLabel}
                       </span>
                       {plan.isConsecutive ? (
-                        <TooltipProvider delayDuration={200}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info
-                                className="h-3.5 w-3.5 text-text-muted"
-                                aria-label="Consecutive days from activation"
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-xs text-white">
-                                Consecutive days from activation
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info
+                              className="h-3.5 w-3.5 text-text-muted"
+                              aria-label="Consecutive days from activation"
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            Consecutive days from activation
+                          </TooltipContent>
+                        </Tooltip>
                       ) : null}
                     </Link>
-                  </TableCell>
+                  </td>
 
-                  <TableCell className="px-3">
-                    <Link href={href} className={linkClass}>
-                      <span className="text-body-sm font-medium tabular text-text-secondary">
+                  {/* ── Price / GB ── */}
+                  <td className="px-3 py-4">
+                    <Link href={href} className="no-underline">
+                      <span className="text-sm font-medium tabular text-text-secondary">
                         {pricePerGB(effective, getHighSpeedDataMB(plan))}
                       </span>
                     </Link>
-                  </TableCell>
+                  </td>
 
-                  <TableCell className="px-3">
+                  {/* ── Price ── */}
+                  <td className="px-3 py-4">
                     <Link
                       href={href}
-                      className={cn(
-                        linkClass,
-                        "inline-flex flex-row flex-wrap items-baseline gap-x-1.5",
-                      )}
+                      className="inline-flex flex-row flex-wrap items-baseline gap-x-1.5 no-underline"
                     >
-                      <span className="text-body-sm font-bold tabular text-primary-text">
+                      <span
+                        className={cn(
+                          "text-base font-bold tabular leading-tight",
+                          sort === "cheapest" || sort === "best-value"
+                            ? "text-primary-text"
+                            : "text-brand-navy",
+                        )}
+                      >
                         {formatPrice(effective)}
                       </span>
-                      {hasPromo ? (
-                        <span className="text-xs tabular text-destructive line-through decoration-destructive/80">
+                      {hasPromo && (
+                        <span className="text-xs tabular text-primary line-through decoration-primary">
                           {formatPrice(plan.usdPrice)}
                         </span>
-                      ) : null}
+                      )}
                     </Link>
-                  </TableCell>
+                  </td>
 
-                  <TableCell className="px-3">
-                    <PlanFeatureIcons plan={plan} />
-                  </TableCell>
-                </TableRow>
+                  {/* ── Features ── */}
+                  <td className="px-3 py-4">
+                    <PlanFeatureChips plan={plan} />
+                  </td>
+
+                  {/* ── Action chevron ── */}
+                  <td className="px-3 py-4">
+                    <Link
+                      href={href}
+                      aria-label={`View ${plan.provider.name} plan details`}
+                      className="flex items-center justify-center no-underline"
+                    >
+                      <span className="inline-flex size-8 items-center justify-center rounded-full border border-border bg-card text-primary transition-colors duration-150 group-hover:border-[#FFE0D1] group-hover:bg-[#FFF1EB]">
+                        <ChevronRight className="h-4 w-4" />
+                      </span>
+                    </Link>
+                  </td>
+                </tr>
               );
             })}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import NavWrapper from "@/components/getters/NavWrapper";
 import NextTopLoader from "nextjs-toploader";
 import { SearchDialogProvider } from "@/components/search/SearchDialogProvider";
 import { SearchDialog } from "@/components/search/SearchDialog";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -63,14 +64,16 @@ export default function RootLayout({
         <NextTopLoader color="var(--primary)" showSpinner={false} />
         <QueryProvider>
           <NuqsAdapter>
-            <SearchDialogProvider>
-              <NavWrapper />
-              <main id="main-content" className="grow">
-                {children}
-              </main>
-              <Footer />
-              <SearchDialog />
-            </SearchDialogProvider>
+            <TooltipProvider>
+              <SearchDialogProvider>
+                <NavWrapper />
+                <main id="main-content" className="grow">
+                  {children}
+                </main>
+                <Footer />
+                <SearchDialog />
+              </SearchDialogProvider>
+            </TooltipProvider>
           </NuqsAdapter>
         </QueryProvider>
       </body>

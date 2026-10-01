@@ -27,9 +27,21 @@ export function formatKbpsSpeed(kbps: number): string {
   return `${Math.round(kbps)} Kbps`;
 }
 
+/** True when capacityInfo is a real fair-use / policy note, not a data label. */
+function isUsefulFairUseCapacityInfo(info: string): boolean {
+  const trimmed = info.trim();
+  if (!trimmed) return false;
+  const lower = trimmed.toLowerCase();
+  if (lower === "unlimited" || lower === "data unknown") return false;
+  // Skip short data labels like "1GB", "5 GB/day"
+  if (/^\d+(\.\d+)?\s*(mb|gb|tb)(\s*\/\s*day)?$/i.test(trimmed)) return false;
+  return true;
+}
+
 /**
- * Secondary fair-use / throttle note under Data.
- * Prefer structured fields; fall back to capacityInfo when useful.
+ * Secondary fair-use / throttle note for tooltips.
+ * Prefer provider capacityInfo when it already explains the policy;
+ * otherwise build a clear message from structured fields.
  */
 export function getPlanFairUseNote(plan: {
   capacityInfo: string | null;
@@ -38,26 +50,34 @@ export function getPlanFairUseNote(plan: {
   speedLimit?: number | null;
   possibleThrottling?: boolean | null;
 }): string | null {
+  const info = plan.capacityInfo?.trim();
+  if (info && isUsefulFairUseCapacityInfo(info)) {
+    return info;
+  }
+
   if (plan.reducedSpeed != null && plan.reducedSpeed > 0) {
     const speed = formatKbpsSpeed(plan.reducedSpeed);
-    return speed ? `Then ${speed}` : null;
+    if (!speed) return null;
+    if (plan.unlimitedAfterAllowance) {
+      return `Slows to ${speed} after the high-speed allowance`;
+    }
+    return `Speed may drop to ${speed} after fair use`;
   }
+
   if (plan.possibleThrottling) {
     return "May throttle after fair use";
   }
+
   if (plan.unlimitedAfterAllowance) {
-    return "Unlimited after high-speed data";
-  }
-  if (plan.speedLimit != null && plan.speedLimit > 0) {
-    const speed = formatKbpsSpeed(plan.speedLimit);
-    return speed ? `Capped at ${speed}` : null;
+    return "Continues at reduced speed after high-speed data";
   }
 
-  const info = plan.capacityInfo?.trim();
-  if (!info) return null;
-  const lower = info.toLowerCase();
-  if (lower === "unlimited" || lower === "data unknown") return null;
-  return info;
+  if (plan.speedLimit != null && plan.speedLimit > 0) {
+    const speed = formatKbpsSpeed(plan.speedLimit);
+    return speed ? `Speed capped at ${speed}` : null;
+  }
+
+  return null;
 }
 
 export function formatPlanData(plan: {

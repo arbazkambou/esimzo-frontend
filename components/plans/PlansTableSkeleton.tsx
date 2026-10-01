@@ -32,32 +32,40 @@ export function TableSkeleton() {
       </div>
 
       {/* Desktop table skeleton */}
-      <div className="hidden overflow-hidden rounded-lg border border-border bg-card shadow-card lg:block">
-        <div className="flex items-center gap-4 border-b border-border bg-muted/50 px-4 py-3">
-          {[220, 80, 80, 80, 80, 160].map((w, i) => (
-            <Skeleton key={i} className="h-4" style={{ width: w }} />
-          ))}
+      <div className="hidden overflow-hidden rounded-2xl border border-border bg-card shadow-[0_4px_20px_rgba(11,18,33,0.04)] lg:block">
+        {/* Header */}
+        <div className="flex items-center gap-6 border-b border-border bg-muted/60 px-5 py-4">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-4 w-20" />
         </div>
+        {/* Rows */}
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="flex items-center gap-4 border-b border-border px-4 py-4 last:border-b-0"
+            className="flex items-center gap-6 border-b border-border px-5 py-4 last:border-b-0"
           >
-            <div className="flex items-center gap-3" style={{ width: 220 }}>
-              <Skeleton className="size-10 rounded-md" />
+            {/* Plan & Provider */}
+            <div className="flex w-[31%] shrink-0 items-center gap-3">
+              <Skeleton className="size-11 shrink-0 rounded-lg" />
               <div className="space-y-1.5">
-                <Skeleton className="h-3 w-24" />
-                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-3.5 w-20" />
+                <Skeleton className="h-3 w-36" />
+                <Skeleton className="h-2.5 w-12" />
               </div>
             </div>
+            <Skeleton className="h-4 w-12" />
             <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-4 w-14" />
-            <Skeleton className="h-4 w-14" />
-            <div className="flex gap-1">
+            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-5 w-14" />
+            <div className="flex gap-1.5">
+              <Skeleton className="h-5 w-10 rounded-md" />
               <Skeleton className="h-5 w-14 rounded-md" />
-              <Skeleton className="h-5 w-16 rounded-md" />
             </div>
+            <Skeleton className="size-8 rounded-full" />
           </div>
         ))}
       </div>

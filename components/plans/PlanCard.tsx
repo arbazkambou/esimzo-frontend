@@ -28,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -213,27 +212,24 @@ export function PlanCard({
         <div className="mt-3 flex items-center gap-1">
           <p className="text-h2">{dataLabel}</p>
           {fairUseNote ? (
-            <TooltipProvider delayDuration={200}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    aria-label={`Fair use details: ${fairUseNote}`}
-                    className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
-                  >
-                    <Info className="h-3.5 w-3.5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[16rem]">
-                  <p className="text-xs font-semibold text-white">Fair use / speed</p>
-                  <p className="mt-0.5 text-xs text-white/90">{fairUseNote}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  aria-label={`Fair use details: ${fairUseNote}`}
+                  className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[16rem]">
+                {fairUseNote}
+              </TooltipContent>
+            </Tooltip>
           ) : null}
         </div>
         <p className="text-body-sm mt-1 text-text-secondary">
