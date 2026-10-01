@@ -31,22 +31,19 @@ type LoadState = "idle" | "loading" | "loaded" | "error";
 function SearchLoadingState() {
   return (
     <div
-      className="flex min-h-48 flex-col items-center justify-center gap-5 px-6 py-8"
+      className="flex min-h-48 flex-col items-center justify-center gap-4 px-6 py-8"
       role="status"
       aria-live="polite"
       aria-label="Loading destinations"
     >
-      <div className="relative flex size-14 items-center justify-center">
-        <span className="absolute inset-0 rounded-full bg-primary-soft" />
-        <span className="absolute inset-0 animate-ping rounded-full bg-primary/20 [animation-duration:1.4s]" />
-        <span className="absolute inset-1.5 rounded-full border border-primary/25" />
-        <Spinner className="relative size-6 text-primary" />
+      <div className="flex size-12 items-center justify-center rounded-lg bg-primary-soft">
+        <Spinner className="size-5 text-primary" />
       </div>
-      <div className="space-y-1.5 text-center">
-        <p className="text-sm font-semibold text-brand-navy">
+      <div className="space-y-1 text-center">
+        <p className="text-body-sm font-semibold text-brand-navy">
           Loading destinations
         </p>
-        <p className="text-caption text-text-muted">
+        <p className="text-caption text-text-secondary">
           Fetching countries and regions…
         </p>
       </div>
@@ -230,9 +227,9 @@ export function SearchDialog() {
         <button
           type="button"
           onClick={() => navigate(`/${country.slug}`)}
-          className="group flex min-h-11 items-center gap-2 rounded-full border border-border bg-white px-3 py-2 text-left transition-colors hover:border-primary hover:bg-primary-soft focus-visible:border-primary focus-visible:bg-primary-soft outline-none focus-visible:shadow-none"
+          className="group flex min-h-10 items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-left outline-none transition-[border-color,background-color] duration-[var(--transition-fast)] hover:border-primary hover:bg-primary-soft focus-visible:border-primary focus-visible:bg-primary-soft focus-visible:shadow-[var(--focus-ring)]"
         >
-          <span className="relative h-4 w-6 shrink-0 overflow-hidden rounded-[2px] border border-border">
+          <span className="relative h-4 w-6 shrink-0 overflow-hidden rounded-sm border border-border">
             <Image
               src={country.flag}
               alt=""
@@ -241,7 +238,7 @@ export function SearchDialog() {
               aria-hidden
             />
           </span>
-          <span className="text-xs font-semibold text-brand-navy group-hover:text-primary">
+          <span className="text-caption font-semibold text-brand-navy group-hover:text-primary-text">
             {country.name}
           </span>
         </button>
@@ -252,9 +249,9 @@ export function SearchDialog() {
       <button
         type="button"
         onClick={() => navigate(`/${country.slug}`)}
-        className="group flex w-full min-h-12 items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-primary-soft/70 focus-visible:bg-primary-soft outline-none focus-visible:shadow-none"
+        className="group flex w-full min-h-12 items-center gap-3 px-3.5 py-3 text-left outline-none transition-colors duration-[var(--transition-fast)] hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:shadow-[var(--focus-ring)]"
       >
-        <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
+        <span className="relative size-9 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
           <Image
             src={country.flag}
             alt=""
@@ -265,22 +262,23 @@ export function SearchDialog() {
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-semibold text-brand-navy">
+            <p className="truncate text-body-sm font-semibold text-brand-navy">
               {country.name}
             </p>
-            <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">
+            <span className="text-caption font-medium uppercase tracking-wide text-text-secondary">
               {country.code}
             </span>
           </div>
-          {country.region?.name && (
-            <p className="truncate text-caption text-text-muted">
+          {country.region?.name ? (
+            <p className="truncate text-caption text-text-secondary">
               {country.region.name}
             </p>
-          )}
+          ) : null}
         </div>
         <ChevronRight
-          className="h-4 w-4 shrink-0 text-text-muted/0 transition-all group-hover:text-text-muted group-hover:translate-x-0.5"
+          className="size-4 shrink-0 text-transparent transition-all duration-[var(--transition-fast)] group-hover:translate-x-0.5 group-hover:text-text-secondary group-focus-visible:translate-x-0.5 group-focus-visible:text-text-secondary"
           strokeWidth={1.75}
+          aria-hidden
         />
       </button>
     );
@@ -291,9 +289,9 @@ export function SearchDialog() {
       <button
         type="button"
         onClick={() => navigate(`/${region.slug}`)}
-        className="group flex w-full min-h-12 items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-primary-soft/70 focus-visible:bg-primary-soft outline-none focus-visible:shadow-none"
+        className="group flex w-full min-h-12 items-center gap-3 px-3.5 py-3 text-left outline-none transition-colors duration-[var(--transition-fast)] hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:shadow-[var(--focus-ring)]"
       >
-        <span className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
+        <span className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
           <Image
             src={region.flag}
             alt=""
@@ -303,16 +301,17 @@ export function SearchDialog() {
           />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-brand-navy">
+          <p className="truncate text-body-sm font-semibold text-brand-navy">
             {region.name}
           </p>
-          <p className="text-caption text-text-muted">
+          <p className="text-caption text-text-secondary">
             Region · {region.countries.length} countries
           </p>
         </div>
         <ChevronRight
-          className="h-4 w-4 shrink-0 text-text-muted/0 transition-all group-hover:text-text-muted group-hover:translate-x-0.5"
+          className="size-4 shrink-0 text-transparent transition-all duration-[var(--transition-fast)] group-hover:translate-x-0.5 group-hover:text-text-secondary group-focus-visible:translate-x-0.5 group-focus-visible:text-text-secondary"
           strokeWidth={1.75}
+          aria-hidden
         />
       </button>
     );
@@ -324,8 +323,8 @@ export function SearchDialog() {
     <div className="relative">
       <Search
         className={cn(
-          "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors",
-          isInputFocused ? "text-primary" : "text-text-muted",
+          "pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 transition-colors",
+          isInputFocused ? "text-primary" : "text-text-secondary",
         )}
         strokeWidth={1.75}
       />
@@ -338,12 +337,11 @@ export function SearchDialog() {
         onBlur={() => setIsInputFocused(false)}
         placeholder="Country, region or code…"
         className={cn(
-          "h-11 w-full rounded-xl border bg-white pl-10 text-base text-brand-navy placeholder:text-text-muted outline-none transition-[border-color,box-shadow] duration-150",
+          "h-11 w-full rounded-md border bg-card pl-10 text-body text-brand-navy placeholder:text-text-secondary outline-none transition-[border-color,box-shadow] duration-[var(--transition-base)]",
           query || isInputFocused ? "pr-10" : "pr-12",
           isInputFocused
-            ? "border-primary shadow-[0_0_0_3px_rgb(255_107_53/0.15)]"
-            : "border-border hover:border-border-strong shadow-none",
-          "focus-visible:shadow-[0_0_0_3px_rgb(255_107_53/0.15)]",
+            ? "border-primary shadow-[var(--focus-ring)]"
+            : "border-border shadow-none hover:border-border-strong",
         )}
         aria-label="Search destinations"
       />
@@ -355,45 +353,52 @@ export function SearchDialog() {
             inputRef.current?.focus();
           }}
           aria-label="Clear search"
-          className="absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-text-muted hover:bg-muted hover:text-brand-navy transition-colors outline-none focus-visible:shadow-none"
+          className="absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-text-secondary outline-none transition-colors hover:bg-muted hover:text-brand-navy focus-visible:shadow-[var(--focus-ring)]"
         >
-          <X className="h-4 w-4" strokeWidth={1.75} />
+          <X className="size-4" strokeWidth={1.75} />
         </button>
       ) : showEscHint ? (
-        <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-border bg-muted/80 px-1.5 py-0.5 text-[10px] font-medium text-text-muted sm:inline-block">
+        <kbd className="pointer-events-none absolute top-1/2 right-3 hidden -translate-y-1/2 rounded-md border border-border bg-muted px-1.5 py-0.5 text-caption font-medium text-text-secondary sm:inline-block">
           Esc
         </kbd>
       ) : null}
     </div>
   );
 
+  const resultSummary =
+    hasQuery && loadState === "loaded" && !noResults
+      ? [
+          matchedCountries.length > 0 &&
+            `${matchedCountries.length} ${matchedCountries.length === 1 ? "country" : "countries"}`,
+          directMatchedRegions.length > 0 &&
+            `${directMatchedRegions.length} ${directMatchedRegions.length === 1 ? "region" : "regions"}`,
+          alsoInRegions.length > 0 &&
+            `${alsoInRegions.length} related ${alsoInRegions.length === 1 ? "region" : "regions"}`,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : null;
+
   const searchContent = (
     <>
       <div className="shrink-0 px-5 pb-3">
         {searchField}
-        {hasQuery && loadState === "loaded" && !noResults && (
-          <p className="mt-2 text-caption text-text-muted" aria-live="polite">
-            {[
-              matchedCountries.length > 0 &&
-                `${matchedCountries.length} ${matchedCountries.length === 1 ? "country" : "countries"}`,
-              directMatchedRegions.length > 0 &&
-                `${directMatchedRegions.length} ${directMatchedRegions.length === 1 ? "region" : "regions"}`,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
+        {resultSummary ? (
+          <p className="mt-2.5 text-caption text-text-secondary" aria-live="polite">
+            {resultSummary}
           </p>
-        )}
+        ) : null}
       </div>
 
-      <div className="mx-5 h-px shrink-0 bg-border-subtle" />
+      <div className="mx-5 h-px shrink-0 bg-border" />
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
         {loadState === "loading" && <SearchLoadingState />}
 
         {loadState === "error" && (
-          <div className="flex h-44 flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-destructive-soft text-destructive">
-              <Ban className="h-5 w-5" strokeWidth={1.75} />
+          <div className="flex h-44 flex-col items-center justify-center gap-3 px-4 text-center">
+            <div className="flex size-11 items-center justify-center rounded-lg bg-destructive-soft text-destructive">
+              <Ban className="size-5" strokeWidth={1.75} />
             </div>
             <p className="text-body-sm text-text-secondary">{loadError}</p>
             <Button
@@ -407,14 +412,14 @@ export function SearchDialog() {
         )}
 
         {loadState === "loaded" && noResults && (
-          <div className="flex h-36 flex-col items-center justify-center gap-2 px-6 text-center">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-muted text-text-muted">
-              <Search className="h-5 w-5" strokeWidth={1.75} />
+          <div className="flex h-36 flex-col items-center justify-center gap-2 px-4 text-center">
+            <div className="flex size-11 items-center justify-center rounded-lg bg-muted text-text-secondary">
+              <Search className="size-5" strokeWidth={1.75} />
             </div>
-            <p className="text-sm font-semibold text-brand-navy">
+            <p className="text-body-sm font-semibold text-brand-navy">
               Nothing matches your search
             </p>
-            <p className="text-caption text-text-muted">
+            <p className="text-caption text-text-secondary">
               Try a country name, region, or country code
             </p>
           </div>
@@ -450,14 +455,12 @@ export function SearchDialog() {
         )}
 
         {loadState === "loaded" && !hasQuery && (
-          <div className="px-2">
-            <div className="mb-3 flex items-center gap-2 px-1">
-              <MapPin
-                className="h-3.5 w-3.5 text-primary"
-                strokeWidth={1.75}
-                aria-hidden
-              />
-              <p className="text-label font-semibold text-text-secondary">
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="flex size-7 items-center justify-center rounded-md bg-primary-soft text-primary">
+                <MapPin className="size-3.5" strokeWidth={2.2} aria-hidden />
+              </span>
+              <p className="text-caption font-bold uppercase tracking-wider text-text-secondary">
                 Most popular destinations
               </p>
             </div>
@@ -470,8 +473,8 @@ export function SearchDialog() {
         )}
 
         {loadState === "loaded" && noResults && (
-          <div className="mt-4 px-2">
-            <p className="mb-2 px-1 text-caption font-medium text-text-muted">
+          <div className="mt-5">
+            <p className="mb-2.5 text-caption font-bold uppercase tracking-wider text-text-secondary">
               Popular destinations
             </p>
             <div className="flex flex-wrap gap-2">
@@ -490,11 +493,11 @@ export function SearchDialog() {
       {isMobile ? (
         <Drawer open={isOpen} onOpenChange={handleOpenChange}>
           <DrawerContent className="flex h-[80dvh] max-h-[80vh] flex-col gap-0 overflow-hidden rounded-t-2xl border-border bg-surface p-0 shadow-modal">
-            <DrawerHeader className="shrink-0 space-y-0.5 px-5 pb-2 pt-1 text-left">
-              <DrawerTitle className="text-xl font-semibold text-brand-navy">
+            <DrawerHeader className="shrink-0 space-y-1 px-5 pt-1 pb-3 text-left">
+              <DrawerTitle className="text-h3 font-bold text-brand-navy">
                 Where?
               </DrawerTitle>
-              <DrawerDescription className="text-sm text-text-muted">
+              <DrawerDescription className="text-body-sm text-text-secondary">
                 Search countries and regions to compare eSIM plans
               </DrawerDescription>
             </DrawerHeader>
@@ -503,12 +506,12 @@ export function SearchDialog() {
         </Drawer>
       ) : (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-          <DialogContent className="sm:max-w-[480px] md:max-w-[520px]! h-[min(580px,82dvh)] p-0 gap-0 flex flex-col overflow-hidden rounded-xl border-border bg-surface shadow-modal">
-            <DialogHeader className="space-y-0.5 px-5 pb-2 pt-5 text-left">
-              <DialogTitle className="text-xl font-semibold text-brand-navy">
+          <DialogContent className="flex h-[min(580px,82dvh)] flex-col gap-0 overflow-hidden rounded-xl border-border bg-surface p-0 shadow-modal sm:max-w-[480px] md:max-w-[520px]!">
+            <DialogHeader className="shrink-0 space-y-1 px-5 pt-5 pb-3 text-left">
+              <DialogTitle className="text-h3 font-bold text-brand-navy">
                 Where?
               </DialogTitle>
-              <DialogDescription className="text-sm text-text-muted">
+              <DialogDescription className="text-body-sm text-text-secondary">
                 Search countries and regions to compare eSIM plans
               </DialogDescription>
             </DialogHeader>
@@ -530,14 +533,18 @@ function ResultSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-2 last:mb-0">
-      <div className="sticky top-0 z-1 mb-0.5 flex items-center gap-2 bg-surface px-3 py-1.5">
-        <p className="text-label font-semibold text-text-secondary">{label}</p>
-        {typeof count === "number" && (
-          <span className="text-caption tabular text-text-muted">{count}</span>
-        )}
+    <section className="mb-5 last:mb-0">
+      <div className="mb-2 flex items-center gap-2 px-0.5">
+        <p className="text-caption font-bold uppercase tracking-wider text-text-secondary">
+          {label}
+        </p>
+        {typeof count === "number" ? (
+          <span className="inline-flex min-w-5 items-center justify-center rounded-md bg-muted px-1.5 py-0.5 text-caption font-semibold tabular text-text-secondary">
+            {count}
+          </span>
+        ) : null}
       </div>
-      <div className="divide-y divide-border-subtle overflow-hidden rounded-xl border border-border-subtle bg-white">
+      <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card shadow-subtle">
         {children}
       </div>
     </section>

@@ -50,8 +50,13 @@ import { HintTip } from "@/components/ui/hint-tip";
 
 /** Estimated desktop row height for window virtualization. */
 const DESKTOP_ROW_ESTIMATE = 84;
-/** Estimated mobile card height (includes vertical gap). */
-const MOBILE_CARD_ESTIMATE = 210;
+/**
+ * Estimated mobile card height (content only). Cards vary with feature chips /
+ * coverage lines — real sizes are measured via measureElement.
+ */
+const MOBILE_CARD_ESTIMATE = 168;
+/** Matches Tailwind `gap-2.5` (10px) used by the pinned mobile list. */
+const MOBILE_CARD_GAP = 10;
 const VIRTUAL_OVERSCAN = 5;
 const TABLE_COL_SPAN = 7;
 /** Always keep this many real DOM rows (SSR + client) for users and crawlers. */
@@ -311,84 +316,91 @@ const PlanMobileCard = memo(function PlanMobileCard({
       : `${plan.period} ${plan.period === 1 ? "day" : "days"}`;
   const coverageLabel = getCoverageLabel(plan);
   const features = getPlanFeatureChips(plan);
-  const fairUse = getPlanFairUseNote(plan);
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card">
-      <Link
-        href={href}
-        className="flex min-w-0 flex-col outline-none focus-visible:shadow-[var(--focus-ring)] no-underline"
-      >
-        <div className="flex min-w-0 items-start gap-3 bg-card px-3.5 pt-3.5 pb-3 sm:px-4 sm:pt-4">
-          <ProviderLogo
-            src={plan.provider.image}
-            name={plan.provider.name}
-            sizeClassName="size-10 sm:size-11"
-          />
+      {/* Link only covers header + stats so tip buttons are never inside <a>. */}
+      <div className="relative">
+        <Link
+          href={href}
+          className="absolute inset-0 z-0 outline-none focus-visible:shadow-[var(--focus-ring)]"
+          aria-label={`View ${plan.provider.name} plan details`}
+        />
 
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-brand-navy">
-              {plan.provider.name}
-            </p>
-            <p className="line-clamp-2 text-xs leading-snug text-text-secondary">
-              {plan.name}
-            </p>
-            {coverageLabel && (
-              <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-text-muted">
-                <MapPin className="h-3 w-3 shrink-0" aria-hidden />
-                <span className="truncate">{coverageLabel}</span>
+        <div className="relative z-10 flex min-w-0 flex-col pointer-events-none">
+          <div className="flex min-w-0 items-start gap-3 bg-card px-3.5 pt-3.5 pb-3 sm:px-4 sm:pt-4">
+            <ProviderLogo
+              src={plan.provider.image}
+              name={plan.provider.name}
+              sizeClassName="size-10 sm:size-11"
+            />
+
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-brand-navy">
+                {plan.provider.name}
               </p>
-            )}
-          </div>
-
-          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-primary-muted bg-primary-soft text-primary">
-            <ChevronRight className="h-4 w-4" />
-          </span>
-        </div>
-
-        <div className="grid grid-cols-3 border-t border-border bg-surface-tint">
-          <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
-            <div className="flex items-center gap-1 text-text-muted">
-              <Database className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span className="text-[10px] font-medium">Data</span>
-            </div>
-            <span className="text-sm font-medium tabular text-brand-navy">
-              {formatPlanData(plan)}
-            </span>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
-            <div className="flex items-center gap-1 text-text-muted">
-              <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span className="text-[10px] font-medium">Validity</span>
-            </div>
-            <span className="truncate text-sm font-medium tabular text-brand-navy">
-              {periodLabel}
-            </span>
-          </div>
-
-          <div className="flex min-w-0 flex-col gap-1 px-3 py-3">
-            <div className="flex items-center gap-1 text-text-muted">
-              <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span className="text-[10px] font-medium">Price</span>
-            </div>
-            <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
-              <span className="truncate text-sm font-medium tabular text-brand-navy">
-                {formatPrice(effective)}
-              </span>
-              {hasPromo && (
-                <span className="truncate text-[11px] tabular text-primary line-through">
-                  {formatPrice(plan.usdPrice)}
-                </span>
+              <p className="line-clamp-2 text-xs leading-snug text-text-secondary">
+                {plan.name}
+              </p>
+              {coverageLabel && (
+                <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-text-muted">
+                  <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                  <span className="truncate">{coverageLabel}</span>
+                </p>
               )}
             </div>
+
+            <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-primary-muted bg-primary-soft text-primary">
+              <ChevronRight className="h-4 w-4" />
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 border-t border-border bg-surface-tint">
+            <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
+              <div className="flex items-center gap-1 text-text-muted">
+                <Database className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="text-[10px] font-medium">Data</span>
+                <span className="pointer-events-auto">
+                  <FairUseInfo plan={plan} />
+                </span>
+              </div>
+              <span className="text-sm font-medium tabular text-brand-navy">
+                {formatPlanData(plan)}
+              </span>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
+              <div className="flex items-center gap-1 text-text-muted">
+                <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="text-[10px] font-medium">Validity</span>
+              </div>
+              <span className="truncate text-sm font-medium tabular text-brand-navy">
+                {periodLabel}
+              </span>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1 px-3 py-3">
+              <div className="flex items-center gap-1 text-text-muted">
+                <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="text-[10px] font-medium">Price</span>
+              </div>
+              <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+                <span className="truncate text-sm font-medium tabular text-brand-navy">
+                  {formatPrice(effective)}
+                </span>
+                {hasPromo && (
+                  <span className="truncate text-[11px] tabular text-primary line-through">
+                    {formatPrice(plan.usdPrice)}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </Link>
+      </div>
 
-      {(fairUse || features.length > 0) && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-border bg-primary-soft/40 px-3.5 py-2.5 sm:px-4">
-          <FairUseInfo plan={plan} />
+      {features.length > 0 && (
+        <div className="relative z-10 flex flex-wrap items-center gap-2 border-t border-border bg-primary-soft/40 px-3.5 py-2.5 sm:px-4">
           <PlanFeatureChips plan={plan} />
         </div>
       )}
@@ -575,6 +587,7 @@ export default function PlansTable({
   const mobileVirtualizer = useWindowVirtualizer({
     count: !isLargeScreen ? restCount : 0,
     estimateSize: () => MOBILE_CARD_ESTIMATE,
+    gap: MOBILE_CARD_GAP,
     overscan: VIRTUAL_OVERSCAN,
     scrollMargin: mobileScrollMargin,
     getItemKey: (index) => restPlans[index]?.id ?? index,
@@ -636,9 +649,10 @@ export default function PlansTable({
               return (
                 <div
                   key={plan.id}
-                  className="absolute top-0 left-0 w-full pb-2.5"
+                  data-index={virtualRow.index}
+                  ref={mobileVirtualizer.measureElement}
+                  className="absolute top-0 left-0 w-full"
                   style={{
-                    height: MOBILE_CARD_ESTIMATE,
                     transform: `translateY(${virtualRow.start - mobileScrollMargin}px)`,
                   }}
                 >

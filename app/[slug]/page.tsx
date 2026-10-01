@@ -8,6 +8,7 @@ import FAQSection from "@/components/sections/FAQSection";
 import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection";
 import NetworkCoverageSection from "@/components/sections/NetworkCoverageSection";
 import NetworkSpeedsSection from "@/components/sections/network-speeds/NetworkSpeedsSection";
+import CityNetworksSection from "@/components/sections/city-networks/CityNetworksSection";
 import NoPackagesState from "@/components/sections/NoPackagesFound";
 import PhoneCompatibilitySection from "@/components/sections/PhoneCompatibilitySection";
 import TravelerTipsSection from "@/components/sections/TravelerTipsSection";
@@ -30,6 +31,10 @@ import {
   deriveNetworkSpeedsViewModel,
   getNetworkSpeedsBySlug,
 } from "@/lib/network-speeds";
+import {
+  deriveCityNetworksViewModel,
+  getCityNetworksBySlug,
+} from "@/lib/city-networks";
 import { derivePlansHeroStats } from "@/lib/plans/derive-plans-hero-stats";
 import {
   buildCountryPlansJsonLd,
@@ -105,13 +110,17 @@ export async function generateMetadata({
       };
   const speedData =
     scope === "country" ? getNetworkSpeedsBySlug(slug) : null;
+  const cityData =
+    scope === "country" ? getCityNetworksBySlug(slug) : null;
 
   const { title, description, pageUrl } = buildCountryPlansMetadataFields({
     slug,
     countryName,
     heroContent,
     stats,
-    metaDescriptionOverride: speedData?.meta_description_suggestion,
+    metaDescriptionOverride:
+      speedData?.meta_description_suggestion ??
+      cityData?.meta_description_suggestion,
   });
 
   return {
@@ -190,8 +199,14 @@ export default async function page({ params }: PageProps) {
   const speedView = speedData
     ? deriveNetworkSpeedsViewModel(speedData)
     : null;
+  const cityData =
+    scope === "country" ? getCityNetworksBySlug(slug) : null;
+  const cityView = cityData
+    ? deriveCityNetworksViewModel(cityData)
+    : null;
   const mergedFaqs = [
     ...(speedView?.faq ?? []),
+    ...(cityView?.faq ?? []),
     ...(resolvedFaqs?.faqs ?? []),
   ];
 
@@ -241,6 +256,7 @@ export default async function page({ params }: PageProps) {
           />
         ) : null}
         {speedView ? <NetworkSpeedsSection data={speedView} /> : null}
+        {cityView ? <CityNetworksSection data={cityView} /> : null}
         {unlimitedPlansContent ? (
           <UnlimitedPlansSection
             countryName={countryName}
