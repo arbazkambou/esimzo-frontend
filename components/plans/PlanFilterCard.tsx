@@ -16,6 +16,14 @@ import {
   ChevronDown,
   PhoneCall,
 } from "lucide-react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import { Switch } from "@/components/ui/switch";
 import { cn, isUnlimitedPlan, getEffectiveUsdPrice } from "@/lib/utils";
 import type {
@@ -25,6 +33,8 @@ import type {
   PackageCategory,
 } from "@/lib/hooks/use-package-filters";
 import AdvancedFiltersDialog from "./AdvancedFiltersDialog";
+
+type MobileFilterSection = "data" | "validity" | "price";
 
 // ── Presets Configuration ──
 const TOTAL_DATA_PRESETS = [5, 10, 20, 30, 50]; // in GB (5 items + Unlimited = 6 chips)
@@ -53,6 +63,8 @@ export default function PlanFilterCard({
   filters: UsePackageFiltersReturn;
 }) {
   const [isAdvancedModalOpen, setIsAdvancedModalOpen] = useState(false);
+  const [mobileFilterSection, setMobileFilterSection] =
+    useState<MobileFilterSection | null>(null);
   const [, startTransition] = useTransition();
 
   const {
@@ -522,20 +534,189 @@ export default function PlanFilterCard({
     return `$${minVal} – $${maxVal}`;
   }, [localPriceRange, maxPrice]);
 
+  const totalActiveCount =
+    (activeFilterCount || 0) +
+    (unlimited ? 1 : 0) +
+    (noExpiry ? 1 : 0) +
+    (maxPrice === 0 ? 1 : 0) +
+    (advancedFilterCount || 0);
+
+  const mobileDataLabel = unlimited
+    ? "Unlimited"
+    : dataStatusText;
+  const mobileValidityLabel = noExpiry
+    ? "No Expiry"
+    : validityStatusText;
+  const mobilePriceLabel =
+    maxPrice === 0
+      ? "Free"
+      : priceStatusText
+        ? priceStatusText.replace(/^Under /, "≤")
+        : null;
+
+  const openMobileFilter = (section: MobileFilterSection) => {
+    setMobileFilterSection(section);
+  };
+
   return (
     <div className="w-full space-y-4">
-      {/* ── Main Filter Container (Compact eSIMDB Style) ── */}
+      {/* ── MOBILE: Summary tabs → drawer ── */}
       <section
         aria-label="eSIM Plan Filters"
-        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-border/80 bg-card p-4 sm:p-5 md:p-6 shadow-xs transition-shadow"
+        className="relative lg:hidden overflow-visible rounded-2xl border border-border bg-card p-3 pt-5 shadow-card"
+      >
+        <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1/2">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-text-secondary shadow-subtle">
+            <span>Filter Plans</span>
+            {totalActiveCount > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-md bg-primary px-1 text-[10px] font-bold text-white">
+                {totalActiveCount}
+              </span>
+            )}
+          </span>
+        </div>
+
+        <div
+          role="tablist"
+          aria-label="Filter categories"
+          className="grid grid-cols-3 gap-1 pt-1"
+        >
+          {(
+            [
+              {
+                id: "data" as const,
+                title: "Data",
+                value: mobileDataLabel,
+                placeholder: "Choose data",
+              },
+              {
+                id: "validity" as const,
+                title: "Validity",
+                value: mobileValidityLabel,
+                placeholder: "Choose days",
+              },
+              {
+                id: "price" as const,
+                title: "Price",
+                value: mobilePriceLabel,
+                placeholder: "Set budget",
+              },
+            ] as const
+          ).map((tab) => {
+            const isOpen = mobileFilterSection === tab.id;
+            const hasValue = Boolean(tab.value);
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isOpen}
+                aria-label={
+                  hasValue
+                    ? `${tab.title}: ${tab.value}. Tap to edit`
+                    : `${tab.title}: ${tab.placeholder}`
+                }
+                onClick={() => openMobileFilter(tab.id)}
+                className={cn(
+                  "flex min-h-16 flex-col items-stretch justify-center gap-0.5 rounded-md border px-1.5 py-2 text-left transition-[color,background-color,border-color,box-shadow]",
+                  isOpen
+                    ? "border-primary bg-primary text-white shadow-subtle"
+                    : hasValue
+                      ? "border-primary/40 bg-primary-soft hover:border-primary"
+                      : "border-dashed border-border-strong bg-muted/30 hover:border-primary hover:bg-primary-soft/50",
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-flex w-full items-center justify-between gap-0.5 text-[10px] font-bold uppercase tracking-wider",
+                    isOpen
+                      ? "text-white/90"
+                      : hasValue
+                        ? "text-primary-text"
+                        : "text-text-secondary",
+                  )}
+                >
+                  <span className="inline-flex min-w-0 items-center gap-0.5">
+                    <span className="truncate">{tab.title}</span>
+                    {hasValue && (
+                      <span
+                        className={cn(
+                          "h-1.5 w-1.5 shrink-0 rounded-full",
+                          isOpen ? "bg-white" : "bg-primary",
+                        )}
+                        aria-hidden
+                      />
+                    )}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "h-3 w-3 shrink-0 opacity-70",
+                      isOpen && "rotate-180",
+                    )}
+                    aria-hidden
+                  />
+                </span>
+                <span
+                  className={cn(
+                    "w-full whitespace-normal break-words text-[11px] font-bold leading-snug",
+                    isOpen
+                      ? "text-white"
+                      : hasValue
+                        ? "tabular text-brand-navy"
+                        : "font-semibold text-primary-text",
+                  )}
+                >
+                  {hasValue ? tab.value : tab.placeholder}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+          <button
+            type="button"
+            onClick={() => setIsAdvancedModalOpen(true)}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground"
+            aria-label="Open Advanced Filters"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
+            <span>Advanced Filters</span>
+            {advancedFilterCount > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-md bg-primary px-1 text-[10px] font-bold text-white">
+                {advancedFilterCount}
+              </span>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={handleClearAll}
+            disabled={totalActiveCount === 0}
+            className={cn(
+              "text-xs font-semibold",
+              totalActiveCount > 0
+                ? "text-primary-text"
+                : "text-muted-foreground/50",
+            )}
+            aria-label="Reset all filters"
+          >
+            Reset All
+          </button>
+        </div>
+      </section>
+
+      {/* ── DESKTOP: Main Filter Container ── */}
+      <section
+        aria-label="eSIM Plan Filters"
+        className="relative hidden lg:block overflow-hidden rounded-2xl sm:rounded-3xl border border-border/80 bg-card p-4 sm:p-5 md:p-6 shadow-xs transition-shadow"
       >
         {/* Compact Top Badge: FILTER PLANS */}
         <div className="flex items-center justify-center pb-2 sm:pb-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/40 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground shadow-2xs">
             <span>Filter Plans</span>
-            {(activeFilterCount > 0 || unlimited || noExpiry || maxPrice === 0 || advancedFilterCount > 0) && (
+            {totalActiveCount > 0 && (
               <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground shadow-xs">
-                {(activeFilterCount || 0) + (unlimited ? 1 : 0) + (noExpiry ? 1 : 0) + (maxPrice === 0 ? 1 : 0) + (advancedFilterCount || 0)}
+                {totalActiveCount}
               </span>
             )}
           </span>
@@ -548,50 +729,64 @@ export default function PlanFilterCard({
             <div className="flex flex-col gap-3">
               {/* Header Row: Tabs on Left, Readout Badge on Right */}
               <div className="h-8 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {/* Total vs Daily Modern Segmented Control */}
-                  <div className="inline-flex items-center rounded-lg bg-muted/70 p-0.5 border border-border/50 text-xs shadow-2xs">
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* Total vs Daily — filled pill tabs */}
+                  <div
+                    role="tablist"
+                    aria-label="Data allowance type"
+                    className="inline-flex items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5"
+                  >
                     <button
                       type="button"
+                      role="tab"
+                      aria-selected={!isDaily}
                       onClick={() => handleModeChange("total")}
                       className={cn(
-                        "rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
+                        "rounded-md px-3 py-1.5 text-xs font-semibold transition-[color,background-color,box-shadow]",
                         !isDaily
-                          ? "border-primary bg-primary-soft text-primary-text font-semibold"
-                          : "text-muted-foreground hover:text-foreground",
+                          ? "bg-primary text-white shadow-subtle"
+                          : "bg-transparent text-text-secondary hover:bg-background/70 hover:text-brand-navy",
                       )}
                     >
                       Total
                     </button>
                     <button
                       type="button"
+                      role="tab"
+                      aria-selected={isDaily}
                       onClick={() => handleModeChange("daily")}
                       className={cn(
-                        "rounded-md px-2.5 py-1 text-xs font-semibold transition-all",
+                        "rounded-md px-3 py-1.5 text-xs font-semibold transition-[color,background-color,box-shadow]",
                         isDaily
-                          ? "border-primary bg-primary-soft text-primary-text font-semibold"
-                          : "text-muted-foreground hover:text-foreground",
+                          ? "bg-primary text-white shadow-subtle"
+                          : "bg-transparent text-text-secondary hover:bg-background/70 hover:text-brand-navy",
                       )}
                     >
                       Daily
                     </button>
                   </div>
 
-                  {/* Data Only vs Voice Segmented Control (if voice plans available) */}
+                  {/* Data Only vs Voice — filled pill tabs */}
                   {planCounts.dataVoice > 0 && (
-                    <div className="inline-flex items-center rounded-lg bg-muted/70 p-0.5 border border-border/50 text-xs shadow-2xs">
+                    <div
+                      role="tablist"
+                      aria-label="Plan category"
+                      className="inline-flex items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5"
+                    >
                       <button
                         type="button"
+                        role="tab"
+                        aria-selected={packageCategory === "data-only"}
                         onClick={() => {
                           startTransition(() => {
                             setPackageCategory("data-only");
                           });
                         }}
                         className={cn(
-                          "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all",
+                          "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-[color,background-color,box-shadow]",
                           packageCategory === "data-only"
-                            ? "border-primary bg-primary-soft text-primary-text font-semibold"
-                            : "text-muted-foreground hover:text-foreground",
+                            ? "bg-primary text-white shadow-subtle"
+                            : "bg-transparent text-text-secondary hover:bg-background/70 hover:text-brand-navy",
                         )}
                         aria-label="Data Only"
                       >
@@ -600,16 +795,18 @@ export default function PlanFilterCard({
                       </button>
                       <button
                         type="button"
+                        role="tab"
+                        aria-selected={packageCategory === "data-voice"}
                         onClick={() => {
                           startTransition(() => {
                             setPackageCategory("data-voice");
                           });
                         }}
                         className={cn(
-                          "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all",
+                          "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-[color,background-color,box-shadow]",
                           packageCategory === "data-voice"
-                            ? "border-primary bg-primary-soft text-primary-text font-semibold"
-                            : "text-muted-foreground hover:text-foreground",
+                            ? "bg-primary text-white shadow-subtle"
+                            : "bg-transparent text-text-secondary hover:bg-background/70 hover:text-brand-navy",
                         )}
                         aria-label="Data and Voice"
                       >
@@ -1376,6 +1573,397 @@ export default function PlanFilterCard({
         </div>
       </section>
 
+      {/* ── MOBILE: Filter section drawer ── */}
+      <Drawer
+        open={mobileFilterSection !== null}
+        onOpenChange={(open) => {
+          if (!open) setMobileFilterSection(null);
+        }}
+      >
+        <DrawerContent className="max-h-[85vh] rounded-t-2xl border-t border-border bg-card lg:hidden">
+          <DrawerHeader className="border-b border-border px-4 pb-3 text-left">
+            <DrawerTitle className="text-brand-navy">
+              {mobileFilterSection === "data" && "Data"}
+              {mobileFilterSection === "validity" && "Validity"}
+              {mobileFilterSection === "price" && "Price"}
+            </DrawerTitle>
+          </DrawerHeader>
+
+          <div className="overflow-y-auto px-4 py-4">
+            {mobileFilterSection === "data" && (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div
+                    role="tablist"
+                    aria-label="Data allowance type"
+                    className="inline-flex items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5"
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={!isDaily}
+                      onClick={() => handleModeChange("total")}
+                      className={cn(
+                        "rounded-md px-3 py-1.5 text-xs font-semibold transition-[color,background-color,box-shadow]",
+                        !isDaily
+                          ? "bg-primary text-white shadow-subtle"
+                          : "bg-transparent text-text-secondary",
+                      )}
+                    >
+                      Total
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={isDaily}
+                      onClick={() => handleModeChange("daily")}
+                      className={cn(
+                        "rounded-md px-3 py-1.5 text-xs font-semibold transition-[color,background-color,box-shadow]",
+                        isDaily
+                          ? "bg-primary text-white shadow-subtle"
+                          : "bg-transparent text-text-secondary",
+                      )}
+                    >
+                      Daily
+                    </button>
+                  </div>
+                  {planCounts.dataVoice > 0 && (
+                    <div
+                      role="tablist"
+                      aria-label="Plan category"
+                      className="inline-flex items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5"
+                    >
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={packageCategory === "data-only"}
+                        onClick={() =>
+                          startTransition(() => setPackageCategory("data-only"))
+                        }
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold",
+                          packageCategory === "data-only"
+                            ? "bg-primary text-white shadow-subtle"
+                            : "bg-transparent text-text-secondary",
+                        )}
+                      >
+                        <Wifi className="h-3 w-3" />
+                        Data
+                      </button>
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={packageCategory === "data-voice"}
+                        onClick={() =>
+                          startTransition(() =>
+                            setPackageCategory("data-voice"),
+                          )
+                        }
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold",
+                          packageCategory === "data-voice"
+                            ? "bg-primary text-white shadow-subtle"
+                            : "bg-transparent text-text-secondary",
+                        )}
+                      >
+                        <PhoneCall className="h-3 w-3" />
+                        + Voice
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-1.5">
+                  {(isDaily ? DAILY_DATA_PRESETS : TOTAL_DATA_PRESETS).map(
+                    (gb) => {
+                      const count = isDaily
+                        ? (planCounts.dailyData[gb] ?? 0)
+                        : (planCounts.totalData[gb] ?? 0);
+                      const isSelected = activeDataPreset === gb;
+                      const label = isDaily ? `${gb}GB/d` : `${gb}GB+`;
+                      return (
+                        <button
+                          key={gb}
+                          type="button"
+                          onClick={() => handleDataPresetClick(gb)}
+                          disabled={count === 0}
+                          className={cn(
+                            "inline-flex h-9 items-center justify-between rounded-md border px-2.5 text-xs font-medium",
+                            isSelected
+                              ? "border-primary bg-primary-soft text-primary-text"
+                              : "border-border bg-background",
+                            count === 0 && "opacity-35",
+                          )}
+                        >
+                          <span>{label}</span>
+                          <span className="text-caption text-text-secondary tabular">
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    },
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      startTransition(() => {
+                        if (!unlimited) {
+                          setLocalDataRange([0, dataSliderMax]);
+                          setMinData(null);
+                          setMaxData(null);
+                          setDailyMinData(null);
+                          setDailyMaxData(null);
+                          setUnlimited(true);
+                        } else {
+                          setUnlimited(false);
+                        }
+                      });
+                    }}
+                    disabled={planCounts.unlimited === 0}
+                    className={cn(
+                      "inline-flex h-9 items-center justify-between rounded-md border px-2.5 text-xs font-medium",
+                      isDaily && "col-span-2",
+                      unlimited
+                        ? "border-primary bg-primary-soft text-primary-text"
+                        : "border-border bg-background",
+                      planCounts.unlimited === 0 && "opacity-35",
+                    )}
+                  >
+                    <span>Unlimited</span>
+                    <span className="text-caption text-text-secondary tabular">
+                      {planCounts.unlimited}
+                    </span>
+                  </button>
+                </div>
+
+                <div>
+                  <SliderPrimitive.Root
+                    value={localDataRange}
+                    onValueChange={handleDataSliderChange}
+                    onValueCommit={handleDataSliderCommit}
+                    min={0}
+                    max={dataSliderMax}
+                    step={isDaily ? 0.5 : 1}
+                    className="relative flex w-full touch-none select-none items-center py-2"
+                    aria-label="Data range slider"
+                  >
+                    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
+                      <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
+                    </SliderPrimitive.Track>
+                    <SliderPrimitive.Thumb
+                      aria-label="Minimum data"
+                      className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-subtle"
+                    />
+                    <SliderPrimitive.Thumb
+                      aria-label="Maximum data"
+                      className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-subtle"
+                    />
+                  </SliderPrimitive.Root>
+                  <div className="flex justify-between text-caption text-text-secondary">
+                    <span>0 GB</span>
+                    <span>{isDaily ? "10 GB+/day" : "50 GB+"}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {mobileFilterSection === "validity" && (
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-3 gap-1.5">
+                  {DURATION_PRESETS.map((days) => {
+                    const count = planCounts.duration[days] ?? 0;
+                    const isSelected = activeDurationPreset === days;
+                    return (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={() => handleValidityPresetClick(days)}
+                        disabled={count === 0}
+                        className={cn(
+                          "inline-flex h-9 items-center justify-between rounded-md border px-2.5 text-xs font-medium",
+                          isSelected
+                            ? "border-primary bg-primary-soft text-primary-text"
+                            : "border-border bg-background",
+                          count === 0 && "opacity-35",
+                        )}
+                      >
+                        <span>{days}+ Days</span>
+                        <span className="text-caption text-text-secondary tabular">
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      startTransition(() => {
+                        if (!noExpiry) {
+                          setLocalValidityRange([1, 90]);
+                          setMinDuration(null);
+                          setMaxDuration(null);
+                          setNoExpiry(true);
+                        } else {
+                          setNoExpiry(false);
+                        }
+                      });
+                    }}
+                    disabled={planCounts.noExpiry === 0}
+                    className={cn(
+                      "inline-flex h-9 items-center justify-between rounded-md border px-2.5 text-xs font-medium",
+                      noExpiry
+                        ? "border-primary bg-primary-soft text-primary-text"
+                        : "border-border bg-background",
+                      planCounts.noExpiry === 0 && "opacity-35",
+                    )}
+                  >
+                    <span>No Expiry</span>
+                    <span className="text-caption text-text-secondary tabular">
+                      {planCounts.noExpiry}
+                    </span>
+                  </button>
+                </div>
+
+                <div>
+                  <SliderPrimitive.Root
+                    value={localValidityRange}
+                    onValueChange={handleValiditySliderChange}
+                    onValueCommit={handleValiditySliderCommit}
+                    min={1}
+                    max={90}
+                    step={1}
+                    className="relative flex w-full touch-none select-none items-center py-2"
+                    aria-label="Trip duration range slider"
+                  >
+                    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
+                      <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
+                    </SliderPrimitive.Track>
+                    <SliderPrimitive.Thumb
+                      aria-label="Minimum duration"
+                      className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-subtle"
+                    />
+                    <SliderPrimitive.Thumb
+                      aria-label="Maximum duration"
+                      className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-subtle"
+                    />
+                  </SliderPrimitive.Root>
+                  <div className="flex justify-between text-caption text-text-secondary">
+                    <span>1 Day</span>
+                    <span>90+ Days</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {mobileFilterSection === "price" && (
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-3 gap-1.5">
+                  {planCounts.free > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const isCurrentlyFree = maxPrice === 0;
+                        startTransition(() => {
+                          if (isCurrentlyFree) {
+                            setLocalPriceRange([0, 100]);
+                            setMinPrice(null);
+                            setMaxPrice(null);
+                          } else {
+                            setLocalPriceRange([0, 0]);
+                            setMinPrice(null);
+                            setMaxPrice(0);
+                          }
+                        });
+                      }}
+                      className={cn(
+                        "inline-flex h-9 items-center justify-between rounded-md border px-2.5 text-xs font-medium",
+                        maxPrice === 0
+                          ? "border-primary bg-primary-soft text-primary-text"
+                          : "border-border bg-background",
+                      )}
+                    >
+                      <span>Free</span>
+                      <span className="text-caption text-text-secondary tabular">
+                        {planCounts.free}
+                      </span>
+                    </button>
+                  )}
+                  {PRICE_PRESETS.slice(0, planCounts.free > 0 ? 5 : 6).map(
+                    (amt) => {
+                      const count = planCounts.price[amt] ?? 0;
+                      const isSelected =
+                        activePricePreset === amt &&
+                        localPriceRange[0] === 0 &&
+                        maxPrice !== 0;
+                      return (
+                        <button
+                          key={amt}
+                          type="button"
+                          onClick={() => handlePricePresetClick(amt)}
+                          disabled={count === 0}
+                          className={cn(
+                            "inline-flex h-9 items-center justify-between rounded-md border px-2.5 text-xs font-medium",
+                            isSelected
+                              ? "border-primary bg-primary-soft text-primary-text"
+                              : "border-border bg-background",
+                            count === 0 && "opacity-35",
+                          )}
+                        >
+                          <span>Under ${amt}</span>
+                          <span className="text-caption text-text-secondary tabular">
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
+
+                <div>
+                  <SliderPrimitive.Root
+                    value={localPriceRange}
+                    onValueChange={handlePriceSliderChange}
+                    onValueCommit={handlePriceSliderCommit}
+                    min={0}
+                    max={100}
+                    step={1}
+                    className="relative flex w-full touch-none select-none items-center py-2"
+                    aria-label="Price range slider"
+                  >
+                    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
+                      <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
+                    </SliderPrimitive.Track>
+                    <SliderPrimitive.Thumb
+                      aria-label="Minimum price"
+                      className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-subtle"
+                    />
+                    <SliderPrimitive.Thumb
+                      aria-label="Maximum price"
+                      className="block h-5 w-5 rounded-full border-2 border-primary bg-background shadow-subtle"
+                    />
+                  </SliderPrimitive.Root>
+                  <div className="flex justify-between text-caption text-text-secondary">
+                    <span>$0</span>
+                    <span>$100+</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DrawerFooter className="border-t border-border px-4 pb-6 pt-3">
+            <DrawerClose asChild>
+              <button
+                type="button"
+                className="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary text-sm font-semibold text-white shadow-subtle"
+              >
+                Show {filteredCount} plans
+              </button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
       {/* ── Advanced Filters Dialog Modal / Mobile Drawer ── */}
       <AdvancedFiltersDialog
         open={isAdvancedModalOpen}
@@ -1383,17 +1971,21 @@ export default function PlanFilterCard({
         filters={filters}
       />
 
-      {/* ── SEPARATE SORTING & RESULT CONTROLS TOOLBAR ── */}
-      <div className="rounded-2xl border border-border/80 bg-card p-3 sm:px-5 sm:py-3.5 shadow-2xs">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          {/* Left: Sort By Controls */}
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 md:pb-0">
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground shrink-0 mr-1">
+      {/* ── Sort & promo toolbar ── */}
+      <div className="rounded-xl border border-border bg-card p-2.5 shadow-subtle sm:rounded-2xl sm:p-3 sm:px-5 sm:py-3.5">
+        <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-4">
+          {/* Sort chips — edge-to-edge scroll on mobile */}
+          <div className="min-w-0 md:flex md:items-center md:gap-2">
+            <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-secondary md:mb-0 md:mr-1 md:shrink-0 md:text-xs">
               <ArrowUpDown className="h-3.5 w-3.5" />
-              <span>SORT:</span>
+              <span>Sort</span>
             </div>
 
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div
+              role="group"
+              aria-label="Sort plans"
+              className="-mx-0.5 flex gap-1.5 overflow-x-auto px-0.5 pb-0.5 scrollbar-none snap-x snap-mandatory md:pb-0"
+            >
               {SORT_OPTIONS.map((opt) => {
                 const isActive = sort === opt.value;
                 return (
@@ -1401,11 +1993,12 @@ export default function PlanFilterCard({
                     key={opt.value}
                     type="button"
                     onClick={() => startTransition(() => setSort(opt.value))}
+                    aria-pressed={isActive}
                     className={cn(
-                      "inline-flex min-h-[36px] items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all active:scale-95 shadow-2xs whitespace-nowrap",
+                      "inline-flex min-h-9 shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-semibold transition-[color,background-color,border-color] active:scale-[0.98]",
                       isActive
-                        ? "border-primary bg-primary-soft text-primary-text [&_svg]:text-primary-text"
-                        : "border-border/80 bg-background text-foreground/80 hover:bg-muted/70 hover:text-foreground [&_svg]:text-primary",
+                        ? "border-2 border-primary bg-primary-soft text-primary-text [&_svg]:text-primary-text"
+                        : "border-border bg-background text-foreground/80 hover:border-border-strong hover:bg-muted/40 [&_svg]:text-primary-text",
                     )}
                   >
                     {opt.icon}
@@ -1416,14 +2009,14 @@ export default function PlanFilterCard({
             </div>
           </div>
 
-          {/* Right: Apply Promo Codes & Results Count */}
-          <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-2.5 md:border-t-0 md:pt-0">
-            <div className="hidden lg:block h-4 w-px bg-border/80" />
-
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-xs font-semibold text-foreground">
-                Apply Promo Codes
+          {/* Promo + results (results hidden on mobile) */}
+          <div className="flex items-center justify-between gap-3 border-t border-border pt-2 md:justify-end md:border-t-0 md:pt-0">
+            <label className="flex min-h-9 flex-1 cursor-pointer select-none items-center justify-between gap-2 rounded-md border border-border bg-muted/30 px-3 py-1.5 md:flex-none md:justify-start md:border-0 md:bg-transparent md:px-0 md:py-0">
+              <span className="inline-flex items-center gap-2">
+                <Sparkles className="h-4 w-4 shrink-0 text-primary-text" />
+                <span className="text-xs font-semibold text-foreground">
+                  Apply Promo Codes
+                </span>
               </span>
               <Switch
                 checked={applyPromo}
@@ -1435,14 +2028,17 @@ export default function PlanFilterCard({
               />
             </label>
 
-            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground border-l border-border/70 pl-3">
+            <div className="hidden items-center gap-2 border-l border-border pl-3 text-xs font-medium text-text-secondary md:flex">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
               </span>
               <span>
-                Showing <strong className="text-foreground">{filteredCount}</strong> of{" "}
-                {totalCount} plans
+                Showing{" "}
+                <strong className="tabular text-brand-navy">
+                  {filteredCount}
+                </strong>{" "}
+                of {totalCount} plans
               </span>
             </div>
           </div>

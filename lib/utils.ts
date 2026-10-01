@@ -16,6 +16,50 @@ export function formatPrice(usd: number): string {
   return `$${usd}`;
 }
 
+/** Format kbps to a short human speed label. */
+export function formatKbpsSpeed(kbps: number): string {
+  if (!Number.isFinite(kbps) || kbps <= 0) return "";
+  if (kbps >= 1000) {
+    const mbps = kbps / 1000;
+    const label = mbps % 1 === 0 ? mbps.toFixed(0) : mbps.toFixed(1);
+    return `${label} Mbps`;
+  }
+  return `${Math.round(kbps)} Kbps`;
+}
+
+/**
+ * Secondary fair-use / throttle note under Data.
+ * Prefer structured fields; fall back to capacityInfo when useful.
+ */
+export function getPlanFairUseNote(plan: {
+  capacityInfo: string | null;
+  unlimitedAfterAllowance: boolean | null;
+  reducedSpeed: number | null;
+  speedLimit?: number | null;
+  possibleThrottling?: boolean | null;
+}): string | null {
+  if (plan.reducedSpeed != null && plan.reducedSpeed > 0) {
+    const speed = formatKbpsSpeed(plan.reducedSpeed);
+    return speed ? `Then ${speed}` : null;
+  }
+  if (plan.possibleThrottling) {
+    return "May throttle after fair use";
+  }
+  if (plan.unlimitedAfterAllowance) {
+    return "Unlimited after high-speed data";
+  }
+  if (plan.speedLimit != null && plan.speedLimit > 0) {
+    const speed = formatKbpsSpeed(plan.speedLimit);
+    return speed ? `Capped at ${speed}` : null;
+  }
+
+  const info = plan.capacityInfo?.trim();
+  if (!info) return null;
+  const lower = info.toLowerCase();
+  if (lower === "unlimited" || lower === "data unknown") return null;
+  return info;
+}
+
 export function formatPlanData(plan: {
   capacity: number;
   capacityInfo: string | null;
@@ -42,14 +86,11 @@ export function getHighSpeedDataMB(plan: {
   return plan.capacity;
 }
 
+/** True unlimited data only — not daily caps that continue after fair use. */
 export function isUnlimitedPlan(plan: {
   dataType: "fixed" | "daily" | "unlimited" | "unknown";
-  unlimitedAfterAllowance: boolean | null;
 }): boolean {
-  return (
-    plan.dataType === "unlimited" ||
-    (plan.dataType === "daily" && plan.unlimitedAfterAllowance === true)
-  );
+  return plan.dataType === "unlimited";
 }
 
 export function getEffectiveUsdPrice(plan: {

@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   Check,
   ChevronRight,
+  Info,
   Minus,
   Wifi,
   Phone,
@@ -19,10 +20,17 @@ import {
   formatPrice,
   getEffectiveUsdPrice,
   getHighSpeedDataMB,
+  getPlanFairUseNote,
   pricePerGB,
 } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type PlanCardBadge = "Best value" | "Most popular";
 
@@ -125,7 +133,7 @@ export function PlanCard({
   const effectivePrice = getEffectiveUsdPrice(plan);
   const hasPromo = effectivePrice < plan.usdPrice;
   const dataLabel = formatPlanData(plan);
-  const isUnlimited = plan.dataType === "unlimited";
+  const fairUseNote = getPlanFairUseNote(plan);
   const speed = getSpeedLabel(plan);
   const networks = getNetworkNames(plan);
   const features = getFeatures(plan);
@@ -202,10 +210,32 @@ export function PlanCard({
 
       {/* Data + validity */}
       <div className={cn(compareMode && "subgrid-row")}>
-        <p className="text-h2 mt-3">{dataLabel}</p>
-        {isUnlimited && plan.capacityInfo && (
-          <p className="text-caption mt-0.5">Fair use</p>
-        )}
+        <div className="mt-3 flex items-center gap-1">
+          <p className="text-h2">{dataLabel}</p>
+          {fairUseNote ? (
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    aria-label={`Fair use details: ${fairUseNote}`}
+                    className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[16rem]">
+                  <p className="text-xs font-semibold text-white">Fair use / speed</p>
+                  <p className="mt-0.5 text-xs text-white/90">{fairUseNote}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : null}
+        </div>
         <p className="text-body-sm mt-1 text-text-secondary">
           {plan.period} {plan.period === 1 ? "day" : "days"}
           {speed && (
@@ -221,24 +251,22 @@ export function PlanCard({
 
       {/* Price */}
       <div className="mt-3">
-        <p className="text-price">
-          {formatPrice(effectivePrice)}{" "}
-          <span className="text-caption font-medium text-text-muted align-baseline">
-            USD
-          </span>
-        </p>
-        <div className="mt-0.5 flex flex-wrap items-center gap-2">
-          {hasPromo && (
-            <>
-              <span className="text-caption line-through text-text-muted tabular">
-                {formatPrice(plan.usdPrice)} USD
-              </span>
-              <Badge variant="success">Discount</Badge>
-            </>
-          )}
-          {perGb !== "–" && (
-            <span className="text-caption">{perGb}/GB</span>
-          )}
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          <p className="text-price">
+            {formatPrice(effectivePrice)}{" "}
+            <span className="text-xs font-medium text-text-muted align-baseline">
+              USD
+            </span>
+          </p>
+          {hasPromo ? (
+            <span className="text-xs tabular text-destructive line-through decoration-destructive/80">
+              {formatPrice(plan.usdPrice)}
+            </span>
+          ) : null}
+          {hasPromo ? <Badge variant="success">Discount</Badge> : null}
+          {perGb !== "–" ? (
+            <span className="text-xs text-text-muted">{perGb}/GB</span>
+          ) : null}
         </div>
       </div>
 

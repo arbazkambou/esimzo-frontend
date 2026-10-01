@@ -96,7 +96,7 @@ export async function generateMetadata({
         planCount: 0,
         providerCount: 0,
         startingPrice: 0,
-        lastUpdated: "daily" as const,
+        lastUpdated: new Date(),
       };
 
   const { title, description, pageUrl } = buildCountryPlansMetadataFields({
@@ -258,10 +258,10 @@ export default async function page({ params }: PageProps) {
           name={countryName}
           scope={scope}
         />
-        {resolvedFaqs && resolvedFaqs.faqs.length > 0 ? (
-          <FAQSection faqs={resolvedFaqs.faqs} heading={resolvedFaqs.heading} />
-        ) : null}
       </div>
+      {resolvedFaqs && resolvedFaqs.faqs.length > 0 ? (
+        <FAQSection faqs={resolvedFaqs.faqs} heading={resolvedFaqs.heading} />
+      ) : null}
     </>
   );
 }

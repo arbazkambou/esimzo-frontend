@@ -63,7 +63,7 @@ const curatedDestinations: CuratedDestination[] = [
 
 export default function TopDestinationsSection() {
   return (
-    <section id="destinations" className="py-14 sm:py-20 bg-background relative">
+    <section id="destinations" className="py-[var(--section-y-tight)] bg-background relative">
       <div className="container max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">

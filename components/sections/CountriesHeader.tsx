@@ -3,7 +3,7 @@ import type {
   PlansHeroStats,
 } from "@/lib/content/countries";
 import { formatPrice } from "@/lib/utils";
-import { ArrowDown, Layers3, Sparkles, Tag, UsersRound } from "lucide-react";
+import { ArrowRight, Layers3, Sparkles, Tag, UsersRound } from "lucide-react";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -38,16 +38,39 @@ function highlightTemplateValues(
   });
 }
 
-function formatLastUpdated(value: PlansHeroStats["lastUpdated"]): string {
-  if (value == null || value === "") return "daily";
-  if (value instanceof Date) {
-    return value.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+function resolveUpdatedDate(value: PlansHeroStats["lastUpdated"]): Date {
+  const date =
+    value instanceof Date
+      ? value
+      : value == null || value === "" || value === "daily"
+        ? new Date()
+        : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return new Date();
   }
-  return String(value);
+
+  return date;
+}
+
+function formatUpdatedAt(value: PlansHeroStats["lastUpdated"]): string {
+  return resolveUpdatedDate(value).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+/** Compact stamp for narrow screens, e.g. "Oct 1, 1:00 AM" */
+function formatUpdatedAtShort(value: PlansHeroStats["lastUpdated"]): string {
+  return resolveUpdatedDate(value).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 export default function CountriesHeader({
@@ -56,20 +79,16 @@ export default function CountriesHeader({
   stats,
 }: Props) {
   const startingPrice = formatPrice(stats.startingPrice);
-  const lastUpdated = formatLastUpdated(stats.lastUpdated);
+  const updatedAt = formatUpdatedAt(stats.lastUpdated);
+  const updatedAtShort = formatUpdatedAtShort(stats.lastUpdated);
 
   const title = fillTemplate(content.titleTemplate, { countryName });
   const description = fillTemplate(content.description, { countryName });
-  const browseValues = {
-    planCount: String(stats.planCount),
-    providerCount: String(stats.providerCount),
-  };
   const pricingValues = {
     startingPrice,
-    lastUpdated,
+    lastUpdated: "daily",
   };
 
-  // Highlight country name in the H1 when the template ends with it
   const titleSuffix = ` ${countryName}`;
   const titleHasCountrySuffix = title.endsWith(titleSuffix);
   const titlePrefix = titleHasCountrySuffix
@@ -90,12 +109,16 @@ export default function CountriesHeader({
         aria-hidden="true"
       />
 
-      <div className="container py-12 sm:py-16 lg:py-20 xl:py-24">
-        <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(28rem,0.98fr)] lg:gap-16 xl:gap-24">
+      <div className="container py-12 sm:py-16 lg:py-20">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] lg:gap-14 xl:gap-20">
           <div className="flex min-w-0 flex-col gap-6">
             {content.eyebrow ? (
               <p className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/15 bg-background/75 px-3.5 py-2 text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-primary shadow-sm backdrop-blur-sm sm:text-xs">
-                <Sparkles className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+                <Sparkles
+                  className="h-3.5 w-3.5"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
                 {content.eyebrow}
               </p>
             ) : null}
@@ -119,8 +142,8 @@ export default function CountriesHeader({
                 className="group inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-[0_10px_24px_-12px_var(--primary)] transition-[transform,box-shadow,background-color] hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-[0_14px_28px_-12px_var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 Browse plans
-                <ArrowDown
-                  className="h-4 w-4 transition-transform group-hover:translate-y-0.5"
+                <ArrowRight
+                  className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
                   strokeWidth={2.25}
                   aria-hidden="true"
                 />
@@ -129,98 +152,91 @@ export default function CountriesHeader({
           </div>
 
           <div className="min-w-0">
-            <div className="relative w-full max-w-full overflow-hidden rounded-[1.75rem] border border-white/70 bg-card/95 p-5 shadow-[0_14px_36px_-26px_rgba(15,23,42,0.22)] ring-1 ring-border/40 backdrop-blur-sm dark:border-white/10 sm:p-7">
-              <div className="min-w-0">
-                <div className="mb-4 flex min-w-0 flex-wrap items-center justify-between gap-3 px-1">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-secondary/30 text-foreground">
-                      <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
-                    Plan snapshot
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/25 px-2.5 py-1 text-xs font-medium text-muted-foreground">
-                    <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
-                    Updated {lastUpdated}
+            <div className="rounded-xl border border-white/70 bg-card/95 p-2 shadow-card ring-1 ring-border/40 backdrop-blur-sm dark:border-white/10 sm:rounded-[1.75rem] sm:p-6 sm:shadow-[0_14px_36px_-26px_rgba(15,23,42,0.22)]">
+              {/* Header — title + timestamp on one row with space-between */}
+              <div className="mb-1.5 flex items-center justify-between gap-2 sm:mb-4 sm:gap-3">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-secondary/30 text-foreground sm:h-7 sm:w-7 sm:rounded-lg">
+                    <Sparkles
+                      className="h-3 w-3 sm:h-3.5 sm:w-3.5"
+                      aria-hidden="true"
+                    />
                   </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-[1.45fr_1fr_1fr] sm:gap-3">
-                  <div className="col-span-2 flex min-w-0 flex-col justify-between rounded-2xl border border-primary/15 bg-primary/[0.09] px-4 py-4 sm:col-span-1 sm:min-h-28 sm:px-5">
-                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground sm:text-sm">
-                      <Tag
-                        className="h-4 w-4 shrink-0 text-primary"
-                        strokeWidth={2}
-                        aria-hidden="true"
-                      />
-                      Starting price
-                    </div>
-                    <p className="mt-3 text-3xl font-bold leading-none tracking-[-0.04em] text-primary tabular-nums sm:text-[2rem]">
-                      {startingPrice}
-                    </p>
-                  </div>
-
-                  <div className="flex min-w-0 flex-col justify-between rounded-2xl border border-secondary/30 bg-secondary/[0.13] px-4 py-4 sm:min-h-28">
-                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground sm:text-sm">
-                      <Layers3
-                        className="h-4 w-4 shrink-0 text-foreground"
-                        strokeWidth={1.75}
-                        aria-hidden="true"
-                      />
-                      Plans
-                    </div>
-                    <p className="mt-3 text-2xl font-bold leading-none tracking-tight text-foreground tabular-nums sm:text-[1.75rem]">
-                      {stats.planCount}
-                    </p>
-                  </div>
-
-                  <div className="flex min-w-0 flex-col justify-between rounded-2xl border border-secondary/30 bg-secondary/[0.13] px-4 py-4 sm:min-h-28">
-                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground sm:text-sm">
-                      <UsersRound
-                        className="h-4 w-4 shrink-0 text-foreground"
-                        strokeWidth={1.75}
-                        aria-hidden="true"
-                      />
-                      Providers
-                    </div>
-                    <p className="mt-3 text-2xl font-bold leading-none tracking-tight text-foreground tabular-nums sm:text-[1.75rem]">
-                      {stats.providerCount}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 space-y-2 border-t border-border/55 pt-4 text-sm leading-6 text-muted-foreground">
-                  <p className="flex items-start gap-2.5 rounded-xl border border-secondary/15 bg-secondary/[0.06] px-3 py-2.5">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-background/80 text-primary ring-1 ring-border/35">
-                      <Layers3
-                        className="h-3.5 w-3.5"
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                      />
-                    </span>
-                    <span>
-                      {highlightTemplateValues(
-                        content.browseTemplate,
-                        browseValues,
-                      )}
-                    </span>
+                  <p className="truncate text-sm font-semibold leading-5 text-foreground">
+                    Plan snapshot
                   </p>
-                  <p className="flex items-start gap-2.5 rounded-xl border border-primary/10 bg-primary/[0.045] px-3 py-2.5">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-background/80 text-primary ring-1 ring-border/35">
-                      <Tag
-                        className="h-3.5 w-3.5"
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                      />
+                </div>
+                <p className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-success">
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
+                    aria-hidden="true"
+                  />
+                  <span className="sm:hidden" title={`Updated at ${updatedAt}`}>
+                    Updated at {updatedAtShort}
+                  </span>
+                  <span className="hidden sm:inline">
+                    Updated at {updatedAt}
+                  </span>
+                </p>
+              </div>
+
+              {/* Stats — compact equal columns */}
+              <div className="grid grid-cols-3 overflow-hidden rounded-md border border-border sm:gap-3 sm:overflow-visible sm:rounded-none sm:border-0">
+                <div className="flex min-w-0 flex-col items-start gap-1 bg-primary/[0.09] px-2 py-1.5 text-left sm:min-h-[6.5rem] sm:justify-between sm:rounded-2xl sm:border sm:border-primary/15 sm:px-4 sm:py-4">
+                  <div className="flex w-full items-center gap-1 sm:gap-2">
+                    <Tag
+                      className="h-3 w-3 shrink-0 text-primary sm:h-4 sm:w-4"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[10px] font-medium leading-tight text-muted-foreground sm:text-sm">
+                      Starting price
                     </span>
-                    <span>
-                      {highlightTemplateValues(
-                        content.pricingTemplate,
-                        pricingValues,
-                      )}
+                  </div>
+                  <p className="text-base font-bold leading-none tracking-[-0.04em] text-primary tabular-nums sm:mt-3 sm:text-[1.875rem]">
+                    {startingPrice}
+                  </p>
+                </div>
+
+                <div className="flex min-w-0 flex-col items-start gap-1 border-l border-border bg-secondary/[0.13] px-2 py-1.5 text-left sm:min-h-[6.5rem] sm:justify-between sm:rounded-2xl sm:border sm:border-secondary/30 sm:px-4 sm:py-4">
+                  <div className="flex w-full items-center gap-1 sm:gap-2">
+                    <Layers3
+                      className="h-3 w-3 shrink-0 text-foreground sm:h-4 sm:w-4"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[10px] font-medium leading-tight text-muted-foreground sm:text-sm">
+                      Plans
                     </span>
+                  </div>
+                  <p className="text-base font-bold leading-none tracking-tight text-foreground tabular-nums sm:mt-3 sm:text-[1.75rem]">
+                    {stats.planCount}
+                  </p>
+                </div>
+
+                <div className="flex min-w-0 flex-col items-start gap-1 border-l border-border bg-secondary/[0.13] px-2 py-1.5 text-left sm:min-h-[6.5rem] sm:justify-between sm:rounded-2xl sm:border sm:border-secondary/30 sm:px-4 sm:py-4">
+                  <div className="flex w-full items-center gap-1 sm:gap-2">
+                    <UsersRound
+                      className="h-3 w-3 shrink-0 text-foreground sm:h-4 sm:w-4"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[10px] font-medium leading-tight text-muted-foreground sm:text-sm">
+                      Providers
+                    </span>
+                  </div>
+                  <p className="text-base font-bold leading-none tracking-tight text-foreground tabular-nums sm:mt-3 sm:text-[1.75rem]">
+                    {stats.providerCount}
                   </p>
                 </div>
               </div>
+
+              <p className="mt-1.5 rounded-md border border-primary/10 bg-primary/[0.045] px-2 py-1 text-xs leading-4 text-muted-foreground sm:mt-4 sm:rounded-xl sm:px-3.5 sm:py-3 sm:text-sm sm:leading-6">
+                {highlightTemplateValues(
+                  content.pricingTemplate,
+                  pricingValues,
+                )}
+              </p>
             </div>
           </div>
         </div>

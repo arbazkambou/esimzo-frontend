@@ -118,7 +118,7 @@ export default function CountryVsRegionalSection({
     <section
       id="country-vs-regional"
       aria-labelledby="country-vs-regional-heading"
-      className="relative overflow-hidden bg-background py-14 sm:py-20"
+      className="relative overflow-hidden bg-background py-[var(--section-y-tight)]"
     >
       <div
         className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"

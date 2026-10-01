@@ -15,7 +15,7 @@ export function derivePlansHeroStats(plans: Plan[]): PlansHeroStats {
     planCount,
     providerCount,
     startingPrice,
-    // No public last_updated on plan payloads yet; matches site "updated daily" messaging.
-    lastUpdated: "daily",
+    // No public last_updated on plan payloads yet; use render time as a human-readable stamp.
+    lastUpdated: new Date(),
   };
 }

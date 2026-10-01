@@ -28,7 +28,7 @@ export default function FAQSection({
   return (
     <section
       id="faq"
-      className="py-[var(--section-y)] bg-background relative"
+      className="py-[var(--section-y-tight)] bg-background relative"
     >
       <div className="container-narrow relative z-10">
         <div className="mb-8 text-center sm:mb-10">
