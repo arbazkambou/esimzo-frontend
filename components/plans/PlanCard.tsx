@@ -25,11 +25,7 @@ import {
 } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { HintTip } from "@/components/ui/hint-tip";
 
 export type PlanCardBadge = "Best value" | "Most popular";
 
@@ -54,6 +50,14 @@ function getSpeedLabel(plan: Plan): "4G" | "5G" | "4G/5G" | null {
 
 function getNetworkNames(plan: Plan): string[] {
   const names = new Set<string>();
+
+  if (Array.isArray(plan.networks) && plan.networks.length > 0) {
+    for (const name of plan.networks) {
+      if (typeof name === "string" && name.trim()) names.add(name.trim());
+    }
+    return Array.from(names);
+  }
+
   for (const coverage of plan.coverages ?? []) {
     for (const network of coverage.networks ?? []) {
       if (network.name) names.add(network.name);
@@ -212,24 +216,14 @@ export function PlanCard({
         <div className="mt-3 flex items-center gap-1">
           <p className="text-h2">{dataLabel}</p>
           {fairUseNote ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  aria-label={`Fair use details: ${fairUseNote}`}
-                  className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
-                >
-                  <Info className="h-3.5 w-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[16rem]">
-                {fairUseNote}
-              </TooltipContent>
-            </Tooltip>
+            <HintTip
+              content={fairUseNote}
+              label={`Fair use details: ${fairUseNote}`}
+              side="top"
+              className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
+            >
+              <Info className="h-3.5 w-3.5" />
+            </HintTip>
           ) : null}
         </div>
         <p className="text-body-sm mt-1 text-text-secondary">

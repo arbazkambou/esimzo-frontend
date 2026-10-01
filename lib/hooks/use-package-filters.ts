@@ -9,12 +9,38 @@ import {
   parseAsArrayOf,
 } from "nuqs";
 import type { Plan } from "@/lib/types/plans.types";
+import { normalizeNetworkName } from "@/lib/network-names";
 import {
   getEffectiveUsdPrice,
   getHighSpeedDataMB,
   isUnlimitedPlan,
 } from "@/lib/utils";
-import { getCountryNetworkCoverageContent } from "@/lib/content/countries";
+
+/** Prefer slim `plan.networks`; fall back to coverages (provider/detail payloads). */
+function getPlanNetworkNames(plan: Plan): string[] {
+  const raw: string[] = [];
+
+  if (Array.isArray(plan.networks) && plan.networks.length > 0) {
+    for (const name of plan.networks) {
+      if (typeof name === "string" && name.trim()) raw.push(name);
+    }
+  } else {
+    for (const coverage of plan.coverages ?? []) {
+      for (const network of coverage.networks ?? []) {
+        const netName =
+          typeof network === "string" ? network : network?.name;
+        if (netName?.trim()) raw.push(netName.trim());
+      }
+    }
+  }
+
+  const names = new Set<string>();
+  for (const name of raw) {
+    const normalized = normalizeNetworkName(name);
+    if (normalized) names.add(normalized);
+  }
+  return [...names];
+}
 
 // ── Sort options ──
 export type SortOption = "cheapest" | "best-value" | "most-data" | "longest";
@@ -374,42 +400,21 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     [plans],
   );
 
-  // Extract unique carriers with plan counts
+  // Extract unique carriers with plan counts (from slim networks or coverages)
   const allNetworks = useMemo(() => {
     const map = new Map<string, number>();
 
-    // 1. Check if plans contain coverages with networks
-    for (const p of allPlans) {
-      const planNetworks = new Set<string>();
-      for (const c of p.coverages ?? []) {
-        for (const n of c.networks ?? []) {
-          const netName = typeof n === "string" ? n : n?.name;
-          if (netName && !planNetworks.has(netName)) {
-            planNetworks.add(netName);
-          }
-        }
-      }
+    for (const plan of allPlans) {
+      const planNetworks = new Set(getPlanNetworkNames(plan));
       for (const net of planNetworks) {
         map.set(net, (map.get(net) ?? 0) + 1);
       }
     }
 
-    // 2. If no networks found in plan.coverages and slug is provided, resolve from destination known networks
-    if (map.size === 0 && slug) {
-      const coverageContent = getCountryNetworkCoverageContent(slug);
-      const known = coverageContent?.networks ?? [];
-      const weights = [0.94, 0.82, 0.71, 0.58, 0.45];
-      known.forEach((netName, idx) => {
-        const factor = weights[idx % weights.length];
-        const count = Math.max(1, Math.round(allPlans.length * factor));
-        map.set(netName, count);
-      });
-    }
-
     return Array.from(map.entries())
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count);
-  }, [allPlans, slug]);
+  }, [allPlans]);
 
   // Extract unique providers with logos and plan counts
   const allProviders = useMemo(() => {
@@ -530,14 +535,20 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
       );
     }
 
-    // Networks filter
+    // Networks filter (slim `networks` or coverages), with alias normalization
     if (networks.length > 0) {
-      const netSet = new Set(networks);
-      result = result.filter((p) =>
-        p.coverages?.some((c) =>
-          c.networks?.some((n) => netSet.has(n.name)),
-        ),
+      const netSet = new Set(
+        networks
+          .filter((name) => name !== "__NONE_SELECTED__")
+          .map((name) => normalizeNetworkName(name) || name),
       );
+      if (netSet.size === 0) {
+        result = [];
+      } else {
+        result = result.filter((p) =>
+          getPlanNetworkNames(p).some((name) => netSet.has(name)),
+        );
+      }
     }
 
     // Providers filter

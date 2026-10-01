@@ -3,16 +3,13 @@ import { Send, X, Instagram, Mail } from "lucide-react";
 
 const footerLinks = {
   Product: [
-    { label: "eSIM Plans", href: "/plans" },
     { label: "Global eSIMs", href: "/global" },
-    { label: "Regional eSIMs", href: "/region" },
     { label: "Popular Destinations", href: "/#destinations" },
   ],
   Company: [
     { label: "Why eSIMzo", href: "/#why-esimzo" },
     { label: "How it works", href: "/#how-it-works" },
     { label: "Reviews", href: "/#reviews" },
-    { label: "Blog", href: "/blog" },
   ],
   Support: [
     { label: "FAQ", href: "/#faq" },
@@ -55,7 +52,7 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="max-w-[17rem] text-body-sm leading-relaxed text-white/80">
+            <p className="max-w-[17rem] text-body-sm leading-relaxed !text-white/85">
               The smartest way to compare and buy eSIM plans for travel — no
               roaming, no hassle, no overpaying.
             </p>
@@ -90,7 +87,7 @@ export default function Footer() {
                       id={`footer-link-${link.label
                         .toLowerCase()
                         .replace(/\s+/g, "-")}`}
-                      className="text-body-sm text-white/80 transition-colors hover:text-white"
+                      className="text-body-sm !text-white/65 transition-colors hover:!text-primary"
                     >
                       {link.label}
                     </Link>
@@ -102,7 +99,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/15 pt-7">
-          <p className="max-w-2xl text-caption leading-relaxed text-white/70">
+          <p className="max-w-2xl text-caption leading-relaxed !text-white/75">
             eSIMzo is an independent travel eSIM comparison engine. Providers
             cannot pay to rank higher. Listings are ranked by measurable
             traveler criteria. Affiliate commissions may apply when you buy
@@ -112,7 +109,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/15">
-        <div className="container flex flex-col items-start justify-between gap-2 py-5 text-caption text-white/70 sm:flex-row sm:items-center">
+        <div className="container flex flex-col items-start justify-between gap-2 py-5 text-caption !text-white/75 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} eSIMzo. All rights reserved.</p>
           <p>Made for travellers worldwide</p>
         </div>

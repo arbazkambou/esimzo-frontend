@@ -137,13 +137,21 @@ export function buildCountryPlansJsonLd({
   );
 
   if (faqs.length > 0) {
+    const seenQuestions = new Set<string>();
+    const dedupedFaqs = faqs.filter((faq) => {
+      const key = faq.question.trim().toLowerCase();
+      if (!key || seenQuestions.has(key)) return false;
+      seenQuestions.add(key);
+      return true;
+    });
+
     hasPart.push({ "@id": `${pageUrl}#faq` });
     graph.push({
       "@type": "FAQPage",
       "@id": `${pageUrl}#faq`,
       url: `${pageUrl}#faq`,
       isPartOf: { "@id": pageId },
-      mainEntity: faqs.map((faq) => ({
+      mainEntity: dedupedFaqs.map((faq) => ({
         "@type": "Question",
         name: faq.question,
         acceptedAnswer: {
@@ -203,11 +211,14 @@ export function buildCountryPlansMetadataFields({
   countryName,
   heroContent,
   stats,
+  metaDescriptionOverride,
 }: {
   slug: string;
   countryName: string;
   heroContent: CountryPlansHeroContent;
   stats: PlansHeroStats;
+  /** Prefer speed-test meta when available */
+  metaDescriptionOverride?: string | null;
 }) {
   const pageUrl = `${SITE_URL}/${slug}/`;
   const values = {
@@ -219,7 +230,9 @@ export function buildCountryPlansMetadataFields({
   };
 
   const title = fillTemplate(heroContent.titleTemplate, values);
-  const description = fillTemplate(heroContent.description, values);
+  const description =
+    metaDescriptionOverride?.trim() ||
+    fillTemplate(heroContent.description, values);
 
   return {
     title,

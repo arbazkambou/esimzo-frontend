@@ -9,6 +9,7 @@ import {
 export type PlansScope = "country" | "region" | "global";
 
 const twelveHoursMs = 12 * 60 * 60 * 1000;
+const isDev = process.env.NODE_ENV === "development";
 
 export function usePlans(
   slug: string,
@@ -29,8 +30,12 @@ export function usePlans(
       return res.data;
     },
     initialData,
-    initialDataUpdatedAt: initialData ? () => Date.now() : undefined,
-    staleTime: twelveHoursMs,
-    gcTime: twelveHoursMs,
+    // In prod, treat SSR payload as fresh so we don't immediately refetch.
+    // In dev, allow refetch so backend changes show up without cache gymnastics.
+    initialDataUpdatedAt: !isDev && initialData ? () => Date.now() : undefined,
+    staleTime: isDev ? 0 : twelveHoursMs,
+    gcTime: isDev ? 5 * 60 * 1000 : twelveHoursMs,
+    refetchOnMount: isDev,
+    refetchOnWindowFocus: isDev,
   });
 }

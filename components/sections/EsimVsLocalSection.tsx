@@ -43,18 +43,9 @@ export default function EsimVsLocalSection({ countryName, content }: Props) {
     <section
       id="esim-vs-local"
       aria-labelledby="esim-vs-local-heading"
-      className="relative overflow-hidden bg-background py-[var(--section-y-tight)]"
+      className="bg-background py-[var(--section-y-tight)]"
     >
-      <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 w-full">
+      <div className="w-full">
         <header className="mb-10 text-center sm:mb-12">
           {content.eyebrow ? (
             <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15">
@@ -81,14 +72,14 @@ export default function EsimVsLocalSection({ countryName, content }: Props) {
             )}
           </h2>
 
-          <p className="mx-auto max-w-3xl text-left text-xs leading-relaxed font-normal text-slate-500 sm:text-[13.5px] dark:text-slate-400">
+          <p className="mx-auto max-w-3xl text-left text-xs leading-relaxed font-normal text-text-secondary sm:text-[13.5px]">
             {intro}
           </p>
         </header>
 
         {notice ? (
           <Alert className="mb-8 border-primary/20 bg-primary-soft/70 dark:border-primary/30 dark:bg-primary/30">
-            <AlertDescription className="text-slate-600 dark:text-slate-300">
+            <AlertDescription className="text-text-secondary">
               {notice}
             </AlertDescription>
           </Alert>
@@ -123,10 +114,10 @@ export default function EsimVsLocalSection({ countryName, content }: Props) {
                     key={`${row.travelEsim}-${index}`}
                     className="border-b border-slate-100 last:border-b-0 dark:border-slate-800/80"
                   >
-                    <td className="border-r border-slate-100 px-4 py-4 align-top text-xs leading-relaxed font-normal text-slate-500 sm:px-5 sm:text-[13.5px] dark:border-slate-800 dark:text-slate-400">
+                    <td className="border-r border-slate-100 px-4 py-4 align-top text-xs leading-relaxed font-normal text-text-secondary sm:px-5 sm:text-[13.5px] dark:border-slate-800">
                       {row.travelEsim}
                     </td>
-                    <td className="px-4 py-4 align-top text-xs leading-relaxed font-normal text-slate-500 sm:px-5 sm:text-[13.5px] dark:text-slate-400">
+                    <td className="px-4 py-4 align-top text-xs leading-relaxed font-normal text-text-secondary sm:px-5 sm:text-[13.5px]">
                       {row.localSim}
                     </td>
                   </tr>
@@ -141,7 +132,7 @@ export default function EsimVsLocalSection({ countryName, content }: Props) {
             {closingParagraphs.map((paragraph, index) => (
               <p
                 key={index}
-                className="text-xs leading-relaxed font-normal text-slate-500 sm:text-[13.5px] dark:text-slate-400"
+                className="text-xs leading-relaxed font-normal text-text-secondary sm:text-[13.5px]"
               >
                 {paragraph}
               </p>

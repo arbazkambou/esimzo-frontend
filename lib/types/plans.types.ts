@@ -89,6 +89,11 @@ export type Plan = {
   /** Omitted from list responses; null on detail responses means unknown. */
   internetBreakouts?: InternetBreakout[] | null;
   coverages: Coverage[];
+  /**
+   * Slim local operator names for the destination (country list endpoints).
+   * Prefer this over `coverages` for network filters — full coverages are often empty on lists.
+   */
+  networks?: string[];
   provider: {
     name: string;
     slug: string;

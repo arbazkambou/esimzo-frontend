@@ -432,10 +432,6 @@
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-
-  p {
-    max-width: 65ch;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

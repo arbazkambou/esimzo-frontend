@@ -1,8 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
-import Image from "next/image";
+import {
+  type ReactNode,
+  type RefObject,
+  memo,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import Link from "next/link";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import {
   ArrowDown,
   ArrowUp,
@@ -38,11 +46,16 @@ import {
   getPlanFairUseNote,
   pricePerGB,
 } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { HintTip } from "@/components/ui/hint-tip";
+
+/** Estimated desktop row height for window virtualization. */
+const DESKTOP_ROW_ESTIMATE = 84;
+/** Estimated mobile card height (includes vertical gap). */
+const MOBILE_CARD_ESTIMATE = 210;
+const VIRTUAL_OVERSCAN = 5;
+const TABLE_COL_SPAN = 7;
+/** Always keep this many real DOM rows (SSR + client) for users and crawlers. */
+const SEO_PLAN_COUNT = 100;
 
 type Props = {
   plans: Plan[];
@@ -50,10 +63,6 @@ type Props = {
   sortDir: SortDirection;
   onSort: (sort: SortOption) => void;
   slug: string;
-  /** Total matching plans (before the initial 100-plan cap). */
-  totalPlanCount?: number;
-  /** True when the list is truncated for initial load performance. */
-  isCapped?: boolean;
 };
 
 type ColumnSort = {
@@ -187,7 +196,50 @@ function getPlanFeatureChips(plan: Plan): FeatureChip[] {
   return features;
 }
 
-/** Text + icon chips for the features column */
+function ProviderLogo({
+  src,
+  name,
+  sizeClassName,
+}: {
+  src?: string | null;
+  name: string;
+  sizeClassName: string;
+}) {
+  if (!src) {
+    return (
+      <div
+        className={cn(
+          "flex shrink-0 items-center justify-center rounded-lg bg-primary-soft text-sm font-bold text-primary-text",
+          sizeClassName,
+        )}
+      >
+        {name.charAt(0)}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "shrink-0 overflow-hidden rounded-lg border border-border bg-white",
+        sizeClassName,
+      )}
+    >
+      {/* Native img is cheaper than next/image inside a virtualized list. */}
+      <img
+        src={src}
+        alt=""
+        width={44}
+        height={44}
+        loading="lazy"
+        decoding="async"
+        className="size-full object-contain p-1"
+        aria-hidden
+      />
+    </div>
+  );
+}
+
 function PlanFeatureChips({ plan }: { plan: Plan }) {
   const features = getPlanFeatureChips(plan);
   if (features.length === 0) return null;
@@ -198,24 +250,16 @@ function PlanFeatureChips({ plan }: { plan: Plan }) {
   return (
     <div className="flex min-w-0 flex-wrap items-center gap-1">
       {visible.map((feature) => (
-        <Tooltip key={feature.key}>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-tint px-2 py-0.5 text-[11px] font-medium text-text-secondary transition-colors hover:border-border-strong hover:text-brand-navy"
-            >
-              {feature.icon}
-              <span>{feature.label}</span>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[16rem]">
-            {feature.detail}
-          </TooltipContent>
-        </Tooltip>
+        <HintTip
+          key={feature.key}
+          content={feature.detail}
+          label={feature.detail}
+          side="bottom"
+          className="inline-flex cursor-default items-center gap-1 rounded-md border border-border bg-card px-2 py-0.5 text-[11px] font-medium text-text-secondary"
+        >
+          {feature.icon}
+          <span>{feature.label}</span>
+        </HintTip>
       ))}
       {overflow > 0 && (
         <span className="text-[11px] font-medium text-text-muted">
@@ -231,24 +275,14 @@ function FairUseInfo({ plan }: { plan: Plan }) {
   if (!note) return null;
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          aria-label={`Fair use details: ${note}`}
-          className="ml-1 inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
-        >
-          <Info className="h-3.5 w-3.5" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-[16rem]">
-        {note}
-      </TooltipContent>
-    </Tooltip>
+    <HintTip
+      content={note}
+      label={`Fair use details: ${note}`}
+      side="top"
+      className="ml-1 inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-text-muted transition-colors hover:text-primary-text"
+    >
+      <Info className="h-3.5 w-3.5" aria-hidden />
+    </HintTip>
   );
 }
 
@@ -262,7 +296,7 @@ function getCoverageLabel(plan: Plan): string | null {
 }
 
 /** Mobile card */
-function PlanMobileCard({
+const PlanMobileCard = memo(function PlanMobileCard({
   plan,
   href,
 }: {
@@ -277,105 +311,236 @@ function PlanMobileCard({
       : `${plan.period} ${plan.period === 1 ? "day" : "days"}`;
   const coverageLabel = getCoverageLabel(plan);
   const features = getPlanFeatureChips(plan);
+  const fairUse = getPlanFairUseNote(plan);
 
   return (
-    <Link
-      href={href}
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card transition-[border-color,box-shadow,background-color] duration-150",
-        "hover:border-border-strong",
-        "focus-visible:shadow-[var(--focus-ring)] outline-none",
-      )}
-    >
-      {/* ── Provider header ── */}
-      <div className="flex min-w-0 items-start gap-3 px-3.5 pt-3.5 pb-3 sm:px-4 sm:pt-4">
-        {plan.provider.image ? (
-          <div className="relative size-10 shrink-0 overflow-hidden rounded-lg border border-border bg-white sm:size-11 sm:rounded-xl">
-            <Image
-              src={plan.provider.image}
-              alt=""
-              fill
-              className="object-contain p-1"
-              aria-hidden
-            />
-          </div>
-        ) : (
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-sm font-bold text-primary-text sm:size-11 sm:rounded-xl">
-            {plan.provider.name.charAt(0)}
-          </div>
-        )}
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <Link
+        href={href}
+        className="flex min-w-0 flex-col outline-none focus-visible:shadow-[var(--focus-ring)] no-underline"
+      >
+        <div className="flex min-w-0 items-start gap-3 bg-card px-3.5 pt-3.5 pb-3 sm:px-4 sm:pt-4">
+          <ProviderLogo
+            src={plan.provider.image}
+            name={plan.provider.name}
+            sizeClassName="size-10 sm:size-11"
+          />
 
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-brand-navy">
-            {plan.provider.name}
-          </p>
-          <p className="line-clamp-2 text-xs leading-snug text-text-secondary">
-            {plan.name}
-          </p>
-          {coverageLabel && (
-            <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-text-muted">
-              <MapPin className="h-3 w-3 shrink-0" aria-hidden />
-              <span className="truncate">{coverageLabel}</span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-brand-navy">
+              {plan.provider.name}
             </p>
-          )}
-        </div>
-
-        <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-card text-primary transition-[background-color,border-color] duration-150 group-hover:border-[#FFE0D1] group-hover:bg-[#FFF1EB]">
-          <ChevronRight className="h-4 w-4" />
-        </span>
-      </div>
-
-      {/* ── Stats: Data | Validity | Price ── */}
-      <div className="grid grid-cols-3 border-t border-border">
-        {/* Data */}
-        <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
-          <div className="flex items-center gap-1 text-text-muted">
-            <Database className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="text-[10px] font-medium">Data</span>
-            <FairUseInfo plan={plan} />
-          </div>
-          <span className="text-sm font-medium tabular text-brand-navy">
-            {formatPlanData(plan)}
-          </span>
-        </div>
-
-        {/* Validity */}
-        <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
-          <div className="flex items-center gap-1 text-text-muted">
-            <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="text-[10px] font-medium">Validity</span>
-          </div>
-          <span className="truncate text-sm font-medium tabular text-brand-navy">
-            {periodLabel}
-          </span>
-        </div>
-
-        {/* Price */}
-        <div className="flex min-w-0 flex-col gap-1 px-3 py-3">
-          <div className="flex items-center gap-1 text-text-muted">
-            <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="text-[10px] font-medium">Price</span>
-          </div>
-          <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
-            <span className="truncate text-sm font-medium tabular text-brand-navy">
-              {formatPrice(effective)}
-            </span>
-            {hasPromo && (
-              <span className="truncate text-[11px] tabular text-primary line-through">
-                {formatPrice(plan.usdPrice)}
-              </span>
+            <p className="line-clamp-2 text-xs leading-snug text-text-secondary">
+              {plan.name}
+            </p>
+            {coverageLabel && (
+              <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-text-muted">
+                <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                <span className="truncate">{coverageLabel}</span>
+              </p>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* ── Features ── */}
-      {features.length > 0 && (
-        <div className="border-t border-border px-3.5 py-2.5 sm:px-4">
+          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-primary-muted bg-primary-soft text-primary">
+            <ChevronRight className="h-4 w-4" />
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 border-t border-border bg-surface-tint">
+          <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
+            <div className="flex items-center gap-1 text-text-muted">
+              <Database className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              <span className="text-[10px] font-medium">Data</span>
+            </div>
+            <span className="text-sm font-medium tabular text-brand-navy">
+              {formatPlanData(plan)}
+            </span>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-1 border-r border-border px-3 py-3">
+            <div className="flex items-center gap-1 text-text-muted">
+              <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              <span className="text-[10px] font-medium">Validity</span>
+            </div>
+            <span className="truncate text-sm font-medium tabular text-brand-navy">
+              {periodLabel}
+            </span>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-1 px-3 py-3">
+            <div className="flex items-center gap-1 text-text-muted">
+              <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              <span className="text-[10px] font-medium">Price</span>
+            </div>
+            <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+              <span className="truncate text-sm font-medium tabular text-brand-navy">
+                {formatPrice(effective)}
+              </span>
+              {hasPromo && (
+                <span className="truncate text-[11px] tabular text-primary line-through">
+                  {formatPrice(plan.usdPrice)}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </Link>
+
+      {(fairUse || features.length > 0) && (
+        <div className="flex flex-wrap items-center gap-2 border-t border-border bg-primary-soft/40 px-3.5 py-2.5 sm:px-4">
+          <FairUseInfo plan={plan} />
           <PlanFeatureChips plan={plan} />
         </div>
       )}
-    </Link>
+    </article>
+  );
+});
+
+const PlanDesktopRow = memo(function PlanDesktopRow({
+  plan,
+  slug,
+  sort,
+}: {
+  plan: Plan;
+  slug: string;
+  sort: SortOption;
+}) {
+  const href = `/${slug}/${plan.provider.slug}-provider`;
+  const effective = getEffectiveUsdPrice(plan);
+  const hasPromo = effective < plan.usdPrice;
+  const periodLabel =
+    plan.period === 0
+      ? "No expiry"
+      : `${plan.period} ${plan.period === 1 ? "Day" : "Days"}`;
+  const coverageLabel = getCoverageLabel(plan);
+
+  return (
+    <tr className="group border-b border-border last:border-b-0 hover:bg-surface-tint">
+      <td className="px-5 py-4">
+        <Link
+          href={href}
+          className="flex min-w-0 items-center gap-3 no-underline"
+        >
+          <ProviderLogo
+            src={plan.provider.image}
+            name={plan.provider.name}
+            sizeClassName="size-11"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-brand-navy">
+              {plan.provider.name}
+            </p>
+            <p className="mt-0.5 truncate text-xs font-normal text-text-secondary">
+              {plan.name}
+            </p>
+            {coverageLabel && (
+              <p className="mt-0.5 flex items-center gap-0.5 truncate text-[11px] text-text-muted">
+                <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                {coverageLabel}
+              </p>
+            )}
+          </div>
+        </Link>
+      </td>
+
+      <td className="px-3 py-4">
+        <span className="inline-flex items-center text-sm font-semibold tabular text-brand-navy">
+          {formatPlanData(plan)}
+          <FairUseInfo plan={plan} />
+        </span>
+      </td>
+
+      <td className="px-3 py-4">
+        <span className="inline-flex items-center gap-1 text-sm font-medium tabular text-brand-navy">
+          {periodLabel}
+          {plan.isConsecutive ? (
+            <span
+              title="Consecutive days from activation"
+              aria-label="Consecutive days from activation"
+              className="inline-flex"
+            >
+              <Info className="h-3.5 w-3.5 text-text-muted" aria-hidden />
+            </span>
+          ) : null}
+        </span>
+      </td>
+
+      <td className="px-3 py-4">
+        <span className="text-sm font-medium tabular text-text-secondary">
+          {pricePerGB(effective, getHighSpeedDataMB(plan))}
+        </span>
+      </td>
+
+      <td className="px-3 py-4">
+        <span
+          className={cn(
+            "text-base font-bold tabular leading-tight",
+            sort === "cheapest" || sort === "best-value"
+              ? "text-primary-text"
+              : "text-brand-navy",
+          )}
+        >
+          {formatPrice(effective)}
+        </span>
+        {hasPromo && (
+          <span className="ml-1.5 text-xs tabular text-primary line-through decoration-primary">
+            {formatPrice(plan.usdPrice)}
+          </span>
+        )}
+      </td>
+
+      <td className="px-3 py-4">
+        <PlanFeatureChips plan={plan} />
+      </td>
+
+      <td className="px-3 py-4">
+        <Link
+          href={href}
+          aria-label={`View ${plan.provider.name} plan details`}
+          className="flex items-center justify-center no-underline"
+        >
+          <span className="inline-flex size-8 items-center justify-center rounded-full border border-border bg-card text-primary group-hover:border-primary/30 group-hover:bg-primary-soft">
+            <ChevronRight className="h-4 w-4" />
+          </span>
+        </Link>
+      </td>
+    </tr>
+  );
+});
+
+function useDocumentOffsetTop(
+  ref: RefObject<HTMLElement | null>,
+  enabled: boolean,
+  layoutKey: string | number,
+) {
+  const [offsetTop, setOffsetTop] = useState(0);
+
+  useLayoutEffect(() => {
+    if (!enabled) return;
+
+    const update = () => {
+      const el = ref.current;
+      if (!el) return;
+      setOffsetTop(el.getBoundingClientRect().top + window.scrollY);
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [enabled, layoutKey, ref]);
+
+  return offsetTop;
+}
+
+function useIsLargeScreen() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const media = window.matchMedia("(min-width: 1024px)");
+      media.addEventListener("change", onChange);
+      return () => media.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(min-width: 1024px)").matches,
+    () => false,
   );
 }
 
@@ -385,70 +550,124 @@ export default function PlansTable({
   sortDir,
   onSort,
   slug,
-  totalPlanCount,
-  isCapped = false,
 }: Props) {
-  const matchCount = totalPlanCount ?? plans.length;
+  // First N plans are always real DOM (SSR + client) — same content for users
+  // and crawlers. Only the remainder is window-virtualized for performance.
+  const pinnedPlans = plans.slice(0, SEO_PLAN_COUNT);
+  const restPlans = plans.slice(SEO_PLAN_COUNT);
+  const restCount = restPlans.length;
+
+  const isLargeScreen = useIsLargeScreen();
+  const mobileRestRef = useRef<HTMLDivElement>(null);
+  const desktopRestRef = useRef<HTMLTableRowElement>(null);
+
+  const mobileScrollMargin = useDocumentOffsetTop(
+    mobileRestRef,
+    !isLargeScreen && restCount > 0,
+    plans.length,
+  );
+  const desktopScrollMargin = useDocumentOffsetTop(
+    desktopRestRef,
+    isLargeScreen && restCount > 0,
+    plans.length,
+  );
+
+  const mobileVirtualizer = useWindowVirtualizer({
+    count: !isLargeScreen ? restCount : 0,
+    estimateSize: () => MOBILE_CARD_ESTIMATE,
+    overscan: VIRTUAL_OVERSCAN,
+    scrollMargin: mobileScrollMargin,
+    getItemKey: (index) => restPlans[index]?.id ?? index,
+  });
+
+  const desktopVirtualizer = useWindowVirtualizer({
+    count: isLargeScreen ? restCount : 0,
+    estimateSize: () => DESKTOP_ROW_ESTIMATE,
+    overscan: VIRTUAL_OVERSCAN,
+    scrollMargin: desktopScrollMargin,
+    getItemKey: (index) => restPlans[index]?.id ?? index,
+  });
+
+  const mobileItems = mobileVirtualizer.getVirtualItems();
+  const desktopItems = desktopVirtualizer.getVirtualItems();
+
+  const desktopPaddingTop =
+    desktopItems.length > 0
+      ? Math.max(0, desktopItems[0]!.start - desktopScrollMargin)
+      : 0;
+  const desktopPaddingBottom =
+    desktopItems.length > 0
+      ? Math.max(
+          0,
+          desktopVirtualizer.getTotalSize() -
+            (desktopItems[desktopItems.length - 1]!.end - desktopScrollMargin),
+        )
+      : 0;
 
   return (
     <div className="mt-2 space-y-3 sm:mt-4">
       {/* Mobile / tablet card list */}
       <div className="flex flex-col gap-2.5 lg:hidden">
         <p className="px-0.5 text-caption text-text-secondary">
-          {isCapped ? (
-            <>
-              Showing{" "}
-              <span className="tabular font-semibold text-brand-navy">
-                {plans.length}
-              </span>{" "}
-              of{" "}
-              <span className="tabular font-semibold text-brand-navy">
-                {matchCount}
-              </span>{" "}
-              plans
-            </>
-          ) : (
-            <>
-              <span className="tabular font-semibold text-brand-navy">
-                {plans.length}
-              </span>{" "}
-              plans match your filters
-            </>
-          )}
+          <span className="tabular font-semibold text-brand-navy">
+            {plans.length}
+          </span>{" "}
+          plans match your filters
         </p>
-        {plans.map((plan) => (
-          <PlanMobileCard
-            key={plan.id}
-            plan={plan}
-            href={`/${slug}/${plan.provider.slug}-provider`}
-          />
-        ))}
+
+        <div className="flex flex-col gap-2.5">
+          {pinnedPlans.map((plan) => (
+            <PlanMobileCard
+              key={plan.id}
+              plan={plan}
+              href={`/${slug}/${plan.provider.slug}-provider`}
+            />
+          ))}
+        </div>
+
+        {restCount > 0 ? (
+          <div
+            ref={mobileRestRef}
+            className="relative w-full"
+            style={{ height: mobileVirtualizer.getTotalSize() }}
+          >
+            {mobileItems.map((virtualRow) => {
+              const plan = restPlans[virtualRow.index]!;
+              return (
+                <div
+                  key={plan.id}
+                  className="absolute top-0 left-0 w-full pb-2.5"
+                  style={{
+                    height: MOBILE_CARD_ESTIMATE,
+                    transform: `translateY(${virtualRow.start - mobileScrollMargin}px)`,
+                  }}
+                >
+                  <PlanMobileCard
+                    plan={plan}
+                    href={`/${slug}/${plan.provider.slug}-provider`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
 
       {/* Desktop comparison table */}
       <div className="hidden overflow-hidden rounded-2xl border border-border bg-card shadow-[0_4px_20px_rgba(11,18,33,0.04)] lg:block">
         <table className="w-full table-fixed border-collapse">
           <colgroup>
-            {/* Plan & Provider — most space */}
             <col className="w-[31%]" />
-            {/* Data */}
             <col className="w-[9%]" />
-            {/* Validity */}
             <col className="w-[11%]" />
-            {/* Price/GB */}
             <col className="w-[10%]" />
-            {/* Price */}
             <col className="w-[11%]" />
-            {/* Features */}
             <col className="w-[21%]" />
-            {/* Action */}
             <col className="w-[7%]" />
           </colgroup>
 
-          {/* ── Table Header ── */}
           <thead>
             <tr className="border-b border-border bg-muted/60">
-              {/* Plan & Provider — non-sortable */}
               <th
                 scope="col"
                 className="px-5 py-4 text-left text-sm font-semibold text-brand-navy"
@@ -456,15 +675,10 @@ export default function PlansTable({
                 Plan &amp; Provider
               </th>
 
-              {/* Sortable columns */}
               {SORTABLE_COLUMNS.map((col) => {
                 const isActive = sort === col.id;
                 return (
-                  <th
-                    key={col.id}
-                    scope="col"
-                    className="px-3 py-4 text-left"
-                  >
+                  <th key={col.id} scope="col" className="px-3 py-4 text-left">
                     <button
                       type="button"
                       onClick={() => onSort(col.id)}
@@ -490,168 +704,79 @@ export default function PlansTable({
                 );
               })}
 
-              {/* Features — non-sortable */}
               <th
                 scope="col"
                 className="px-3 py-4 text-left text-sm font-semibold text-brand-navy"
               >
                 Features
               </th>
-
-              {/* Action — empty header */}
               <th scope="col" className="px-3 py-4" aria-hidden />
             </tr>
           </thead>
 
-          {/* ── Table Body ── */}
           <tbody>
-            {plans.map((plan) => {
-              const href = `/${slug}/${plan.provider.slug}-provider`;
-              const effective = getEffectiveUsdPrice(plan);
-              const hasPromo = effective < plan.usdPrice;
-              const periodLabel =
-                plan.period === 0
-                  ? "No expiry"
-                  : `${plan.period} ${plan.period === 1 ? "Day" : "Days"}`;
-              const coverageLabel = getCoverageLabel(plan);
+            {pinnedPlans.map((plan) => (
+              <PlanDesktopRow
+                key={plan.id}
+                plan={plan}
+                slug={slug}
+                sort={sort}
+              />
+            ))}
 
-              return (
-                <tr
-                  key={plan.id}
-                  className="group border-b border-border last:border-b-0 transition-colors duration-150 hover:bg-surface-tint"
-                >
-                  {/* ── Plan & Provider ── */}
-                  <td className="px-5 py-4">
-                    <Link
-                      href={href}
-                      className="flex min-w-0 items-center gap-3 no-underline"
-                    >
-                      {/* Provider logo */}
-                      {plan.provider.image ? (
-                        <div className="relative size-11 shrink-0 overflow-hidden rounded-lg border border-border bg-white">
-                          <Image
-                            src={plan.provider.image}
-                            alt=""
-                            fill
-                            className="object-contain p-1"
-                            aria-hidden
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-sm font-bold text-primary-text">
-                          {plan.provider.name.charAt(0)}
-                        </div>
-                      )}
-
-                      {/* Provider / plan info */}
-                      <div className="min-w-0 flex-1">
-                        {/* Provider name */}
-                        <p className="truncate text-sm font-semibold text-brand-navy">
-                          {plan.provider.name}
-                        </p>
-                        {/* Plan name */}
-                        <p className="mt-0.5 truncate text-xs font-normal text-text-secondary">
-                          {plan.name}
-                        </p>
-                        {/* Location */}
-                        {coverageLabel && (
-                          <p className="mt-0.5 flex items-center gap-0.5 truncate text-[11px] text-text-muted">
-                            <MapPin className="h-3 w-3 shrink-0" aria-hidden />
-                            {coverageLabel}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  </td>
-
-                  {/* ── Data ── */}
-                  <td className="px-3 py-4">
-                    <Link href={href} className="inline-flex items-center no-underline">
-                      <span className="text-sm font-semibold tabular text-brand-navy">
-                        {formatPlanData(plan)}
-                      </span>
-                      <FairUseInfo plan={plan} />
-                    </Link>
-                  </td>
-
-                  {/* ── Validity ── */}
-                  <td className="px-3 py-4">
-                    <Link href={href} className="inline-flex items-center gap-1 no-underline">
-                      <span className="text-sm font-medium tabular text-brand-navy">
-                        {periodLabel}
-                      </span>
-                      {plan.isConsecutive ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info
-                              className="h-3.5 w-3.5 text-text-muted"
-                              aria-label="Consecutive days from activation"
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Consecutive days from activation
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : null}
-                    </Link>
-                  </td>
-
-                  {/* ── Price / GB ── */}
-                  <td className="px-3 py-4">
-                    <Link href={href} className="no-underline">
-                      <span className="text-sm font-medium tabular text-text-secondary">
-                        {pricePerGB(effective, getHighSpeedDataMB(plan))}
-                      </span>
-                    </Link>
-                  </td>
-
-                  {/* ── Price ── */}
-                  <td className="px-3 py-4">
-                    <Link
-                      href={href}
-                      className="inline-flex flex-row flex-wrap items-baseline gap-x-1.5 no-underline"
-                    >
-                      <span
-                        className={cn(
-                          "text-base font-bold tabular leading-tight",
-                          sort === "cheapest" || sort === "best-value"
-                            ? "text-primary-text"
-                            : "text-brand-navy",
-                        )}
-                      >
-                        {formatPrice(effective)}
-                      </span>
-                      {hasPromo && (
-                        <span className="text-xs tabular text-primary line-through decoration-primary">
-                          {formatPrice(plan.usdPrice)}
-                        </span>
-                      )}
-                    </Link>
-                  </td>
-
-                  {/* ── Features ── */}
-                  <td className="px-3 py-4">
-                    <PlanFeatureChips plan={plan} />
-                  </td>
-
-                  {/* ── Action chevron ── */}
-                  <td className="px-3 py-4">
-                    <Link
-                      href={href}
-                      aria-label={`View ${plan.provider.name} plan details`}
-                      className="flex items-center justify-center no-underline"
-                    >
-                      <span className="inline-flex size-8 items-center justify-center rounded-full border border-border bg-card text-primary transition-colors duration-150 group-hover:border-[#FFE0D1] group-hover:bg-[#FFF1EB]">
-                        <ChevronRight className="h-4 w-4" />
-                      </span>
-                    </Link>
-                  </td>
+            {restCount > 0 ? (
+              <>
+                {/* Anchor for virtualizer scroll margin (after pinned SEO rows). */}
+                <tr ref={desktopRestRef} aria-hidden>
+                  <td
+                    colSpan={TABLE_COL_SPAN}
+                    style={{ height: 0, padding: 0, border: 0 }}
+                  />
                 </tr>
-              );
-            })}
+
+                {desktopPaddingTop > 0 ? (
+                  <tr aria-hidden>
+                    <td
+                      colSpan={TABLE_COL_SPAN}
+                      style={{
+                        height: desktopPaddingTop,
+                        padding: 0,
+                        border: 0,
+                      }}
+                    />
+                  </tr>
+                ) : null}
+
+                {desktopItems.map((virtualRow) => {
+                  const plan = restPlans[virtualRow.index]!;
+                  return (
+                    <PlanDesktopRow
+                      key={plan.id}
+                      plan={plan}
+                      slug={slug}
+                      sort={sort}
+                    />
+                  );
+                })}
+
+                {desktopPaddingBottom > 0 ? (
+                  <tr aria-hidden>
+                    <td
+                      colSpan={TABLE_COL_SPAN}
+                      style={{
+                        height: desktopPaddingBottom,
+                        padding: 0,
+                        border: 0,
+                      }}
+                    />
+                  </tr>
+                ) : null}
+              </>
+            ) : null}
           </tbody>
         </table>
       </div>
     </div>
   );
 }
+

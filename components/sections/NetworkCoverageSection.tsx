@@ -40,23 +40,21 @@ export default function NetworkCoverageSection({
     ? heading.slice(0, -titleSuffix.length)
     : heading;
 
+  const networkCols =
+    networks.length === 1
+      ? "sm:grid-cols-1"
+      : networks.length === 2
+        ? "sm:grid-cols-2"
+        : "sm:grid-cols-3";
+
   return (
     <section
       id="coverage"
       aria-labelledby="coverage-heading"
-      className="relative overflow-hidden bg-background py-[var(--section-y-tight)]"
+      className="bg-background py-[var(--section-y-tight)]"
     >
-      <div
-        className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-primary-soft/35 blur-3xl dark:bg-primary/25"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute right-1/5 bottom-0 h-96 w-96 translate-x-1/3 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 w-full">
-        <header className="mb-10 text-center sm:mb-12">
+      <div className="w-full">
+        <header className="mb-8 text-center sm:mb-10">
           {content.eyebrow ? (
             <p className="mb-3.5 inline-flex items-center justify-center gap-2 rounded-full bg-primary-soft px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-primary select-none dark:bg-primary/15 dark:text-primary">
               <Signal
@@ -84,35 +82,35 @@ export default function NetworkCoverageSection({
         </header>
 
         {networks.length > 0 ? (
-          <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:mb-8 sm:p-6 dark:border-slate-800 dark:bg-card">
-            <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
-              <span
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-primary dark:bg-primary/20 dark:text-primary"
-                aria-hidden="true"
-              >
-                <Signal className="h-4 w-4" strokeWidth={2.2} />
-              </span>
-              <p className="text-xs font-extrabold tracking-wide text-foreground sm:text-sm dark:text-white">
-                Major mainland networks
-              </p>
-            </div>
-            <ul className="flex flex-wrap gap-2 sm:gap-2.5">
+          <div className="mb-6 sm:mb-8">
+            <p className="mb-3 text-center text-xs font-bold tracking-wide text-text-secondary sm:text-[13px]">
+              Major mainland networks
+            </p>
+            <ul className={`grid grid-cols-1 gap-3 ${networkCols}`}>
               {networks.map((network) => (
                 <li key={network}>
-                  <span className="inline-flex items-center rounded-full border border-primary/15 bg-muted px-3.5 py-1.5 text-xs font-bold text-foreground sm:text-sm dark:border-primary/20 dark:bg-primary/20 dark:text-white">
-                    {network}
-                  </span>
+                  <div className="flex h-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:px-5 dark:border-slate-800 dark:bg-card">
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary dark:bg-primary/20 dark:text-primary"
+                      aria-hidden="true"
+                    >
+                      <Signal className="h-4 w-4" strokeWidth={2.2} />
+                    </span>
+                    <span className="text-sm font-bold text-foreground dark:text-white">
+                      {network}
+                    </span>
+                  </div>
                 </li>
               ))}
             </ul>
           </div>
         ) : null}
 
-        <div className="flex w-full flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:gap-3.5 sm:p-6 dark:border-slate-800 dark:bg-card">
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:gap-3.5 sm:p-6 dark:border-slate-800 dark:bg-card">
           {paragraphs.map((paragraph, index) => (
             <p
               key={index}
-              className="text-xs leading-relaxed font-normal text-slate-500 sm:text-[13.5px] dark:text-slate-400"
+              className="text-xs leading-relaxed font-normal text-text-secondary sm:text-[13.5px]"
             >
               {paragraph}
             </p>
@@ -123,7 +121,7 @@ export default function NetworkCoverageSection({
           <aside className="mt-6 sm:mt-8">
             <Alert className="rounded-2xl border-primary/20 bg-primary-soft/70 px-5 py-4 dark:border-primary/30 dark:bg-primary/10 sm:px-6 sm:py-5">
               <MapPinned className="text-primary" aria-hidden="true" />
-              <AlertDescription className="text-xs leading-relaxed text-slate-600 sm:text-[13.5px] dark:text-slate-300">
+              <AlertDescription className="text-xs leading-relaxed text-text-secondary sm:text-[13.5px]">
                 <p>{notice}</p>
                 {territories.length > 0 ? (
                   <ul className="mt-3 flex flex-wrap gap-2">

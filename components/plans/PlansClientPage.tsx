@@ -9,11 +9,12 @@ import PlanFilterCard from "./PlanFilterCard";
 import PlansTable from "./PlansTable";
 import PlansTableSkeleton, { TableSkeleton } from "./PlansTableSkeleton";
 import NoFilterResults from "./NoFilterResults";
+import { ArrowUp } from "lucide-react";
 
-/** Max plans rendered on first load when no filters are applied. */
-const INITIAL_PLAN_LIMIT = 100;
-/** How many extra rows to mount per animation frame when expanding. */
-const EXPAND_CHUNK = 100;
+/** Show jump control once the plans section start is this far above the viewport. */
+const JUMP_SHOW_OFFSET_PX = 240;
+/** Only offer jump-to-top when the list is long enough to matter. */
+const JUMP_MIN_PLANS = 40;
 
 type Props = {
   slug: string;
@@ -24,47 +25,40 @@ type Props = {
 function PlansContent({ slug, initialData, scope = "country" }: Props) {
   const { data: plans, isLoading } = usePlans(slug, initialData, scope);
   const filters = usePackageFilters(plans, slug);
-  const [displayLimit, setDisplayLimit] = useState(INITIAL_PLAN_LIMIT);
-  const [isExpanding, setIsExpanding] = useState(false);
+  const [showJumpToPlans, setShowJumpToPlans] = useState(false);
 
   const allFiltered = filters.filteredPlans;
-  const hasActiveFilters = filters.activeFilterCount > 0;
+  const canJump = allFiltered.length >= JUMP_MIN_PLANS;
 
-  // Filters → show everything. Cleared filters → reset to the initial cap.
   useEffect(() => {
-    if (hasActiveFilters) {
-      setDisplayLimit(allFiltered.length);
-      setIsExpanding(false);
-    } else {
-      setDisplayLimit(INITIAL_PLAN_LIMIT);
-      setIsExpanding(false);
+    if (!canJump) {
+      setShowJumpToPlans(false);
+      return;
     }
-  }, [hasActiveFilters, allFiltered.length]);
 
-  const isCapped =
-    !hasActiveFilters && displayLimit < allFiltered.length;
-  const visiblePlans = hasActiveFilters
-    ? allFiltered
-    : allFiltered.slice(0, Math.min(displayLimit, allFiltered.length));
-
-  const handleViewAll = useCallback(() => {
-    if (isExpanding) return;
-    setIsExpanding(true);
-
-    // Grow in chunks so React can paint between batches (avoids a long freeze).
-    const grow = (current: number) => {
-      const next = Math.min(current + EXPAND_CHUNK, allFiltered.length);
-      setDisplayLimit(next);
-      if (next < allFiltered.length) {
-        requestAnimationFrame(() => grow(next));
-      } else {
-        setIsExpanding(false);
-      }
+    const updateVisibility = () => {
+      const plansEl = document.getElementById("plans");
+      if (!plansEl) return;
+      setShowJumpToPlans(
+        plansEl.getBoundingClientRect().top < -JUMP_SHOW_OFFSET_PX,
+      );
     };
 
-    // Let the loading state paint before the first heavy chunk.
-    requestAnimationFrame(() => grow(displayLimit));
-  }, [allFiltered.length, displayLimit, isExpanding]);
+    updateVisibility();
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    window.addEventListener("resize", updateVisibility);
+    return () => {
+      window.removeEventListener("scroll", updateVisibility);
+      window.removeEventListener("resize", updateVisibility);
+    };
+  }, [canJump]);
+
+  const jumpToPlansStart = useCallback(() => {
+    document.getElementById("plans")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, []);
 
   if (isLoading) {
     return <PlansTableSkeleton />;
@@ -76,35 +70,28 @@ function PlansContent({ slug, initialData, scope = "country" }: Props) {
       {filters.isFiltering ? (
         <TableSkeleton />
       ) : allFiltered.length > 0 ? (
-        <div className={isCapped || isExpanding ? "relative" : undefined}>
-          <PlansTable
-            plans={visiblePlans}
-            sort={filters.sort}
-            sortDir={filters.sortDir}
-            onSort={filters.toggleColumnSort}
-            slug={slug}
-            totalPlanCount={allFiltered.length}
-            isCapped={isCapped}
-          />
-          {isCapped || isExpanding ? (
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center bg-gradient-to-t from-background from-40% via-background/95 to-transparent pb-5 pt-28">
-              <Button
-                type="button"
-                variant="default"
-                size="lg"
-                className="pointer-events-auto shadow-elevated"
-                isLoading={isExpanding}
-                disabled={isExpanding}
-                onClick={handleViewAll}
-              >
-                View all {allFiltered.length} plans
-              </Button>
-            </div>
-          ) : null}
-        </div>
+        <PlansTable
+          plans={allFiltered}
+          sort={filters.sort}
+          sortDir={filters.sortDir}
+          onSort={filters.toggleColumnSort}
+          slug={slug}
+        />
       ) : (
         <NoFilterResults onClear={filters.clearAll} />
       )}
+
+      {showJumpToPlans ? (
+        <Button
+          type="button"
+          size="icon-lg"
+          className="fixed bottom-6 right-4 z-50 shadow-elevated sm:bottom-8 sm:right-6"
+          aria-label="Jump to start of plans"
+          onClick={jumpToPlansStart}
+        >
+          <ArrowUp className="size-5" strokeWidth={2.2} aria-hidden />
+        </Button>
+      ) : null}
     </div>
   );
 }

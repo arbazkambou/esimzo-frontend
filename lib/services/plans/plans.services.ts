@@ -6,7 +6,11 @@ import {
   Region,
 } from "@/lib/types/plans.types";
 import { api, fail, ok, type ApiResponse } from "../api";
-import { cacheRevalidate, cacheTags } from "../cache-keys";
+import {
+  cacheRevalidate,
+  cacheTags,
+  nextFetchCache,
+} from "../cache-keys";
 
 const noStore = { cache: "no-store" as const };
 
@@ -25,21 +29,33 @@ function unwrapPlansPayload(data: PlansListPayload | Plan[]): {
 }
 
 export async function getCountries() {
-  return api<Country[]>("/countries", {
-    next: { revalidate: cacheRevalidate.hour, tags: [cacheTags.countries] },
-  });
+  return api<Country[]>(
+    "/countries",
+    nextFetchCache({
+      revalidate: cacheRevalidate.hour,
+      tags: [cacheTags.countries],
+    }),
+  );
 }
 
 export async function getPopularCountries() {
-  return api<Country[]>("/countries/popular", {
-    next: { revalidate: cacheRevalidate.hour, tags: [cacheTags.countries] },
-  });
+  return api<Country[]>(
+    "/countries/popular",
+    nextFetchCache({
+      revalidate: cacheRevalidate.hour,
+      tags: [cacheTags.countries],
+    }),
+  );
 }
 
 export async function getRegions() {
-  return api<Region[]>("/regions", {
-    next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.regions] },
-  });
+  return api<Region[]>(
+    "/regions",
+    nextFetchCache({
+      revalidate: cacheRevalidate.twelveHours,
+      tags: [cacheTags.regions],
+    }),
+  );
 }
 
 /** Match a slug against the cached regions list. Null means it is not a region. */
@@ -47,7 +63,7 @@ export async function getRegionBySlug(slug: string): Promise<Region | null> {
   const regions = await getRegions();
   if (!regions.success) return null;
   const normalized = slug.toLowerCase();
-  return regions.data.find((region) => region.slug === normalized) ?? null;
+  return regions.data.find((region) => region.slug.toLowerCase() === normalized) ?? null;
 }
 
 export async function getRegionCountries(slug: string) {
@@ -55,17 +71,26 @@ export async function getRegionCountries(slug: string) {
 }
 
 export async function getCountryPackagesBySlug(slug: string) {
-  return unwrapPlans(await api<PlansListPayload | Plan[]>(
-    `/plans/country/${slug}`,
-    { next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.plans] } },
-  ));
+  return unwrapPlans(
+    await api<PlansListPayload | Plan[]>(
+      `/plans/country/${slug}`,
+      nextFetchCache({
+        revalidate: cacheRevalidate.twelveHours,
+        tags: [cacheTags.plans],
+      }),
+    ),
+  );
 }
 
 export async function getRegionalPackagesBySlug(slug: string) {
   return unwrapPlans(
-    await api<PlansListPayload | Plan[]>(`/plans/region/${slug}`, {
-      next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.plans] },
-    }),
+    await api<PlansListPayload | Plan[]>(
+      `/plans/region/${slug}`,
+      nextFetchCache({
+        revalidate: cacheRevalidate.twelveHours,
+        tags: [cacheTags.plans],
+      }),
+    ),
   );
 }
 
@@ -83,9 +108,13 @@ export async function getRegionalPackagesByProvider(
 
 export async function getGlobalPackages() {
   return unwrapPlans(
-    await api<PlansListPayload | Plan[]>(`/plans/global`, {
-      next: { revalidate: cacheRevalidate.twelveHours, tags: [cacheTags.plans] },
-    }),
+    await api<PlansListPayload | Plan[]>(
+      `/plans/global`,
+      nextFetchCache({
+        revalidate: cacheRevalidate.twelveHours,
+        tags: [cacheTags.plans],
+      }),
+    ),
   );
 }
 

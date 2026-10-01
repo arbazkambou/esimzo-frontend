@@ -98,17 +98,8 @@ export default function CountriesHeader({
   return (
     <section
       aria-label={`${countryName} eSIM plans`}
-      className="relative isolate overflow-hidden border-b border-secondary/35 bg-gradient-to-br from-secondary/35 via-secondary/10 to-background"
+      className="border-b border-secondary/35 bg-background"
     >
-      <div
-        className="pointer-events-none absolute -left-24 top-12 -z-10 h-72 w-72 rounded-full bg-secondary/25 blur-3xl"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -right-24 -top-32 -z-10 h-96 w-96 rounded-full bg-secondary/30 blur-3xl"
-        aria-hidden="true"
-      />
-
       <div className="container py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)] lg:gap-14 xl:gap-20">
           <div className="flex min-w-0 flex-col gap-6">
@@ -134,7 +125,7 @@ export default function CountriesHeader({
                   title
                 )}
               </h1>
-              <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+              <p className="max-w-2xl text-base leading-7 text-text-secondary sm:text-lg sm:leading-8">
                 {description}
               </p>
               <a
@@ -231,7 +222,7 @@ export default function CountriesHeader({
                 </div>
               </div>
 
-              <p className="mt-1.5 rounded-md border border-primary/10 bg-primary/[0.045] px-2 py-1 text-xs leading-4 text-muted-foreground sm:mt-4 sm:rounded-xl sm:px-3.5 sm:py-3 sm:text-sm sm:leading-6">
+              <p className="mt-1.5 rounded-md border border-primary/10 bg-primary/[0.045] px-2 py-1 text-xs leading-4 text-text-secondary sm:mt-4 sm:rounded-xl sm:px-3.5 sm:py-3 sm:text-sm sm:leading-6">
                 {highlightTemplateValues(
                   content.pricingTemplate,
                   pricingValues,

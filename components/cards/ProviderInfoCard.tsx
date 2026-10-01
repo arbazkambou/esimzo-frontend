@@ -1,6 +1,6 @@
 import { capitalize } from "@/lib/constants";
 import { Provider } from "@/lib/types/info.types";
-import { ChevronRight, Signal } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,30 +11,43 @@ interface Props {
 }
 
 const ProviderInfoCard = ({ provider, slug, placeName }: Props) => {
-  const { name, image, planCount } = provider;
+  const { name, image, planCount, slug: providerSlug } = provider;
+  const destination = placeName ?? capitalize(slug);
+
   return (
-    <div className="group relative flex items-center gap-4 rounded-2xl border border-border bg-muted/60 hover:bg-muted/80 p-4">
-      <Image
-        src={image}
-        alt={name}
-        width={64}
-        height={64}
-        className="object-contain rounded-sm"
-      />
+    <Link
+      href={`/${slug}/${providerSlug}-provider`}
+      className="group relative flex items-center gap-3.5 sm:gap-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-3.5 sm:p-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:-translate-y-[2.5px] hover:border-primary dark:hover:border-primary hover:shadow-md hover:shadow-primary/5 hover:bg-primary-soft dark:hover:bg-slate-800/90 active:scale-[0.985] transition-all duration-[240ms] ease-out"
+    >
+      <div className="relative flex h-7 w-10 sm:h-8 sm:w-11 shrink-0 items-center justify-center overflow-hidden rounded-[5px] border border-slate-200/80 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 shadow-2xs">
+        <Image
+          src={image}
+          alt={name}
+          width={44}
+          height={32}
+          className="object-contain group-hover:scale-[1.04] transition-transform duration-[240ms] ease-out"
+        />
+      </div>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-medium text-card-foreground">
+        <p className="truncate text-sm font-bold text-foreground dark:text-white group-hover:text-primary transition-colors duration-[240ms] ease-out">
           {name}
         </p>
 
-        <div className="flex items-center gap-1">
-          <p className="text-sm font-semibold text-muted-foreground">
-            {planCount} Plans for {placeName ?? capitalize(slug)}
-          </p>
+        <div className="flex items-center mt-0.5">
+          <span className="text-[11.5px] sm:text-xs text-slate-400 dark:text-slate-400 font-normal">
+            {planCount} Plans for {destination}
+          </span>
         </div>
       </div>
-      <Signal size={18} className="" />
-    </div>
+
+      <div className="flex h-7 w-7 sm:h-7.5 sm:w-7.5 shrink-0 items-center justify-center rounded-full bg-primary-soft dark:bg-primary/20 text-primary dark:text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-[240ms] ease-out ml-auto">
+        <ChevronRight
+          size={15}
+          className="transition-transform duration-[240ms] ease-out group-hover:translate-x-[3px]"
+        />
+      </div>
+    </Link>
   );
 };
 
