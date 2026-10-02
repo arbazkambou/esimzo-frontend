@@ -408,6 +408,7 @@ import type {
   TravelerTipsContent,
   UnlimitedPlansContent,
 } from "./types";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { formatPrice } from "@/lib/utils";
 
 export type {
@@ -791,15 +792,6 @@ const countryFaqsContentBySlug: Record<string, CountryFaqsContent> = {
   global: globalFaqsContent,
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template
-    .replace(/\{\{(\w+)\}\}/g, (_, key: string) => values[key] ?? "")
-    .replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 function formatLastUpdated(value: PlansHeroStats["lastUpdated"]): string {
   if (value == null || value === "") return "daily";
   if (value instanceof Date) {
@@ -892,19 +884,18 @@ export function resolveCountryFaqs(
   countryName: string,
   stats: PlansHeroStats,
 ): { heading?: string; faqs: CountryFaqItem[] } {
-  const values = {
-    countryName,
+  const extra = {
     starting_price: formatPrice(stats.startingPrice),
     last_updated: formatLastUpdated(stats.lastUpdated),
   };
 
   return {
     heading: content.heading
-      ? fillTemplate(content.heading, values)
+      ? fillCountryTemplate(content.heading, countryName, extra)
       : undefined,
     faqs: content.faqs.map((faq) => ({
-      question: fillTemplate(faq.question, values),
-      answer: fillTemplate(faq.answer, values),
+      question: fillCountryTemplate(faq.question, countryName, extra),
+      answer: fillCountryTemplate(faq.answer, countryName, extra),
     })),
   };
 }

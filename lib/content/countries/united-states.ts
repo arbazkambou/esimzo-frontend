@@ -15,8 +15,11 @@ import type {
 export const unitedStatesPlansHeroContent: CountryPlansHeroContent = {
   eyebrow: "Compare Plans",
   titleTemplate: "Compare eSIM Plans for {countryName}",
+  searchName: "USA",
+  metaTitleTemplate:
+    "USA eSIM: Compare {planCount} Plans from {startingPrice} ({year})",
   description:
-    "Compare travel eSIM plans for {countryName} by price, data, validity, local network, 5G access, hotspot support and speed limits. Use the filters to find an option that fits your trip and phone.",
+    "Compare USA travel eSIM plans for {countryName} by price, data, validity, local network, 5G access, hotspot support and speed limits. Use the filters to find an option that fits your trip and phone.",
   browseTemplate:
     "Browse {planCount} plans from {providerCount} providers.",
   pricingTemplate:
@@ -28,7 +31,7 @@ export const unitedStatesHowToChooseContent: HowToChooseEsimContent = {
   eyebrow: "Buying Guide",
   headingTemplate: "How to Choose an eSIM for {countryName}",
   intro:
-    "The right plan depends on how long you will be in {countryName}, where you will travel and how you use your phone. A few days in New York or Los Angeles has different needs from a national park road trip, time in Alaska or Hawaii, or a route that continues into Canada or Mexico.",
+    "The right plan depends on how long you will be in {countryName}, where you will travel and how you use your phone. A few days in New York or Los Angeles has different needs from a USA national park road trip, time in Alaska or Hawaii, or a route that continues into Canada or Mexico.",
   criteria: [
     {
       heading: "Match the validity to your full trip",

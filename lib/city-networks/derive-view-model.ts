@@ -148,14 +148,25 @@ export function deriveCityNetworksViewModel(
     (analyticsCards.length > 0 ? analyticsCards.length : cards.length);
 
   const tipNetwork = networkCtaName(leader);
+  const isUsStates = data.slug === "united-states";
+  const placeKind = isUsStates ? ("state" as const) : ("city" as const);
+  const placeLabelSingular = isUsStates ? "state" : "city";
+  const placeLabelPlural = isUsStates ? "states" : "cities";
+  const areaPhrase = isUsStates
+    ? `${citiesLabel} states`
+    : `${citiesLabel} cities and regions`;
 
   return {
     country: data.country,
     slug: data.slug,
     updatedLabel: UPDATED_LABEL,
     updatedDatetime: UPDATED_DATETIME,
-    heading: `Best mobile network by city in ${data.country} (2026)`,
-    intro: `${data.primary_source} compared download speeds across ${citiesLabel} cities and regions in ${data.country}. Use this to pick an eSIM on the network that performs best where you’ll spend most of your time.`,
+    placeKind,
+    placeLabelSingular,
+    placeLabelPlural,
+    heading: `Best mobile network by ${placeLabelSingular} in ${data.country} (2026)`,
+    eyebrow: `Speeds by ${placeLabelSingular}`,
+    intro: `${data.primary_source} compared download speeds across ${areaPhrase} in ${data.country}. Use this to pick an eSIM on the network that performs best where you’ll spend most of your time.`,
     leader,
     primarySource: data.primary_source,
     metaDescriptionSuggestion: data.meta_description_suggestion,
@@ -169,8 +180,12 @@ export function deriveCityNetworksViewModel(
       answer: item.a,
     })),
     tip: {
-      title: `${leader} is the safest pick for a multi-city trip.`,
-      text: `${leader} was fastest in the most places we compared in ${data.country}. If your route covers several cities, starting with ${leader} is the lower-risk choice.`,
+      title: isUsStates
+        ? `${leader} is the safest pick for a multi-state trip.`
+        : `${leader} is the safest pick for a multi-city trip.`,
+      text: isUsStates
+        ? `${leader} was fastest in the most places we compared in ${data.country}. If your route covers several states, starting with ${leader} is the lower-risk choice.`
+        : `${leader} was fastest in the most places we compared in ${data.country}. If your route covers several cities, starting with ${leader} is the lower-risk choice.`,
       ctaLabel: `See eSIMs on ${leader}`,
       ctaHref: `?network=${encodeURIComponent(tipNetwork)}#plans`,
       secondaryLabel: `Compare all ${data.country} eSIM plans`,

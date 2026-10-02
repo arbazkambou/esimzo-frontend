@@ -2,6 +2,7 @@ import type {
   CountryPlansHeroContent,
   PlansHeroStats,
 } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { formatPrice } from "@/lib/utils";
 import { ArrowRight, Layers3, Sparkles, Tag, UsersRound } from "lucide-react";
 import type { ReactNode } from "react";
@@ -11,13 +12,6 @@ type Props = {
   content: CountryPlansHeroContent;
   stats: PlansHeroStats;
 };
-
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
 
 function highlightTemplateValues(
   template: string,
@@ -82,8 +76,8 @@ export default function CountriesHeader({
   const updatedAt = formatUpdatedAt(stats.lastUpdated);
   const updatedAtShort = formatUpdatedAtShort(stats.lastUpdated);
 
-  const title = fillTemplate(content.titleTemplate, { countryName });
-  const description = fillTemplate(content.description, { countryName });
+  const title = fillCountryTemplate(content.titleTemplate, countryName);
+  const description = fillCountryTemplate(content.description, countryName);
   const pricingValues = {
     startingPrice,
     lastUpdated: "daily",
@@ -119,6 +113,7 @@ export default function CountriesHeader({
                 {titleHasCountrySuffix ? (
                   <>
                     <span className="block">{titlePrefix}</span>
+                    {" "}
                     <span className="block text-primary">{countryName}</span>
                   </>
                 ) : (

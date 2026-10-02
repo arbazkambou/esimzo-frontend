@@ -77,7 +77,7 @@ export default function CityNetworksSection({ data }: Props) {
               strokeWidth={2.2}
               aria-hidden="true"
             />
-            <span>Speeds by city</span>
+            <span>{data.eyebrow}</span>
             <span aria-hidden="true">•</span>
             <span>
               Updated{" "}
@@ -89,7 +89,7 @@ export default function CityNetworksSection({ data }: Props) {
             id="city-networks-heading"
             className="mb-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl dark:text-white"
           >
-            Best mobile network by city in{" "}
+            Best mobile network by {data.placeLabelSingular} in{" "}
             <span className="text-primary">{data.country}</span> (2026)
           </h2>
 
@@ -152,7 +152,8 @@ export default function CityNetworksSection({ data }: Props) {
             })}
           </ul>
           <p className="mt-3.5 text-xs leading-relaxed text-text-secondary sm:text-[13.5px]">
-            Select a network to see the cities where it&apos;s fastest.
+            Select a network to see the {data.placeLabelPlural} where it&apos;s
+            fastest.
           </p>
         </aside>
 
@@ -212,15 +213,18 @@ export default function CityNetworksSection({ data }: Props) {
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Find your city"
+              placeholder={`Find your ${data.placeLabelSingular}`}
               className="pl-9"
-              aria-label="Find your city"
+              aria-label={`Find your ${data.placeLabelSingular}`}
             />
           </div>
         </div>
 
         <p className="mb-4 text-xs text-text-secondary sm:mb-5 sm:text-[13.5px]">
-          Showing {filteredCards.length} of {tabCards.length} cities and regions
+          Showing {filteredCards.length} of {tabCards.length}{" "}
+          {data.placeKind === "state"
+            ? data.placeLabelPlural
+            : "cities and regions"}
           {highlightedNetwork ? ` · fastest on ${highlightedNetwork}` : ""}
           , A–Z
         </p>
@@ -237,13 +241,14 @@ export default function CityNetworksSection({ data }: Props) {
           </div>
         ) : (
           <p className="mb-8 rounded-2xl border border-slate-200/80 bg-muted px-4 py-8 text-center text-xs text-text-secondary sm:mb-10 sm:text-[13.5px] dark:border-slate-800">
-            No cities match your search
+            No {data.placeLabelPlural} match your search
             {highlightedNetwork ? ` for ${highlightedNetwork}` : ""}.
           </p>
         )}
 
         <CityNetworkFaqTip
           country={data.country}
+          placeLabelSingular={data.placeLabelSingular}
           faq={data.faq}
           tip={data.tip}
         />

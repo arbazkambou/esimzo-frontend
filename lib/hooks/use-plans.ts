@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Plan } from "@/lib/types/plans.types";
+import type { PlanListItem } from "@/lib/types/plans.types";
+import { toPlanListItems } from "@/lib/plans/plan-list-item";
 import {
   getCountryPackagesBySlug,
   getGlobalPackages,
@@ -13,7 +14,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 export function usePlans(
   slug: string,
-  initialData?: Plan[],
+  initialData?: PlanListItem[],
   scope: PlansScope = "country",
 ) {
   return useQuery({
@@ -27,7 +28,7 @@ export function usePlans(
             : await getCountryPackagesBySlug(slug);
 
       if (!res.success) throw new Error(res.message);
-      return res.data;
+      return toPlanListItems(res.data);
     },
     initialData,
     // In prod, treat SSR payload as fresh so we don't immediately refetch.

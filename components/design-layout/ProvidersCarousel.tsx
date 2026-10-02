@@ -128,7 +128,7 @@ export default function ProvidersCarousel({
         {/* Blue Outline Pill CTA Button matching screenshot */}
         <div className="mt-6 flex justify-center">
           <Link
-            href="/plans"
+            href="/"
             className="inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white dark:bg-card px-7 py-3 text-xs sm:text-sm font-bold text-primary hover:bg-primary hover:text-primary-foreground shadow-xs hover:shadow-md transition-all duration-200 group cursor-pointer"
           >
             <span>Compare plans from 50+ providers</span>

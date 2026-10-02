@@ -75,7 +75,12 @@ export type CityNetworksViewModel = {
   slug: string;
   updatedLabel: string;
   updatedDatetime: string;
+  /** "city" for most countries; "state" for Opensignal US coverage. */
+  placeKind: "city" | "state";
+  placeLabelSingular: string;
+  placeLabelPlural: string;
   heading: string;
+  eyebrow: string;
   intro: string;
   leader: string;
   primarySource: string;

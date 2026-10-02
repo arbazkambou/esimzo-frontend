@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { Plan } from "@/lib/types/plans.types";
+import type { PlanListItem } from "@/lib/types/plans.types";
 import { usePlans, type PlansScope } from "@/lib/hooks/use-plans";
 import {
   usePackageFilters,
@@ -30,13 +30,13 @@ const JUMP_MIN_PLANS = 40;
 
 type Props = {
   slug: string;
-  initialData: Plan[];
+  initialData: PlanListItem[];
   scope?: PlansScope;
 };
 
 /** Slice of filter state the list needs — kept outside the nuqs Suspense boundary. */
 type ListFilterState = {
-  filteredPlans: Plan[];
+  filteredPlans: PlanListItem[];
   sort: SortOption;
   sortDir: SortDirection;
   isFiltering: boolean;
@@ -53,7 +53,7 @@ function UrlFilters({
   slug,
   onChange,
 }: {
-  plans: Plan[];
+  plans: PlanListItem[];
   slug: string;
   onChange: (state: ListFilterState) => void;
 }) {

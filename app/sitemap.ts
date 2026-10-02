@@ -11,8 +11,7 @@ function toEntries(
     .filter((item) => Boolean(item.slug))
     .map((item) => ({
       url: `${SITE_URL}/${item.slug}/`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
+      changeFrequency: "weekly" as const,
       priority: 0.8,
     }));
 }
@@ -30,10 +29,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     regions.success && Array.isArray(regions.data) ? regions.data : [],
   );
 
+  // Omit lastModified until we have real content dates — inventing build-time
+  // timestamps makes every URL look freshly updated on every deploy.
   return [
     {
       url: `${SITE_URL}/`,
-      lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
     },
@@ -41,8 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...regionEntries,
     {
       url: `${SITE_URL}/global/`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
+      changeFrequency: "weekly",
       priority: 0.8,
     },
   ];

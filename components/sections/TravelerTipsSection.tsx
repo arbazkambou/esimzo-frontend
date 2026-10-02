@@ -1,4 +1,5 @@
 import type { TravelerTipsContent } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Lightbulb } from "lucide-react";
 
@@ -7,24 +8,16 @@ type Props = {
   content: TravelerTipsContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 export default function TravelerTipsSection({
   countryName,
   content,
 }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
   const intro = content.intro?.trim()
-    ? fillTemplate(content.intro, values)
+    ? fillCountryTemplate(content.intro, countryName)
     : null;
   const notice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   const tips = content.tips.filter(
@@ -92,7 +85,7 @@ export default function TravelerTipsSection({
         <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5">
           {tips.map((tip, index) => {
             const paragraphs = tip.paragraphs
-              .map((p) => fillTemplate(p, values).trim())
+              .map((p) => fillCountryTemplate(p, countryName).trim())
               .filter(Boolean);
 
             return (

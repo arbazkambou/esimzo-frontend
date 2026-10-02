@@ -2,6 +2,7 @@ import type {
   CountryVsRegionalContent,
   CountryVsRegionalOption,
 } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Flag, Globe2, Info } from "lucide-react";
 import type { ReactNode } from "react";
@@ -11,27 +12,20 @@ type Props = {
   content: CountryVsRegionalContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 function OptionPanel({
   option,
-  values,
+  countryName,
   icon,
   accent,
 }: {
   option: CountryVsRegionalOption;
-  values: Record<string, string>;
+  countryName: string;
   icon: ReactNode;
   accent: "orange" | "sky";
 }) {
-  const title = fillTemplate(option.titleTemplate, values);
+  const title = fillCountryTemplate(option.titleTemplate, countryName);
   const paragraphs = option.paragraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
   const destinations =
     option.destinations?.map((d) => d.trim()).filter(Boolean) ?? [];
@@ -94,17 +88,16 @@ export default function CountryVsRegionalSection({
   countryName,
   content,
 }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
   const notice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   const countryParagraphs = content.countryOption.paragraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
   const regionalParagraphs = content.regionalOption.paragraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
 
   if (countryParagraphs.length === 0 && regionalParagraphs.length === 0) {
@@ -153,7 +146,7 @@ export default function CountryVsRegionalSection({
           {countryParagraphs.length > 0 ? (
             <OptionPanel
               option={content.countryOption}
-              values={values}
+              countryName={countryName}
               accent="orange"
               icon={<Flag className="h-5 w-5" strokeWidth={2.2} />}
             />
@@ -161,7 +154,7 @@ export default function CountryVsRegionalSection({
           {regionalParagraphs.length > 0 ? (
             <OptionPanel
               option={content.regionalOption}
-              values={values}
+              countryName={countryName}
               accent="sky"
               icon={<Globe2 className="h-5 w-5" strokeWidth={2.2} />}
             />

@@ -60,10 +60,15 @@ export async function getRegions() {
 
 /** Match a slug against the cached regions list. Null means it is not a region. */
 export async function getRegionBySlug(slug: string): Promise<Region | null> {
+  if (!slug) return null;
   const regions = await getRegions();
   if (!regions.success) return null;
   const normalized = slug.toLowerCase();
-  return regions.data.find((region) => region.slug.toLowerCase() === normalized) ?? null;
+  return (
+    regions.data.find(
+      (region) => region.slug?.toLowerCase() === normalized,
+    ) ?? null
+  );
 }
 
 export async function getRegionCountries(slug: string) {

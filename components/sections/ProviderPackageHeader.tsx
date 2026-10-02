@@ -1,5 +1,5 @@
-import { capitalize } from "@/lib/constants";
 import React from "react";
+import { withDefiniteArticle } from "@/lib/display-name";
 
 type PropsType = {
   providerName: string;
@@ -13,7 +13,7 @@ export default function ProviderPackageHeader({
   return (
     <header>
       <h1 className="text-4xl py-2 font-bold">
-        {capitalize(providerName)} eSIM Data Plans for {capitalize(countryName)}
+        {providerName} eSIM Data Plans for {withDefiniteArticle(countryName)}
       </h1>
     </header>
   );

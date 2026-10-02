@@ -1,4 +1,5 @@
 import type { PhoneCompatibilityContent } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Smartphone } from "lucide-react";
 
@@ -7,28 +8,20 @@ type Props = {
   content: PhoneCompatibilityContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 export default function PhoneCompatibilitySection({
   countryName,
   content,
 }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
 
   const paragraphs = content.paragraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
 
   if (paragraphs.length === 0) return null;
 
   const notice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   const showCta =

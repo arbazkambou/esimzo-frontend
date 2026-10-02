@@ -32,7 +32,7 @@ import {
   Wifi,
   Zap,
 } from "lucide-react";
-import type { Plan } from "@/lib/types/plans.types";
+import type { PlanListItem } from "@/lib/types/plans.types";
 import type {
   SortOption,
   SortDirection,
@@ -64,7 +64,7 @@ const TABLE_COL_SPAN = 7;
 const INITIAL_PLAN_COUNT = 100;
 
 type Props = {
-  plans: Plan[];
+  plans: PlanListItem[];
   sort: SortOption;
   sortDir: SortDirection;
   onSort: (sort: SortOption) => void;
@@ -83,7 +83,7 @@ const SORTABLE_COLUMNS: ColumnSort[] = [
   { id: "cheapest", label: "Price" },
 ];
 
-function getSpeedLabel(plan: Plan): "4G" | "5G" | "4G/5G" | null {
+function getSpeedLabel(plan: PlanListItem): "4G" | "5G" | "4G/5G" | null {
   if (plan.has5G === true) return "4G/5G";
   if (plan.has5G === false) return "4G";
   return null;
@@ -96,7 +96,7 @@ type FeatureChip = {
   icon: ReactNode;
 };
 
-function getPlanFeatureChips(plan: Plan): FeatureChip[] {
+function getPlanFeatureChips(plan: PlanListItem): FeatureChip[] {
   const features: FeatureChip[] = [];
   const speed = getSpeedLabel(plan);
   const hasVoice =
@@ -246,7 +246,7 @@ function ProviderLogo({
   );
 }
 
-function PlanFeatureChips({ plan }: { plan: Plan }) {
+function PlanFeatureChips({ plan }: { plan: PlanListItem }) {
   const features = getPlanFeatureChips(plan);
   if (features.length === 0) return null;
 
@@ -276,7 +276,7 @@ function PlanFeatureChips({ plan }: { plan: Plan }) {
   );
 }
 
-function FairUseInfo({ plan }: { plan: Plan }) {
+function FairUseInfo({ plan }: { plan: PlanListItem }) {
   const note = getPlanFairUseNote(plan);
   if (!note) return null;
 
@@ -293,9 +293,9 @@ function FairUseInfo({ plan }: { plan: Plan }) {
 }
 
 /** Derive a compact location label from coverage codes */
-function getCoverageLabel(plan: Plan): string | null {
-  if (!plan.coverages || plan.coverages.length === 0) return null;
-  const codes = plan.coverages.map((c) => c.code).filter(Boolean);
+function getCoverageLabel(plan: PlanListItem): string | null {
+  if (!plan.coverageCodes || plan.coverageCodes.length === 0) return null;
+  const codes = plan.coverageCodes.filter(Boolean);
   if (codes.length === 0) return null;
   if (codes.length <= 3) return codes.join(", ");
   return `${codes.slice(0, 2).join(", ")} +${codes.length - 2}`;
@@ -306,7 +306,7 @@ const PlanMobileCard = memo(function PlanMobileCard({
   plan,
   href,
 }: {
-  plan: Plan;
+  plan: PlanListItem;
   href: string;
 }) {
   const effective = getEffectiveUsdPrice(plan);
@@ -414,7 +414,7 @@ const PlanDesktopRow = memo(function PlanDesktopRow({
   slug,
   sort,
 }: {
-  plan: Plan;
+  plan: PlanListItem;
   slug: string;
   sort: SortOption;
 }) {

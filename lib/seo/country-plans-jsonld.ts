@@ -4,21 +4,14 @@ import type {
   HowToChooseEsimContent,
   PlansHeroStats,
 } from "@/lib/content/countries";
+import { fillCountryTemplate, withDefiniteArticle } from "@/lib/display-name";
 import type { Plan } from "@/lib/types/plans.types";
 import { formatPrice, getEffectiveUsdPrice } from "@/lib/utils";
 
 const SITE_URL = "https://esimzo.com";
-const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
-
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template
-    .replace(/\{\{(\w+)\}\}/g, (_, key: string) => values[key] ?? "")
-    .replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
+/** Cap offer list size so JSON-LD stays reasonable on large plan pages. */
+const JSON_LD_OFFER_LIMIT = 50;
 
 function formatLastUpdated(value: PlansHeroStats["lastUpdated"]): string {
   if (value == null || value === "") return "daily";
@@ -54,24 +47,61 @@ export function buildCountryPlansJsonLd({
 }: CountryPlansJsonLdInput): Record<string, unknown> {
   const pageUrl = `${SITE_URL}/${slug}/`;
   const pageId = `${pageUrl}#webpage`;
-  const values = {
-    countryName,
+  const extra = {
     planCount: String(stats.planCount),
     providerCount: String(stats.providerCount),
     startingPrice: formatPrice(stats.startingPrice),
     lastUpdated: formatLastUpdated(stats.lastUpdated),
   };
 
-  const title = fillTemplate(heroContent.titleTemplate, values);
-  const description = fillTemplate(heroContent.description, values);
-  const prices = plans
-    .map(getEffectiveUsdPrice)
-    .filter((n) => Number.isFinite(n));
-  const lowPrice = prices.length ? Math.min(...prices) : stats.startingPrice;
-  const highPrice = prices.length ? Math.max(...prices) : stats.startingPrice;
-
+  const title = fillCountryTemplate(
+    heroContent.titleTemplate,
+    countryName,
+    extra,
+  );
+  const description = fillCountryTemplate(
+    heroContent.description,
+    countryName,
+    extra,
+  );
   const hasPart: { "@id": string }[] = [];
   const graph: Record<string, unknown>[] = [];
+
+  const offerPlans = [...plans]
+    .sort((a, b) => getEffectiveUsdPrice(a) - getEffectiveUsdPrice(b))
+    .slice(0, JSON_LD_OFFER_LIMIT);
+
+  const offerListElements = offerPlans.map((plan, index) => {
+    const price = Number(getEffectiveUsdPrice(plan).toFixed(2));
+    const providerName = plan.provider.name;
+    const providerUrl = `${SITE_URL}/${slug}/${plan.provider.slug}-provider/`;
+
+    return {
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Offer",
+        name: `${providerName} — ${plan.name}`,
+        url: providerUrl,
+        priceCurrency: "USD",
+        price,
+        availability: "https://schema.org/InStock",
+        seller: {
+          "@type": "Organization",
+          name: providerName,
+        },
+        itemOffered: {
+          "@type": "Product",
+          name: plan.name,
+          category: "Travel eSIM",
+          brand: {
+            "@type": "Brand",
+            name: providerName,
+          },
+        },
+      },
+    };
+  });
 
   const collectionPage: Record<string, unknown> = {
     "@type": "CollectionPage",
@@ -110,29 +140,13 @@ export function buildCountryPlansJsonLd({
       ],
     },
     {
-      "@type": "Product",
+      "@type": "ItemList",
       "@id": `${pageUrl}#offers`,
-      name: `Travel eSIM plans for ${countryName}`,
+      name: `Travel eSIM plans for ${withDefiniteArticle(countryName)}`,
       description,
-      category: "Travel eSIM",
-      brand: {
-        "@type": "Brand",
-        name: "eSIMzo",
-      },
-      audience: {
-        "@type": "Audience",
-        audienceType: "Travelers",
-      },
-      offers: {
-        "@type": "AggregateOffer",
-        url: pageUrl,
-        priceCurrency: "USD",
-        lowPrice: Number(lowPrice.toFixed(2)),
-        highPrice: Number(highPrice.toFixed(2)),
-        offerCount: stats.planCount,
-        availability: "https://schema.org/InStock",
-        seller: { "@id": ORGANIZATION_ID },
-      },
+      numberOfItems: stats.planCount,
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      itemListElement: offerListElements,
     },
   );
 
@@ -163,8 +177,16 @@ export function buildCountryPlansJsonLd({
   }
 
   if (howToChoose) {
-    const howToName = fillTemplate(howToChoose.headingTemplate, values);
-    const howToDescription = fillTemplate(howToChoose.intro, values);
+    const howToName = fillCountryTemplate(
+      howToChoose.headingTemplate,
+      countryName,
+      extra,
+    );
+    const howToDescription = fillCountryTemplate(
+      howToChoose.intro,
+      countryName,
+      extra,
+    );
     const steps = howToChoose.criteria
       .filter(
         (c) =>
@@ -176,7 +198,7 @@ export function buildCountryPlansJsonLd({
         position: index + 1,
         name: criterion.heading,
         text: criterion.paragraphs
-          .map((p) => fillTemplate(p, values).trim())
+          .map((p) => fillCountryTemplate(p, countryName, extra).trim())
           .filter(Boolean)
           .join(" "),
       }));
@@ -211,28 +233,59 @@ export function buildCountryPlansMetadataFields({
   countryName,
   heroContent,
   stats,
-  metaDescriptionOverride,
+  speedHighlight,
+  includeCityCue = false,
 }: {
   slug: string;
   countryName: string;
   heroContent: CountryPlansHeroContent;
   stats: PlansHeroStats;
-  /** Prefer speed-test meta when available */
-  metaDescriptionOverride?: string | null;
+  /** Structured speed highlight — merged into the description, not a full replace */
+  speedHighlight?: {
+    fastest: string;
+    fastestDl: number;
+  } | null;
+  /** Append city-networks cue when city data exists */
+  includeCityCue?: boolean;
 }) {
   const pageUrl = `${SITE_URL}/${slug}/`;
-  const values = {
-    countryName,
+  const searchName = heroContent.searchName?.trim() || countryName;
+  const year = String(new Date().getFullYear());
+  const extra = {
+    searchName,
     planCount: String(stats.planCount),
     providerCount: String(stats.providerCount),
     startingPrice: formatPrice(stats.startingPrice),
     lastUpdated: formatLastUpdated(stats.lastUpdated),
+    year,
   };
 
-  const title = fillTemplate(heroContent.titleTemplate, values);
-  const description =
-    metaDescriptionOverride?.trim() ||
-    fillTemplate(heroContent.description, values);
+  const title = fillCountryTemplate(
+    heroContent.metaTitleTemplate ?? heroContent.titleTemplate,
+    countryName,
+    extra,
+  );
+
+  let description: string;
+  if (speedHighlight?.fastest && Number.isFinite(speedHighlight.fastestDl)) {
+    const mbps = Math.round(speedHighlight.fastestDl);
+    const parts = [
+      `Compare ${extra.planCount} ${searchName} eSIM plans from ${extra.startingPrice}.`,
+      `${speedHighlight.fastest} is fastest (${mbps} Mbps).`,
+    ];
+    if (includeCityCue) {
+      parts.push("See speeds by network and city.");
+    } else {
+      parts.push("See speeds by network.");
+    }
+    description = parts.join(" ");
+  } else {
+    description = fillCountryTemplate(
+      heroContent.description,
+      countryName,
+      extra,
+    );
+  }
 
   return {
     title,

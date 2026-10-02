@@ -1,4 +1,5 @@
 import type { EsimVsLocalContent } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ArrowLeftRight } from "lucide-react";
 
@@ -7,17 +8,9 @@ type Props = {
   content: EsimVsLocalContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 export default function EsimVsLocalSection({ countryName, content }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
-  const intro = fillTemplate(content.intro, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
+  const intro = fillCountryTemplate(content.intro, countryName);
 
   const rows = content.rows.filter(
     (row) => row.travelEsim.trim().length > 0 && row.localSim.trim().length > 0,
@@ -26,11 +19,11 @@ export default function EsimVsLocalSection({ countryName, content }: Props) {
   if (rows.length === 0) return null;
 
   const closingParagraphs = content.closingParagraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
 
   const notice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   const titleSuffix = ` ${countryName}?`;

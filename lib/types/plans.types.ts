@@ -101,6 +101,43 @@ export type Plan = {
   };
 };
 
+/** Fields required for country/region/global plan lists (filters + table). */
+export type PlanListItem = {
+  id: string;
+  name: string;
+  usdPrice: number;
+  promoEnabled: boolean;
+  promoPrice: number | null;
+  capacity: number;
+  capacityInfo: string | null;
+  dataType: Plan["dataType"];
+  unlimitedAfterAllowance: boolean | null;
+  period: number;
+  reducedSpeed: number | null;
+  speedLimit?: number | null;
+  possibleThrottling?: boolean | null;
+  isLowLatency: boolean | null;
+  has5G: boolean | null;
+  tethering: boolean | null;
+  canTopUp: boolean | null;
+  phoneNumber: boolean | null;
+  telephony?: Telephony | null;
+  subscription: boolean | null;
+  payAsYouGo: boolean | null;
+  newUserOnly: boolean | null;
+  isConsecutive: boolean | null;
+  eKYC: boolean | null;
+  providerPromoAvailable: boolean | null;
+  networks: string[];
+  coverageCodes: string[];
+  hasInternetBreakouts: boolean;
+  provider: {
+    name: string;
+    slug: string;
+    image: string | null;
+  };
+};
+
 export type Provider = {
   id: string;
   name: string;

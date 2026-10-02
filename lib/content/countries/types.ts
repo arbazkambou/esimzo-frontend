@@ -1,6 +1,17 @@
 export type CountryPlansHeroContent = {
-  /** e.g. "Compare eSIM Plans for {countryName}" */
+  /** Visible H1, e.g. "Compare eSIM Plans for {countryName}" */
   titleTemplate: string;
+  /**
+   * Optional document `<title>` template. Falls back to `titleTemplate`.
+   * Placeholders: countryName, searchName, planCount, providerCount,
+   * startingPrice, lastUpdated, year.
+   */
+  metaTitleTemplate?: string;
+  /**
+   * Short search-friendly label for meta (e.g. "USA").
+   * Falls back to `countryName`.
+   */
+  searchName?: string;
   /** Supporting copy; may include {countryName} */
   description: string;
   /** e.g. "Browse {planCount} plans from {providerCount} providers." */

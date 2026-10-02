@@ -1,4 +1,5 @@
 import type { UnlimitedPlansContent } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ArrowUp,
@@ -11,28 +12,23 @@ type Props = {
   content: UnlimitedPlansContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 export default function UnlimitedPlansSection({
   countryName,
   content,
 }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
 
   const introParagraphs = content.introParagraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
-  const checklistIntro = fillTemplate(content.checklistIntro, values).trim();
+  const checklistIntro = fillCountryTemplate(
+    content.checklistIntro,
+    countryName,
+  ).trim();
   const checklist = content.checklist.map((item) => item.trim()).filter(Boolean);
-  const closing = fillTemplate(content.closing, values).trim();
+  const closing = fillCountryTemplate(content.closing, countryName).trim();
   const notice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   if (introParagraphs.length === 0 && checklist.length === 0 && !closing) {

@@ -1,4 +1,5 @@
 import type { NetworkCoverageContent } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { MapPinned, Signal } from "lucide-react";
 
@@ -7,22 +8,14 @@ type Props = {
   content: NetworkCoverageContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 export default function NetworkCoverageSection({
   countryName,
   content,
 }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
 
   const paragraphs = content.paragraphs
-    .map((p) => fillTemplate(p, values).trim())
+    .map((p) => fillCountryTemplate(p, countryName).trim())
     .filter(Boolean);
 
   if (paragraphs.length === 0) return null;
@@ -31,7 +24,7 @@ export default function NetworkCoverageSection({
   const territories =
     content.territories?.map((t) => t.trim()).filter(Boolean) ?? [];
   const notice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   const titleSuffix = ` ${countryName}`;

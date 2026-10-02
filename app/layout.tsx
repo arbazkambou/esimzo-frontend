@@ -25,9 +25,6 @@ export const metadata: Metadata = {
   },
   description:
     "Compare 30,000+ travel eSIM plans from different providers in 200+ countries. Sort by price per GB, validity, speed rules, and real traveler reviews.",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "Compare Travel eSIM Plans Without Sponsored Rankings | eSIMzo",
     description:

@@ -9,7 +9,6 @@ import HowToChooseEsimSection from "@/components/sections/HowToChooseEsimSection
 import NetworkCoverageSection from "@/components/sections/NetworkCoverageSection";
 import NetworkSpeedsSection from "@/components/sections/network-speeds/NetworkSpeedsSection";
 import CityNetworksSection from "@/components/sections/city-networks/CityNetworksSection";
-import NoPackagesState from "@/components/sections/NoPackagesFound";
 import PhoneCompatibilitySection from "@/components/sections/PhoneCompatibilitySection";
 import TravelerTipsSection from "@/components/sections/TravelerTipsSection";
 import UnlimitedPlansSection from "@/components/sections/UnlimitedPlansSection";
@@ -49,9 +48,11 @@ import {
   getRegionalPackagesBySlug,
   getRegions,
 } from "@/lib/services/plans/plans.services";
+import { toPlanListItems } from "@/lib/plans/plan-list-item";
 import type { Plan } from "@/lib/types/plans.types";
 import type { ApiResponse } from "@/lib/services/api";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -86,28 +87,19 @@ async function loadPlans(slug: string): Promise<{
   };
 }
 
-const DEFAULT_OG_IMAGE = {
-  url: "/opengraph-image",
-  width: 1200,
-  height: 630,
-  alt: "eSIMzo — Compare travel eSIM plans",
-} as const;
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const { scope, name: countryName, packages } = await loadPlans(slug);
-  const hasPlans = packages.success && packages.data.length > 0;
+  if (!packages.success || packages.data.length === 0) {
+    return {
+      title: "Page not found",
+      robots: { index: false, follow: false },
+    };
+  }
   const heroContent = getCountryPlansHeroContent(slug);
-  const stats = hasPlans
-    ? derivePlansHeroStats(packages.data)
-    : {
-        planCount: 0,
-        providerCount: 0,
-        startingPrice: 0,
-        lastUpdated: new Date(),
-      };
+  const stats = derivePlansHeroStats(packages.data);
   const speedData =
     scope === "country" ? getNetworkSpeedsBySlug(slug) : null;
   const cityData =
@@ -118,20 +110,20 @@ export async function generateMetadata({
     countryName,
     heroContent,
     stats,
-    metaDescriptionOverride:
-      speedData?.meta_description_suggestion ??
-      cityData?.meta_description_suggestion,
+    speedHighlight: speedData
+      ? { fastest: speedData.fastest, fastestDl: speedData.fastest_dl }
+      : null,
+    includeCityCue: Boolean(cityData),
   });
 
+  // OG/Twitter images come from app/[slug]/opengraph-image.tsx (per destination).
   return {
     title,
     description,
     alternates: {
       canonical: pageUrl,
     },
-    robots: hasPlans
-      ? { index: true, follow: true }
-      : { index: false, follow: true },
+    robots: { index: true, follow: true },
     openGraph: {
       title,
       description,
@@ -139,13 +131,11 @@ export async function generateMetadata({
       siteName: "eSIMzo",
       locale: "en_US",
       type: "website",
-      images: [DEFAULT_OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [DEFAULT_OG_IMAGE.url],
     },
   };
 }
@@ -177,8 +167,7 @@ export default async function page({ params }: PageProps) {
   const { slug } = await params;
   const { scope, name: countryName, packages } = await loadPlans(slug);
 
-  if (!packages.success) return <NoPackagesState />;
-  if (packages.data.length === 0) return <NoPackagesState />;
+  if (!packages.success || packages.data.length === 0) notFound();
 
   const content = getCountryPlansHeroContent(slug);
   const howToChooseContent = getCountryHowToChooseContent(slug);
@@ -234,7 +223,7 @@ export default async function page({ params }: PageProps) {
       <div className="container">
         <PlansClientPage
           slug={slug}
-          initialData={packages.data}
+          initialData={toPlanListItems(packages.data)}
           scope={scope}
         />
         {howToChooseContent ? (

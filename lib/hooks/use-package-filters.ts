@@ -8,7 +8,8 @@ import {
   parseAsBoolean,
   parseAsArrayOf,
 } from "nuqs";
-import type { Plan } from "@/lib/types/plans.types";
+import type { PlanListItem } from "@/lib/types/plans.types";
+import { extractPlanNetworkNames } from "@/lib/plans/plan-list-item";
 import { normalizeNetworkName } from "@/lib/network-names";
 import {
   getEffectiveUsdPrice,
@@ -16,23 +17,8 @@ import {
   isUnlimitedPlan,
 } from "@/lib/utils";
 
-/** Prefer slim `plan.networks`; fall back to coverages (provider/detail payloads). */
-function getPlanNetworkNames(plan: Plan): string[] {
-  const raw: string[] = [];
-
-  if (Array.isArray(plan.networks) && plan.networks.length > 0) {
-    for (const name of plan.networks) {
-      if (typeof name === "string" && name.trim()) raw.push(name);
-    }
-  } else {
-    for (const coverage of plan.coverages ?? []) {
-      for (const network of coverage.networks ?? []) {
-        const netName =
-          typeof network === "string" ? network : network?.name;
-        if (netName?.trim()) raw.push(netName.trim());
-      }
-    }
-  }
+function getPlanNetworkNames(plan: PlanListItem): string[] {
+  const raw = extractPlanNetworkNames(plan);
 
   const names = new Set<string>();
   for (const name of raw) {
@@ -53,22 +39,22 @@ export type ColumnSortState = {
 
 // ── Sorting comparators ──
 function sortPlans(
-  plans: Plan[],
+  plans: PlanListItem[],
   column: SortOption,
   direction: SortDirection,
   applyPromo: boolean = true,
-): Plan[] {
+): PlanListItem[] {
   const sorted = [...plans];
   const dir = direction === "asc" ? 1 : -1;
 
-  const getPrice = (p: Plan) =>
+  const getPrice = (p: PlanListItem) =>
     applyPromo ? getEffectiveUsdPrice(p) : p.usdPrice;
 
   switch (column) {
     case "cheapest":
       return sorted.sort((a, b) => (getPrice(a) - getPrice(b)) * dir);
     case "best-value": {
-      const value = (p: Plan) => {
+      const value = (p: PlanListItem) => {
         const highSpeedData =
           p.dataType === "daily"
             ? p.capacity * Math.max(p.period, 1)
@@ -101,7 +87,7 @@ function sortPlans(
   }
 }
 
-const p_period = (p: Plan) => p.period ?? 1;
+const p_period = (p: PlanListItem) => p.period ?? 1;
 
 // ── nuqs options (shallow: true prevents Next.js from refetching page on URL changes) ──
 const NUQS_OPTIONS = { shallow: true, throttleMs: 150 } as const;
@@ -110,7 +96,10 @@ export type DataMode = "total" | "daily";
 export type PackageCategory = "all" | "data-only" | "data-voice";
 
 // ── Main hook ──
-export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
+export function usePackageFilters(
+  plans: PlanListItem[] | undefined,
+  slug?: string,
+) {
   const [isPending, startTransition] = useTransition();
 
   // Sort state
@@ -471,7 +460,7 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     }
 
     // Price limits
-    const getPrice = (p: Plan) =>
+    const getPrice = (p: PlanListItem) =>
       applyPromo ? getEffectiveUsdPrice(p) : p.usdPrice;
 
     if (minPrice !== null) {
@@ -525,8 +514,7 @@ export function usePackageFilters(plans: Plan[] | undefined, slug?: string) {
     if (onlyLocalBreakout) {
       result = result.filter(
         (p) =>
-          p.isLowLatency === true ||
-          (Array.isArray(p.internetBreakouts) && p.internetBreakouts.length > 0),
+          p.isLowLatency === true || p.hasInternetBreakouts === true,
       );
     }
     if (onlyPromo) {

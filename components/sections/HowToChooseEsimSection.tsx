@@ -1,4 +1,5 @@
 import type { HowToChooseEsimContent } from "@/lib/content/countries";
+import { fillCountryTemplate } from "@/lib/display-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, Compass } from "lucide-react";
@@ -8,20 +9,12 @@ type Props = {
   content: HowToChooseEsimContent;
 };
 
-function fillTemplate(
-  template: string,
-  values: Record<string, string>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
-}
-
 export default function HowToChooseEsimSection({
   countryName,
   content,
 }: Props) {
-  const values = { countryName };
-  const heading = fillTemplate(content.headingTemplate, values);
-  const intro = fillTemplate(content.intro, values);
+  const heading = fillCountryTemplate(content.headingTemplate, countryName);
+  const intro = fillCountryTemplate(content.intro, countryName);
 
   const criteria = content.criteria.filter(
     (criterion) =>
@@ -32,7 +25,7 @@ export default function HowToChooseEsimSection({
   if (criteria.length === 0) return null;
 
   const sectionNotice = content.notice?.trim()
-    ? fillTemplate(content.notice, values)
+    ? fillCountryTemplate(content.notice, countryName)
     : null;
 
   const titleSuffix = ` ${countryName}`;
@@ -90,13 +83,13 @@ export default function HowToChooseEsimSection({
         <ol className="flex w-full flex-col gap-3 sm:gap-3.5">
           {criteria.map((criterion, index) => {
             const paragraphs = criterion.paragraphs
-              .map((p) => fillTemplate(p, values).trim())
+              .map((p) => fillCountryTemplate(p, countryName).trim())
               .filter(Boolean);
             const list = criterion.list
-              ?.map((item) => fillTemplate(item, values).trim())
+              ?.map((item) => fillCountryTemplate(item, countryName).trim())
               .filter(Boolean);
             const notice = criterion.notice?.trim()
-              ? fillTemplate(criterion.notice, values)
+              ? fillCountryTemplate(criterion.notice, countryName)
               : null;
 
             return (

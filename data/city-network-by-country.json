@@ -2833,11 +2833,11 @@
   "primary_source": "Opensignal network analytics",
   "cities_compared": 10,
   "leader": "T-Mobile",
-  "meta_description_suggestion": "Best mobile network by city in the United States: T-Mobile is fastest in all 10 cities and regions. Compare eSIM plans by network.",
+  "meta_description_suggestion": "Best mobile network by state in the United States: T-Mobile is fastest in all 10 states compared. Compare eSIM plans by network.",
   "faq": [
    {
-    "q": "Which mobile network is fastest in most cities in the United States?",
-    "a": "T-Mobile is fastest in all 10 cities and regions we compared (Opensignal network analytics, Apr 2026 – Jun 2026)."
+    "q": "Which mobile network is fastest in most states in the United States?",
+    "a": "T-Mobile is fastest in all 10 states we compared (Opensignal network analytics, Apr 2026 – Jun 2026)."
    },
    {
     "q": "What is the best mobile network in New York City?",
@@ -2951,8 +2951,8 @@
    },
    {
     "source": "Opensignal network analytics",
-    "city": "Georgia (US state)",
-    "anchor": "city-georgia-us-state",
+    "city": "Georgia",
+    "anchor": "city-georgia",
     "fastest": "T-Mobile",
     "download_mbps": 244.3,
     "runner_up": "AT&T",
