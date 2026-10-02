@@ -65,15 +65,37 @@ function AccordionTrigger({
 function AccordionContent({
   className,
   children,
+  forceMount: forceMountProp,
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+  // SSR/hydration: keep answers in HTML for SEO. After mount, let Radix
+  // unmount closed panels so open/close animations work normally.
+  const [forceMount, setForceMount] = React.useState<true | undefined>(true)
+
+  React.useEffect(() => {
+    setForceMount(undefined)
+  }, [])
+
+  const resolvedForceMount =
+    forceMountProp !== undefined ? forceMountProp : forceMount
+
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-body"
+      forceMount={resolvedForceMount}
+      className={cn(
+        "overflow-hidden text-body data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+        // While force-mounted for SEO, collapse closed panels without unmounting.
+        resolvedForceMount === true && "data-[state=closed]:hidden",
+      )}
       {...props}
     >
-      <div className={cn("pt-0 pb-4 text-xs leading-relaxed text-text-secondary sm:text-[13.5px]", className)}>
+      <div
+        className={cn(
+          "pt-0 pb-4 text-xs leading-relaxed text-text-secondary sm:text-[13.5px]",
+          className,
+        )}
+      >
         {children}
       </div>
     </AccordionPrimitive.Content>

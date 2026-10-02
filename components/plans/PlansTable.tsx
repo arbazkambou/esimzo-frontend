@@ -47,6 +47,7 @@ import {
   pricePerGB,
 } from "@/lib/utils";
 import { HintTip } from "@/components/ui/hint-tip";
+import { Button } from "@/components/ui/button";
 
 /** Estimated desktop row height for window virtualization. */
 const DESKTOP_ROW_ESTIMATE = 84;
@@ -59,8 +60,8 @@ const MOBILE_CARD_ESTIMATE = 168;
 const MOBILE_CARD_GAP = 10;
 const VIRTUAL_OVERSCAN = 5;
 const TABLE_COL_SPAN = 7;
-/** Always keep this many real DOM rows (SSR + client) for users and crawlers. */
-const SEO_PLAN_COUNT = 100;
+/** First N plans are always real DOM (SSR + initial view) for SEO and UX. */
+const INITIAL_PLAN_COUNT = 100;
 
 type Props = {
   plans: Plan[];
@@ -563,11 +564,15 @@ export default function PlansTable({
   onSort,
   slug,
 }: Props) {
-  // First N plans are always real DOM (SSR + client) — same content for users
-  // and crawlers. Only the remainder is window-virtualized for performance.
-  const pinnedPlans = plans.slice(0, SEO_PLAN_COUNT);
-  const restPlans = plans.slice(SEO_PLAN_COUNT);
+  const [showAll, setShowAll] = useState(false);
+
+  // First N are always real DOM (SSR + crawlers). Remainder loads only after
+  // "View all plans", via the window virtualizer.
+  const pinnedPlans = plans.slice(0, INITIAL_PLAN_COUNT);
+  const hiddenCount = Math.max(0, plans.length - INITIAL_PLAN_COUNT);
+  const restPlans = showAll ? plans.slice(INITIAL_PLAN_COUNT) : [];
   const restCount = restPlans.length;
+  const showViewAll = !showAll && hiddenCount > 0;
 
   const isLargeScreen = useIsLargeScreen();
   const mobileRestRef = useRef<HTMLDivElement>(null);
@@ -626,6 +631,15 @@ export default function PlansTable({
             {plans.length}
           </span>{" "}
           plans match your filters
+          {showViewAll ? (
+            <>
+              {" "}
+              · showing{" "}
+              <span className="tabular font-semibold text-brand-navy">
+                {INITIAL_PLAN_COUNT}
+              </span>
+            </>
+          ) : null}
         </p>
 
         <div className="flex flex-col gap-2.5">
@@ -668,7 +682,7 @@ export default function PlansTable({
       </div>
 
       {/* Desktop comparison table */}
-      <div className="hidden overflow-hidden rounded-2xl border border-border bg-card shadow-[0_4px_20px_rgba(11,18,33,0.04)] lg:block">
+      <div className="hidden overflow-hidden rounded-2xl border border-border bg-card shadow-card lg:block">
         <table className="w-full table-fixed border-collapse">
           <colgroup>
             <col className="w-[31%]" />
@@ -740,7 +754,7 @@ export default function PlansTable({
 
             {restCount > 0 ? (
               <>
-                {/* Anchor for virtualizer scroll margin (after pinned SEO rows). */}
+                {/* Anchor for virtualizer scroll margin (after pinned rows). */}
                 <tr ref={desktopRestRef} aria-hidden>
                   <td
                     colSpan={TABLE_COL_SPAN}
@@ -790,6 +804,24 @@ export default function PlansTable({
           </tbody>
         </table>
       </div>
+
+      {showViewAll ? (
+        <div className="relative z-10 -mt-16 flex justify-center pt-10 sm:-mt-20 sm:pt-12">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 top-0 bg-gradient-to-t from-background from-40% via-background/85 to-transparent"
+          />
+          <Button
+            type="button"
+            variant="default"
+            size="lg"
+            className="relative z-10 shadow-[0_-12px_28px_color-mix(in_srgb,var(--primary)_42%,transparent)]"
+            onClick={() => setShowAll(true)}
+          >
+            View all {plans.length} plans
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

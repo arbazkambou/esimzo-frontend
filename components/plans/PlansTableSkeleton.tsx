@@ -133,22 +133,29 @@ export function TableSkeleton() {
   );
 }
 
+/** Filter chrome only — safe Suspense fallback; do not wrap the plans list. */
+export function FilterCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-border bg-card p-2.5 shadow-subtle sm:p-3">
+      <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-1.5">
+          <Skeleton className="h-3 w-12" />
+          <div className="flex gap-1.5 overflow-hidden">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-9 w-24 shrink-0 rounded-md" />
+            ))}
+          </div>
+        </div>
+        <Skeleton className="h-9 w-full rounded-md md:w-48" />
+      </div>
+    </div>
+  );
+}
+
 export default function PlansTableSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border bg-card p-2.5 shadow-subtle sm:p-3">
-        <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1.5">
-            <Skeleton className="h-3 w-12" />
-            <div className="flex gap-1.5 overflow-hidden">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-9 w-24 shrink-0 rounded-md" />
-              ))}
-            </div>
-          </div>
-          <Skeleton className="h-9 w-full rounded-md md:w-48" />
-        </div>
-      </div>
+      <FilterCardSkeleton />
       <TableSkeleton />
     </div>
   );

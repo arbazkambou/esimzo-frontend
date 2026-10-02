@@ -1,13 +1,25 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import type { Plan } from "@/lib/types/plans.types";
 import { usePlans, type PlansScope } from "@/lib/hooks/use-plans";
-import { usePackageFilters } from "@/lib/hooks/use-package-filters";
+import {
+  usePackageFilters,
+  type SortDirection,
+  type SortOption,
+} from "@/lib/hooks/use-package-filters";
+import { getDefaultFilteredPlans } from "@/lib/plans/default-filtered-plans";
 import { Button } from "@/components/ui/button";
 import PlanFilterCard from "./PlanFilterCard";
 import PlansTable from "./PlansTable";
-import PlansTableSkeleton, { TableSkeleton } from "./PlansTableSkeleton";
+import { FilterCardSkeleton, TableSkeleton } from "./PlansTableSkeleton";
 import NoFilterResults from "./NoFilterResults";
 import { ArrowUp } from "lucide-react";
 
@@ -22,24 +34,91 @@ type Props = {
   scope?: PlansScope;
 };
 
-function PlansContent({ slug, initialData, scope = "country" }: Props) {
-  const { data: plans, isLoading } = usePlans(slug, initialData, scope);
-  const filters = usePackageFilters(plans, slug);
-  const [showJumpToPlans, setShowJumpToPlans] = useState(false);
+/** Slice of filter state the list needs — kept outside the nuqs Suspense boundary. */
+type ListFilterState = {
+  filteredPlans: Plan[];
+  sort: SortOption;
+  sortDir: SortDirection;
+  isFiltering: boolean;
+  toggleColumnSort: (sort: SortOption) => void;
+  clearAll: () => void;
+};
 
-  const allFiltered = filters.filteredPlans;
-  const canJump = allFiltered.length >= JUMP_MIN_PLANS;
+/**
+ * Reads URL filters via nuqs. Must stay inside Suspense.
+ * Pushes list-relevant state up so the plans table can render outside Suspense.
+ */
+function UrlFilters({
+  plans,
+  slug,
+  onChange,
+}: {
+  plans: Plan[];
+  slug: string;
+  onChange: (state: ListFilterState) => void;
+}) {
+  const filters = usePackageFilters(plans, slug);
+  const {
+    filteredPlans,
+    sort,
+    sortDir,
+    isFiltering,
+    toggleColumnSort,
+    clearAll,
+  } = filters;
+
+  useLayoutEffect(() => {
+    onChange({
+      filteredPlans,
+      sort,
+      sortDir,
+      isFiltering,
+      toggleColumnSort,
+      clearAll,
+    });
+  }, [
+    onChange,
+    filteredPlans,
+    sort,
+    sortDir,
+    isFiltering,
+    toggleColumnSort,
+    clearAll,
+  ]);
+
+  return <PlanFilterCard filters={filters} />;
+}
+
+function PlansShell({ slug, initialData, scope = "country" }: Props) {
+  const { data: plans } = usePlans(slug, initialData, scope);
+  const allPlans = plans ?? initialData;
+
+  const defaultPlans = useMemo(
+    () => getDefaultFilteredPlans(allPlans),
+    [allPlans],
+  );
+
+  const [listFilters, setListFilters] = useState<ListFilterState | null>(null);
+  const [scrolledPastPlans, setScrolledPastPlans] = useState(false);
+
+  const handleFiltersChange = useCallback((state: ListFilterState) => {
+    setListFilters(state);
+  }, []);
+
+  const displayPlans = listFilters?.filteredPlans ?? defaultPlans;
+  const sort = listFilters?.sort ?? "cheapest";
+  const sortDir = listFilters?.sortDir ?? "asc";
+  const isFiltering = listFilters?.isFiltering ?? false;
+  const canJump = displayPlans.length >= JUMP_MIN_PLANS;
+  const showJumpToPlans = canJump && scrolledPastPlans;
 
   useEffect(() => {
-    if (!canJump) {
-      setShowJumpToPlans(false);
-      return;
-    }
+    if (!canJump) return;
 
     const updateVisibility = () => {
       const plansEl = document.getElementById("plans");
       if (!plansEl) return;
-      setShowJumpToPlans(
+      setScrolledPastPlans(
         plansEl.getBoundingClientRect().top < -JUMP_SHOW_OFFSET_PX,
       );
     };
@@ -60,25 +139,29 @@ function PlansContent({ slug, initialData, scope = "country" }: Props) {
     });
   }, []);
 
-  if (isLoading) {
-    return <PlansTableSkeleton />;
-  }
-
   return (
     <div className="space-y-6">
-      <PlanFilterCard filters={filters} />
-      {filters.isFiltering ? (
+      {/* Only filter/URL state suspends — never the plan list. */}
+      <Suspense fallback={<FilterCardSkeleton />}>
+        <UrlFilters
+          plans={allPlans}
+          slug={slug}
+          onChange={handleFiltersChange}
+        />
+      </Suspense>
+
+      {isFiltering ? (
         <TableSkeleton />
-      ) : allFiltered.length > 0 ? (
+      ) : displayPlans.length > 0 ? (
         <PlansTable
-          plans={allFiltered}
-          sort={filters.sort}
-          sortDir={filters.sortDir}
-          onSort={filters.toggleColumnSort}
+          plans={displayPlans}
+          sort={sort}
+          sortDir={sortDir}
+          onSort={listFilters?.toggleColumnSort ?? (() => {})}
           slug={slug}
         />
       ) : (
-        <NoFilterResults onClear={filters.clearAll} />
+        <NoFilterResults onClear={listFilters?.clearAll ?? (() => {})} />
       )}
 
       {showJumpToPlans ? (
@@ -103,9 +186,7 @@ export default function PlansClientPage({
 }: Props) {
   return (
     <div id="plans" className="scroll-mt-6 pt-3 pb-4 sm:pt-4 sm:pb-6">
-      <Suspense fallback={<PlansTableSkeleton />}>
-        <PlansContent slug={slug} initialData={initialData} scope={scope} />
-      </Suspense>
+      <PlansShell slug={slug} initialData={initialData} scope={scope} />
     </div>
   );
 }
