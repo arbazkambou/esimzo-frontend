@@ -1,6 +1,7 @@
 import {
   Country,
   Plan,
+  PlanCoveragesPayload,
   Provider,
   PlansListPayload,
   Region,
@@ -13,6 +14,14 @@ import {
 } from "../cache-keys";
 
 const noStore = { cache: "no-store" as const };
+
+/** Full coverage list for a plan — call when Details opens. */
+export async function getPlanCoverages(slugOrId: string) {
+  return api<PlanCoveragesPayload>(
+    `/plans/${encodeURIComponent(slugOrId)}/coverages`,
+    noStore,
+  );
+}
 
 /** Normalize API `data` which may be `{ plans, provider? }` or `[]`. */
 function unwrapPlansPayload(data: PlansListPayload | Plan[]): {

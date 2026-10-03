@@ -32,15 +32,14 @@ export function ProductTabs({
   const activeValue = value ?? defaultValue ?? items[0]?.value;
 
   React.useEffect(() => {
-    if (!listRef.current || !activeValue) return;
-    const active = listRef.current.querySelector<HTMLElement>(
-      `[data-state="active"]`
-    );
-    active?.scrollIntoView({
-      behavior: "smooth",
-      inline: "nearest",
-      block: "nearest",
-    });
+    const list = listRef.current;
+    if (!list || !activeValue) return;
+    const active = list.querySelector<HTMLElement>(`[data-state="active"]`);
+    if (!active) return;
+    // Horizontal-only — scrollIntoView can yank the page away from the top.
+    const left =
+      active.offsetLeft - (list.clientWidth - active.clientWidth) / 2;
+    list.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }, [activeValue]);
 
   return (

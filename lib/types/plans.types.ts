@@ -88,8 +88,11 @@ export type Plan = {
   hasAds: boolean | null;
   packageType: string | null;
   providerPromoAvailable: boolean | null;
+  /** Country count from DB; full `coverages` are loaded via /plans/:slug/coverages. */
+  coverageCount?: number | null;
   /** Omitted from list responses; null on detail responses means unknown. */
   internetBreakouts?: InternetBreakout[] | null;
+  /** Empty on list APIs — fetch via getPlanCoverages when Details opens. */
   coverages: Coverage[];
   /**
    * Slim local operator names for the destination (country list endpoints).
@@ -103,6 +106,14 @@ export type Plan = {
     /** eSIMzo coupon code when present — gates promo pricing in the UI. */
     promoCode?: string | null;
   };
+};
+
+/** GET /plans/:slugOrId/coverages */
+export type PlanCoveragesPayload = {
+  planId: string;
+  slug: string;
+  coverageCount: number;
+  coverages: Coverage[];
 };
 
 /** Fields required for country/region/global plan lists (filters + table). */

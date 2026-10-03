@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Tooltip,
@@ -50,16 +50,27 @@ export function HintTip({
   contentClassName,
 }: HintTipProps) {
   const canHover = useCanHover();
+  // Controlled open — pointer only. Dialog autofocus must not open tips.
+  const [open, setOpen] = useState(false);
 
   if (canHover) {
     return (
-      <Tooltip>
+      <Tooltip
+        open={open}
+        onOpenChange={(next) => {
+          // Ignore focus-driven opens (Radix opens tooltips on focus).
+          if (!next) setOpen(false);
+        }}
+        delayDuration={200}
+      >
         <TooltipTrigger asChild>
           <button
             type="button"
             aria-label={label}
             className={cn(className)}
             onClick={(e) => e.stopPropagation()}
+            onPointerEnter={() => setOpen(true)}
+            onPointerLeave={() => setOpen(false)}
           >
             {children}
           </button>
@@ -77,7 +88,7 @@ export function HintTip({
   }
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"

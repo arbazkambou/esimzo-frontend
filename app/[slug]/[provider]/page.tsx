@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { ProviderDetails } from "@/components/sections/ProviderDetails";
 import { ProviderPlansClient } from "@/components/plans/ProviderPlansClient";
-import { displayNameFromSlug } from "@/lib/display-name";
+import { displayNameFromSlug, withDefiniteArticle } from "@/lib/display-name";
 import {
+  getCountries,
   getRegionBySlug,
+  getRegions,
   loadProviderDestinationPlans,
 } from "@/lib/services/plans/plans.services";
+import {
+  getAdditionalCountryInfo,
+  getAdditionalGlobalInfo,
+  getAdditionalRegionInfo,
+} from "@/lib/services/additional-info/info.services";
 import type { Plan, Provider } from "@/lib/types/plans.types";
 
 const SITE_URL = "https://esimzo.com";
@@ -15,6 +21,26 @@ const SITE_URL = "https://esimzo.com";
 type PropType = {
   params: Promise<{ slug: string; provider: string }>;
 };
+
+type DestinationKind = "global" | "region" | "country";
+
+async function providersForDestination(
+  slug: string,
+  kind: DestinationKind,
+): Promise<string[]> {
+  const info =
+    kind === "global"
+      ? await getAdditionalGlobalInfo()
+      : kind === "region"
+        ? await getAdditionalRegionInfo(slug)
+        : await getAdditionalCountryInfo(slug);
+
+  if (!info.success || !Array.isArray(info.data.providers)) return [];
+
+  return info.data.providers
+    .map((provider) => provider.slug)
+    .filter((providerSlug): providerSlug is string => Boolean(providerSlug));
+}
 
 type ProviderPageData = {
   cleanProviderSlug: string;
@@ -62,6 +88,56 @@ function buildProviderMetadataFields(data: ProviderPageData) {
   return { title, description, pageUrl: data.pageUrl, providerName };
 }
 
+/**
+ * Prerender destination × provider pages that actually have coverage.
+ * Uses additional-info (same source as the provider cards on [slug]).
+ */
+export async function generateStaticParams() {
+  const [countries, regions] = await Promise.all([
+    getCountries(),
+    getRegions(),
+  ]);
+
+  const destinations: { slug: string; kind: DestinationKind }[] = [
+    { slug: "global", kind: "global" },
+  ];
+
+  if (countries.success) {
+    for (const country of countries.data) {
+      if (country.slug) {
+        destinations.push({ slug: country.slug, kind: "country" });
+      }
+    }
+  }
+
+  if (regions.success) {
+    for (const region of regions.data) {
+      if (region.slug) {
+        destinations.push({ slug: region.slug, kind: "region" });
+      }
+    }
+  }
+
+  const params: { slug: string; provider: string }[] = [];
+  const concurrency = 8;
+
+  for (let i = 0; i < destinations.length; i += concurrency) {
+    const batch = destinations.slice(i, i + concurrency);
+    const batchResults = await Promise.all(
+      batch.map(async ({ slug, kind }) => {
+        const providerSlugs = await providersForDestination(slug, kind);
+        return providerSlugs.map((providerSlug) => ({
+          slug,
+          provider: `${providerSlug}-provider`,
+        }));
+      }),
+    );
+    for (const chunk of batchResults) params.push(...chunk);
+  }
+
+  return params;
+}
+
 export async function generateMetadata({
   params,
 }: PropType): Promise<Metadata> {
@@ -104,6 +180,7 @@ export default async function Page({ params }: PropType) {
   if (!data) notFound();
 
   const { providerName } = buildProviderMetadataFields(data);
+  const destination = withDefiniteArticle(data.locationName);
 
   return (
     <div className="container overflow-x-clip py-[var(--section-y-tight)] sm:py-[var(--section-y)]">
@@ -112,27 +189,32 @@ export default async function Page({ params }: PropType) {
           <ProviderDetails provider={data.provider} />
         </aside>
 
-        <Suspense
-          fallback={
-            <div className="flex w-full min-w-0 flex-col gap-4">
-              <div className="h-16 animate-pulse rounded-lg bg-muted" />
-              <div className="h-40 animate-pulse rounded-xl border border-border bg-card" />
-              <div className="h-12 animate-pulse rounded-lg bg-muted" />
-              <div className="h-12 animate-pulse rounded-lg border border-border bg-card" />
-            </div>
-          }
-        >
-          <div className="min-w-0">
-            <ProviderPlansClient
-              plans={data.plans}
-              provider={data.provider}
-              destinationSlug={data.slug}
-              providerSlug={data.cleanProviderSlug}
-              providerName={providerName}
-              locationName={data.locationName}
-            />
-          </div>
-        </Suspense>
+        <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
+          {/*
+            Inline in this Server Component so crawlers / View Source get real
+            <h1> HTML. Do not move into ProviderPlansClient ("use client").
+          */}
+          <header className="flex min-w-0 flex-col gap-1.5">
+            <h1 className="wrap-break-word text-h3 text-brand-navy sm:text-h1">
+              <span className="text-primary">{providerName}</span> eSIM Data
+              Plans for{" "}
+              <span className="mt-0.5 block text-primary sm:mt-0 sm:inline">
+                {destination}
+              </span>
+            </h1>
+            <p className="max-w-2xl text-pretty text-body-sm text-text-secondary sm:text-body">
+              Compare this provider&apos;s country, regional, and global plans
+              — then buy direct with referral tracking.
+            </p>
+          </header>
+
+          <ProviderPlansClient
+            plans={data.plans}
+            provider={data.provider}
+            destinationSlug={data.slug}
+            providerSlug={data.cleanProviderSlug}
+          />
+        </div>
       </section>
     </div>
   );

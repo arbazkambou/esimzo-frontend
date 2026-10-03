@@ -9,7 +9,7 @@ export function derivePlansHeroStats(plans: Plan[]): PlansHeroStats {
   const startingPrice =
     planCount === 0
       ? 0
-      : Math.min(...plans.map(getEffectiveUsdPrice));
+      : Math.min(...plans.map((plan) => getEffectiveUsdPrice(plan)));
 
   return {
     planCount,

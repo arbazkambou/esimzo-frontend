@@ -53,7 +53,9 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { HintTip } from "@/components/ui/hint-tip";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePlanCoverages } from "@/lib/hooks/use-plan-coverages";
 
 const FEATURE_META: Record<
   string,
@@ -251,6 +253,25 @@ function CoverageRow({ coverage }: { coverage: Coverage }) {
   );
 }
 
+/** Single-line rows matching `CoverageRow` height — avoids layout jump on load. */
+function CoverageListSkeleton({ rows = 6 }: { rows?: number }) {
+  return (
+    <div className="space-y-0" aria-hidden>
+      {Array.from({ length: rows }, (_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-2 border-b border-border-subtle py-1.5 last:border-0"
+        >
+          <Skeleton className="size-4 shrink-0 rounded-sm" />
+          <Skeleton className="h-3.5 w-24 max-w-[30%]" />
+          <Skeleton className="h-3 w-28 max-w-[35%]" />
+          <Skeleton className="h-4 w-7 shrink-0 rounded-sm" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ProviderLogo({
   src,
   name,
@@ -344,6 +365,14 @@ export const ProviderPackagesCard = ({
   const [debouncedCoverageQuery, setDebouncedCoverageQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
 
+  const {
+    data: coveragesPayload,
+    isLoading: isCoveragesLoading,
+    isError: isCoveragesError,
+  } = usePlanCoverages(data.slug || data.id, open);
+
+  const coverages = coveragesPayload?.coverages ?? [];
+
   const listItem = useMemo(() => toPlanListItem(data), [data]);
   const {
     usdPrice,
@@ -352,7 +381,6 @@ export const ProviderPackagesCard = ({
     canTopUp,
     has5G,
     isLowLatency,
-    coverages = [],
     telephony,
   } = data;
 
@@ -386,18 +414,16 @@ export const ProviderPackagesCard = ({
   };
 
   // 5G lives in the Network detail badge — keep Included for extras only.
-  const includedFeatures = (
-    [
-      { label: "Tethering", value: tethering },
-      { label: "Top-up", value: canTopUp },
-      { label: "Low latency", value: isLowLatency },
-      { label: "Voice calls", value: hasCalls },
-      { label: "SMS", value: hasSms },
-      { label: "Phone number", value: data.phoneNumber },
-      { label: "Pay as you go", value: data.payAsYouGo },
-    ] as const
-  )
-    .filter((f): f is { label: string; value: true } => f.value === true)
+  const includedFeatures = [
+    { label: "Tethering", value: tethering },
+    { label: "Top-up", value: canTopUp },
+    { label: "Low latency", value: isLowLatency },
+    { label: "Voice calls", value: hasCalls },
+    { label: "SMS", value: hasSms },
+    { label: "Phone number", value: data.phoneNumber },
+    { label: "Pay as you go", value: data.payAsYouGo },
+  ]
+    .filter((f) => f.value === true)
     .map((f) => f.label);
 
   const infoBadges = useMemo(() => {
@@ -513,7 +539,13 @@ export const ProviderPackagesCard = ({
     return items;
   }, [data, fairUseNote]);
 
-  const showCoverageSearch = coverages.length > 4;
+  // Use list `coverageCount` while fetching so the search slot is reserved
+  // before coverages arrive (avoids a jump when the input mounts).
+  const coverageTotal =
+    coverages.length > 0
+      ? coverages.length
+      : (coveragesPayload?.coverageCount ?? data.coverageCount ?? 0);
+  const showCoverageSearch = coverageTotal > 4;
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedCoverageQuery(coverageQuery), 200);
@@ -691,10 +723,11 @@ export const ProviderPackagesCard = ({
     </div>
   );
 
+  const coverageCountLabel = coverageTotal;
+
+  // Fixed height in both loading and loaded states — prevents list box jump.
   const coverageListClass =
-    coverages.length <= 3
-      ? "max-h-36 overflow-y-auto rounded-lg border border-border bg-card px-2.5 sm:max-h-44 sm:px-3"
-      : "h-36 overflow-y-auto rounded-lg border border-border bg-card px-2.5 sm:h-44 sm:px-3";
+    "h-36 overflow-y-auto rounded-lg border border-border bg-card px-2.5 sm:h-44 sm:px-3";
 
   const planDetailsBody = (
     <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-3 py-2.5 sm:gap-3 sm:px-5 sm:py-3">
@@ -729,60 +762,80 @@ export const ProviderPackagesCard = ({
         </section>
       ) : null}
 
-      {coverages.length > 0 ? (
-        <section className="flex shrink-0 flex-col gap-1.5">
-          <div className="flex shrink-0 items-baseline justify-between gap-2">
-            <h3 className="text-label font-semibold text-brand-navy">
-              Coverage
-            </h3>
-            <span className="text-caption text-text-muted">
-              {filteredCoverages.length}
-              {debouncedCoverageQuery ? ` of ${coverages.length}` : ""}{" "}
-              {coverages.length === 1 ? "country" : "countries"}
-            </span>
-          </div>
+      <section className="flex shrink-0 flex-col gap-1.5">
+        <div className="flex h-4 shrink-0 items-baseline justify-between gap-2">
+          <h3 className="text-label font-semibold text-brand-navy">
+            Coverage
+          </h3>
+          <span className="text-caption tabular text-text-muted">
+            {coverageCountLabel > 0 ? (
+              <>
+                {isCoveragesLoading || !debouncedCoverageQuery
+                  ? coverageCountLabel
+                  : `${filteredCoverages.length} of ${coverages.length}`}{" "}
+                {coverageCountLabel === 1 ? "country" : "countries"}
+              </>
+            ) : isCoveragesLoading ? (
+              <Skeleton className="inline-block h-3 w-16 align-middle" />
+            ) : null}
+          </span>
+        </div>
 
-          {showCoverageSearch ? (
-            <div className="flex h-9 shrink-0 items-center gap-2 rounded-md border border-border bg-input-bg px-3 transition-[border-color,box-shadow] focus-within:border-border-strong focus-within:shadow-subtle">
-              <Search
-                className="size-3.5 shrink-0 text-text-muted"
-                strokeWidth={1.75}
-                aria-hidden
-              />
-              <input
-                ref={searchRef}
-                type="search"
-                value={coverageQuery}
-                onChange={(e) => setCoverageQuery(e.target.value)}
-                placeholder="Search country or network…"
-                className="flex-1 bg-transparent text-sm text-brand-navy outline-none placeholder:text-text-muted"
-              />
-              {coverageQuery ? (
-                <button
-                  type="button"
-                  onClick={() => setCoverageQuery("")}
-                  className="inline-flex size-7 items-center justify-center rounded-md text-text-muted transition-colors hover:text-brand-navy"
-                  aria-label="Clear search"
-                >
-                  <X className="size-3.5" strokeWidth={1.75} />
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div className={coverageListClass}>
-            {filteredCoverages.length > 0 ? (
-              filteredCoverages.map((c, i) => (
-                <CoverageRow key={`${c.code}-${i}`} coverage={c} />
-              ))
-            ) : (
-              <p className="py-4 text-center text-caption text-text-muted">
-                No countries match &quot;{debouncedCoverageQuery}&quot;
-              </p>
-            )}
+        {showCoverageSearch ? (
+          <div className="flex h-9 shrink-0 items-center gap-2 rounded-md border border-border bg-input-bg px-3 transition-[border-color,box-shadow] focus-within:border-border-strong focus-within:shadow-subtle">
+            <Search
+              className="size-3.5 shrink-0 text-text-muted"
+              strokeWidth={1.75}
+              aria-hidden
+            />
+            <input
+              ref={searchRef}
+              type="search"
+              value={coverageQuery}
+              onChange={(e) => setCoverageQuery(e.target.value)}
+              placeholder="Search country or network…"
+              disabled={isCoveragesLoading}
+              className="flex-1 bg-transparent text-sm text-brand-navy outline-none placeholder:text-text-muted disabled:cursor-wait disabled:opacity-70"
+            />
+            {coverageQuery ? (
+              <button
+                type="button"
+                onClick={() => setCoverageQuery("")}
+                className="inline-flex size-7 items-center justify-center rounded-md text-text-muted transition-colors hover:text-brand-navy"
+                aria-label="Clear search"
+              >
+                <X className="size-3.5" strokeWidth={1.75} />
+              </button>
+            ) : null}
           </div>
-        </section>
-      ) : null}
+        ) : null}
+
+        <div
+          className={coverageListClass}
+          aria-busy={isCoveragesLoading}
+          aria-live="polite"
+        >
+          {isCoveragesLoading ? (
+            <CoverageListSkeleton />
+          ) : isCoveragesError ? (
+            <p className="py-4 text-center text-caption text-text-muted">
+              Couldn&apos;t load coverage details.
+            </p>
+          ) : filteredCoverages.length > 0 ? (
+            filteredCoverages.map((c, i) => (
+              <CoverageRow key={`${c.code}-${i}`} coverage={c} />
+            ))
+          ) : debouncedCoverageQuery ? (
+            <p className="py-4 text-center text-caption text-text-muted">
+              No countries match &quot;{debouncedCoverageQuery}&quot;
+            </p>
+          ) : (
+            <p className="py-4 text-center text-caption text-text-muted">
+              No coverage details available.
+            </p>
+          )}
+        </div>
+      </section>
     </div>
   );
 
@@ -811,7 +864,10 @@ export const ProviderPackagesCard = ({
 
       {isMobile ? (
         <Drawer open={open} onOpenChange={handleOpenChange}>
-          <DrawerContent className="flex h-[80dvh] max-h-[80vh] flex-col gap-0 overflow-hidden rounded-t-2xl border-border bg-card p-0 shadow-modal">
+          <DrawerContent
+            className="flex h-[80dvh] max-h-[80vh] flex-col gap-0 overflow-hidden rounded-t-2xl border-border bg-card p-0 shadow-modal"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <DrawerHeader className="shrink-0 space-y-0 border-b border-border px-3 pt-1 pb-2.5 text-left group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left">
               <DrawerTitle className="w-full line-clamp-2 text-left text-base font-semibold leading-snug text-brand-navy text-pretty">
                 {data.name}
@@ -827,7 +883,10 @@ export const ProviderPackagesCard = ({
         </Drawer>
       ) : (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-          <DialogContent className="flex max-h-[min(85dvh,40rem)] w-[calc(100%-1.5rem)] max-w-xl! flex-col gap-0 overflow-hidden rounded-xl border-border p-0 sm:w-full">
+          <DialogContent
+            className="flex max-h-[min(85dvh,40rem)] w-[calc(100%-1.5rem)] max-w-xl! flex-col gap-0 overflow-hidden rounded-xl border-border p-0 sm:w-full"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <DialogHeader className="shrink-0 space-y-0 border-b border-border px-4 pt-3.5 pr-12 pb-3 text-left sm:px-5 sm:pr-14">
               <DialogTitle className="w-full line-clamp-2 text-left text-base font-semibold leading-snug text-brand-navy text-pretty sm:text-lg">
                 {data.name}
