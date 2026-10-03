@@ -68,6 +68,8 @@ export type Plan = {
   dataType: "fixed" | "daily" | "unlimited" | "unknown";
   unlimitedAfterAllowance: boolean | null;
   period: number;
+  /** Provider note about validity / activation window (e.g. eSIMcard). */
+  validityInfo?: string | null;
   /** Post-allowance speed in kbps. */
   reducedSpeed: number | null;
   speedLimit?: number | null;
@@ -98,6 +100,8 @@ export type Plan = {
     name: string;
     slug: string;
     image: string | null;
+    /** eSIMzo coupon code when present — gates promo pricing in the UI. */
+    promoCode?: string | null;
   };
 };
 
@@ -135,6 +139,7 @@ export type PlanListItem = {
     name: string;
     slug: string;
     image: string | null;
+    promoCode?: string | null;
   };
 };
 

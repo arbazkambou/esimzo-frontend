@@ -106,7 +106,10 @@ export async function getRegionalPackagesByProvider(
   return unwrapPlansWithProvider(
     await api<PlansListPayload | Plan[]>(
       `/plans/region/${regionSlug}/provider/${providerSlug}`,
-      noStore,
+      nextFetchCache({
+        revalidate: cacheRevalidate.twelveHours,
+        tags: [cacheTags.plans],
+      }),
     ),
   );
 }
@@ -127,7 +130,10 @@ export async function getGlobalPackagesBySlug(slug: string) {
   return unwrapPlansWithProvider(
     await api<PlansListPayload | Plan[]>(
       `/plans/global/provider/${slug}`,
-      noStore,
+      nextFetchCache({
+        revalidate: cacheRevalidate.twelveHours,
+        tags: [cacheTags.plans],
+      }),
     ),
   );
 }
@@ -139,9 +145,105 @@ export async function getProviderBySearchParams(
   return unwrapPlansWithProvider(
     await api<PlansListPayload | Plan[]>(
       `/plans/country/${countrySlug}/provider/${providerSlug}`,
-      noStore,
+      nextFetchCache({
+        revalidate: cacheRevalidate.twelveHours,
+        tags: [cacheTags.plans],
+      }),
     ),
   );
+}
+
+/** Resolve a country's parent region slug from the cached countries list. */
+export async function getCountryRegionSlug(
+  countrySlug: string,
+): Promise<string | null> {
+  if (!countrySlug) return null;
+  const countries = await getCountries();
+  if (!countries.success) return null;
+  const normalized = countrySlug.toLowerCase();
+  const country = countries.data.find(
+    (item) => item.slug?.toLowerCase() === normalized,
+  );
+  return country?.region?.slug ?? null;
+}
+
+function dedupePlansById(plans: Plan[]): Plan[] {
+  const seen = new Set<string>();
+  const result: Plan[] = [];
+  for (const plan of plans) {
+    if (seen.has(plan.id)) continue;
+    seen.add(plan.id);
+    result.push(plan);
+  }
+  return result;
+}
+
+/**
+ * Load provider plans for a destination:
+ * - country: country + parent-region + global (deduped)
+ * - region: region + global (deduped)
+ * - global: global only
+ */
+export async function loadProviderDestinationPlans(
+  destinationSlug: string,
+  providerSlug: string,
+): Promise<ApiResponse<{ plans: Plan[]; provider: Provider }>> {
+  const isGlobal = destinationSlug.toLowerCase() === "global";
+  const region = isGlobal ? null : await getRegionBySlug(destinationSlug);
+
+  if (isGlobal) {
+    return getGlobalPackagesBySlug(providerSlug);
+  }
+
+  if (region) {
+    const [regional, global] = await Promise.all([
+      getRegionalPackagesByProvider(destinationSlug, providerSlug),
+      getGlobalPackagesBySlug(providerSlug),
+    ]);
+
+    if (!regional.success && !global.success) {
+      return regional.success ? regional : global;
+    }
+
+    const provider =
+      (regional.success ? regional.data.provider : null) ??
+      (global.success ? global.data.provider : null);
+    if (!provider) return fail("Provider not found");
+
+    const plans = dedupePlansById([
+      ...(regional.success ? regional.data.plans : []),
+      ...(global.success ? global.data.plans : []),
+    ]);
+
+    return ok({ plans, provider });
+  }
+
+  const regionSlug = await getCountryRegionSlug(destinationSlug);
+  const [country, regional, global] = await Promise.all([
+    getProviderBySearchParams(destinationSlug, providerSlug),
+    regionSlug
+      ? getRegionalPackagesByProvider(regionSlug, providerSlug)
+      : Promise.resolve(null),
+    getGlobalPackagesBySlug(providerSlug),
+  ]);
+
+  if (!country.success && !(regional && regional.success) && !global.success) {
+    return country.success ? country : global;
+  }
+
+  const provider =
+    (country.success ? country.data.provider : null) ??
+    (regional?.success ? regional.data.provider : null) ??
+    (global.success ? global.data.provider : null);
+  if (!provider) return fail("Provider not found");
+
+  const plans = dedupePlansById([
+    ...(country.success ? country.data.plans : []),
+    ...(regional?.success ? regional.data.plans : []),
+    ...(global.success ? global.data.plans : []),
+  ]);
+
+  return ok({ plans, provider });
 }
 
 function unwrapPlans(

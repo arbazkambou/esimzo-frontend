@@ -16,6 +16,13 @@ import {
   getHighSpeedDataMB,
   isUnlimitedPlan,
 } from "@/lib/utils";
+import {
+  sortPlans,
+  type SortDirection,
+  type SortOption,
+} from "@/lib/plans/sort-plans";
+
+export type { SortOption, SortDirection };
 
 function getPlanNetworkNames(plan: PlanListItem): string[] {
   const raw = extractPlanNetworkNames(plan);
@@ -28,66 +35,10 @@ function getPlanNetworkNames(plan: PlanListItem): string[] {
   return [...names];
 }
 
-// ── Sort options ──
-export type SortOption = "cheapest" | "best-value" | "most-data" | "longest";
-export type SortDirection = "asc" | "desc";
-
 export type ColumnSortState = {
   column: SortOption;
   direction: SortDirection;
 };
-
-// ── Sorting comparators ──
-function sortPlans(
-  plans: PlanListItem[],
-  column: SortOption,
-  direction: SortDirection,
-  applyPromo: boolean = true,
-): PlanListItem[] {
-  const sorted = [...plans];
-  const dir = direction === "asc" ? 1 : -1;
-
-  const getPrice = (p: PlanListItem) =>
-    applyPromo ? getEffectiveUsdPrice(p) : p.usdPrice;
-
-  switch (column) {
-    case "cheapest":
-      return sorted.sort((a, b) => (getPrice(a) - getPrice(b)) * dir);
-    case "best-value": {
-      const value = (p: PlanListItem) => {
-        const highSpeedData =
-          p.dataType === "daily"
-            ? p.capacity * Math.max(p.period, 1)
-            : getHighSpeedDataMB(p);
-        return highSpeedData <= 0 || !Number.isFinite(highSpeedData)
-          ? Infinity
-          : getPrice(p) / (highSpeedData / 1024);
-      };
-      return sorted.sort((a, b) => (value(a) - value(b)) * dir);
-    }
-    case "most-data":
-      return sorted.sort((a, b) => {
-        const dataA =
-          a.dataType === "daily"
-            ? a.capacity * Math.max(p_period(a), 1)
-            : getHighSpeedDataMB(a);
-        const dataB =
-          b.dataType === "daily"
-            ? b.capacity * Math.max(p_period(b), 1)
-            : getHighSpeedDataMB(b);
-        if (!Number.isFinite(dataA) && !Number.isFinite(dataB)) return 0;
-        if (!Number.isFinite(dataA)) return -1 * dir;
-        if (!Number.isFinite(dataB)) return 1 * dir;
-        return (dataB - dataA) * dir;
-      });
-    case "longest":
-      return sorted.sort((a, b) => (b.period - a.period) * dir);
-    default:
-      return sorted;
-  }
-}
-
-const p_period = (p: PlanListItem) => p.period ?? 1;
 
 // ── nuqs options (shallow: true prevents Next.js from refetching page on URL changes) ──
 const NUQS_OPTIONS = { shallow: true, throttleMs: 150 } as const;
@@ -519,7 +470,9 @@ export function usePackageFilters(
     }
     if (onlyPromo) {
       result = result.filter(
-        (p) => p.promoEnabled === true || p.providerPromoAvailable === true,
+        (p) =>
+          p.providerPromoAvailable === true ||
+          Boolean(p.provider.promoCode?.trim()),
       );
     }
 

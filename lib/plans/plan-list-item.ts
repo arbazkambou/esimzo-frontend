@@ -66,6 +66,7 @@ export function toPlanListItem(plan: Plan): PlanListItem {
       name: plan.provider.name,
       slug: plan.provider.slug,
       image: plan.provider.image,
+      promoCode: plan.provider.promoCode ?? null,
     },
   };
 }

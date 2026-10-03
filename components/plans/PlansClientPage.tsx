@@ -39,6 +39,7 @@ type ListFilterState = {
   filteredPlans: PlanListItem[];
   sort: SortOption;
   sortDir: SortDirection;
+  applyPromo: boolean;
   isFiltering: boolean;
   toggleColumnSort: (sort: SortOption) => void;
   clearAll: () => void;
@@ -62,6 +63,7 @@ function UrlFilters({
     filteredPlans,
     sort,
     sortDir,
+    applyPromo,
     isFiltering,
     toggleColumnSort,
     clearAll,
@@ -72,6 +74,7 @@ function UrlFilters({
       filteredPlans,
       sort,
       sortDir,
+      applyPromo,
       isFiltering,
       toggleColumnSort,
       clearAll,
@@ -81,6 +84,7 @@ function UrlFilters({
     filteredPlans,
     sort,
     sortDir,
+    applyPromo,
     isFiltering,
     toggleColumnSort,
     clearAll,
@@ -108,6 +112,7 @@ function PlansShell({ slug, initialData, scope = "country" }: Props) {
   const displayPlans = listFilters?.filteredPlans ?? defaultPlans;
   const sort = listFilters?.sort ?? "cheapest";
   const sortDir = listFilters?.sortDir ?? "asc";
+  const applyPromo = listFilters?.applyPromo ?? true;
   const isFiltering = listFilters?.isFiltering ?? false;
   const canJump = displayPlans.length >= JUMP_MIN_PLANS;
   const showJumpToPlans = canJump && scrolledPastPlans;
@@ -159,6 +164,7 @@ function PlansShell({ slug, initialData, scope = "country" }: Props) {
           sortDir={sortDir}
           onSort={listFilters?.toggleColumnSort ?? (() => {})}
           slug={slug}
+          applyPromo={applyPromo}
         />
       ) : (
         <NoFilterResults onClear={listFilters?.clearAll ?? (() => {})} />

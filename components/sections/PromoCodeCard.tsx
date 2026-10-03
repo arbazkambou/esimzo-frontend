@@ -1,16 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Sparkles } from "lucide-react";
+import { Copy, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type Props = {
   code: string;
   title: string | null;
   discount: number | null;
   isPercentage: boolean;
+  /** Nest inside ProviderDetails without a second outer card. */
+  embedded?: boolean;
 };
 
-export function PromoCodeCard({ code, title, discount, isPercentage }: Props) {
+function formatDiscount(
+  discount: number | null,
+  isPercentage: boolean,
+): string | null {
+  if (discount == null || typeof discount !== "number" || discount <= 0) {
+    return null;
+  }
+  return isPercentage ? `${discount}% off` : `$${discount} off`;
+}
+
+export function PromoCodeCard({
+  code,
+  title,
+  discount,
+  isPercentage,
+  embedded = false,
+}: Props) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -19,7 +39,6 @@ export function PromoCodeCard({ code, title, discount, isPercentage }: Props) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // fallback for browsers that block clipboard
       const el = document.createElement("textarea");
       el.value = code;
       document.body.appendChild(el);
@@ -31,78 +50,65 @@ export function PromoCodeCard({ code, title, discount, isPercentage }: Props) {
     }
   }
 
-  const discountLabel = discount
-    ? `${isPercentage ? `${discount}% OFF` : `$${discount} OFF`}`
-    : null;
+  const discountLabel = formatDiscount(discount, isPercentage);
+  const subtitle =
+    discountLabel ??
+    (title?.trim() ? title.trim() : "Apply at checkout");
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-3xl p-5 shadow-lg"
-      style={{
-        background:
-          "linear-gradient(135deg, #ff9900 0%, #ff6600 40%, #ff3300 100%)",
-      }}
+      className={cn(
+        "flex flex-col gap-1.5 sm:gap-2.5",
+        !embedded &&
+          "rounded-2xl border border-border bg-card p-(--card-pad) shadow-card",
+      )}
     >
-      {/* Sparkle decorations */}
-      <span className="pointer-events-none absolute right-5 top-3 select-none text-white/50 text-lg leading-none">
-        ✦
-      </span>
-      <span className="pointer-events-none absolute right-12 top-6 select-none text-white/30 text-xs leading-none">
-        ✦
-      </span>
-      <span className="pointer-events-none absolute right-8 top-11 select-none text-white/20 text-[10px] leading-none">
-        ✦
-      </span>
-
-      {/* "PROMO CODE" label */}
-      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 mb-1">
-        Promo Code
-      </p>
-
-      {/* Headline row */}
-      <div className="flex items-center gap-2.5 mb-4 flex-wrap">
-        {title && (
-          <p className="text-2xl font-extrabold text-white tracking-tight leading-none">
-            {title}
-          </p>
-        )}
-        {discountLabel && (
-          <span className="rounded-full border border-white/40 bg-white/15 px-2.5 py-0.5 text-[11px] font-semibold text-white/90 backdrop-blur-sm">
-            GET {discountLabel}
-          </span>
-        )}
+      <div className="flex items-baseline justify-between gap-2">
+        <p className="text-caption font-bold uppercase tracking-wider text-primary-text">
+          Promo code
+        </p>
+        <p className="truncate text-caption font-semibold text-text-secondary">
+          {subtitle}
+        </p>
       </div>
 
-      {/* Code pill + copy button */}
-      <button
-        onClick={handleCopy}
-        className="group flex w-full items-center justify-between rounded-2xl bg-white/95 px-4 py-3 shadow-inner transition-all hover:bg-white active:scale-[0.98] cursor-pointer"
-      >
-        <span className="flex-1 text-center text-sm font-bold tracking-[0.15em] text-primary uppercase">
-          {code}
-        </span>
-        <span
-          className={`ml-3 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl transition-all ${
-            copied
-              ? "bg-success-soft text-success"
-              : "bg-primary/10 text-primary group-hover:bg-primary/20"
-          }`}
+      <div className="flex overflow-hidden rounded-lg border border-border bg-card shadow-subtle">
+        <div className="flex min-h-9 min-w-0 flex-1 items-center bg-primary-soft/40 px-3 sm:min-h-11 sm:px-3.5">
+          <span className="truncate select-all text-body-sm font-bold tracking-[0.14em] text-brand-navy uppercase sm:text-body">
+            {code}
+          </span>
+        </div>
+        <Button
+          type="button"
+          variant={copied ? "default" : "secondary"}
+          onClick={handleCopy}
+          className="h-auto min-h-9 shrink-0 rounded-none rounded-r-lg border-0 border-l border-border px-3 sm:min-h-11 sm:px-4"
+          aria-label={copied ? "Copied" : "Copy promo code"}
         >
           {copied ? (
-            <Check className="h-3.5 w-3.5" />
+            <>
+              <Check className="size-3.5 sm:size-4" strokeWidth={2} aria-hidden />
+              Copied
+            </>
           ) : (
-            <Copy className="h-3.5 w-3.5" />
+            <>
+              <Copy className="size-3.5 sm:size-4" strokeWidth={1.75} aria-hidden />
+              Copy
+            </>
           )}
-        </span>
-      </button>
+        </Button>
+      </div>
 
-      {/* Copied feedback */}
       <p
-        className={`mt-2 text-center text-[11px] font-medium text-white/80 transition-opacity duration-300 ${
-          copied ? "opacity-100" : "opacity-0"
-        }`}
+        className={cn(
+          "text-center text-caption text-text-secondary transition-opacity",
+          copied
+            ? "opacity-100"
+            : "pointer-events-none h-0 overflow-hidden opacity-0",
+        )}
+        aria-live="polite"
       >
-        ✓ Copied to clipboard!
+        Copied — paste at checkout
       </p>
     </div>
   );

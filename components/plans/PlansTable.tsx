@@ -48,6 +48,7 @@ import {
 } from "@/lib/utils";
 import { HintTip } from "@/components/ui/hint-tip";
 import { Button } from "@/components/ui/button";
+import { setClickedPlanCookie } from "@/lib/provider-plan-cookie";
 
 /** Estimated desktop row height for window virtualization. */
 const DESKTOP_ROW_ESTIMATE = 84;
@@ -69,6 +70,8 @@ type Props = {
   sortDir: SortDirection;
   onSort: (sort: SortOption) => void;
   slug: string;
+  /** When false, show list prices only (ignore provider promo codes). */
+  applyPromo?: boolean;
 };
 
 type ColumnSort = {
@@ -305,12 +308,16 @@ function getCoverageLabel(plan: PlanListItem): string | null {
 const PlanMobileCard = memo(function PlanMobileCard({
   plan,
   href,
+  slug,
+  applyPromo = true,
 }: {
   plan: PlanListItem;
   href: string;
+  slug: string;
+  applyPromo?: boolean;
 }) {
-  const effective = getEffectiveUsdPrice(plan);
-  const hasPromo = effective < plan.usdPrice;
+  const effective = applyPromo ? getEffectiveUsdPrice(plan) : plan.usdPrice;
+  const hasPromo = applyPromo && effective < plan.usdPrice;
   const periodLabel =
     plan.period === 0
       ? "No expiry"
@@ -318,12 +325,21 @@ const PlanMobileCard = memo(function PlanMobileCard({
   const coverageLabel = getCoverageLabel(plan);
   const features = getPlanFeatureChips(plan);
 
+  const rememberClick = () => {
+    setClickedPlanCookie({
+      planId: plan.id,
+      providerSlug: plan.provider.slug,
+      destinationSlug: slug,
+    });
+  };
+
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-card">
       {/* Link only covers header + stats so tip buttons are never inside <a>. */}
       <div className="relative">
         <Link
           href={href}
+          onClick={rememberClick}
           className="absolute inset-0 z-0 outline-none focus-visible:shadow-[var(--focus-ring)]"
           aria-label={`View ${plan.provider.name} plan details`}
         />
@@ -413,25 +429,36 @@ const PlanDesktopRow = memo(function PlanDesktopRow({
   plan,
   slug,
   sort,
+  applyPromo = true,
 }: {
   plan: PlanListItem;
   slug: string;
   sort: SortOption;
+  applyPromo?: boolean;
 }) {
   const href = `/${slug}/${plan.provider.slug}-provider`;
-  const effective = getEffectiveUsdPrice(plan);
-  const hasPromo = effective < plan.usdPrice;
+  const effective = applyPromo ? getEffectiveUsdPrice(plan) : plan.usdPrice;
+  const hasPromo = applyPromo && effective < plan.usdPrice;
   const periodLabel =
     plan.period === 0
       ? "No expiry"
       : `${plan.period} ${plan.period === 1 ? "Day" : "Days"}`;
   const coverageLabel = getCoverageLabel(plan);
 
+  const rememberClick = () => {
+    setClickedPlanCookie({
+      planId: plan.id,
+      providerSlug: plan.provider.slug,
+      destinationSlug: slug,
+    });
+  };
+
   return (
     <tr className="group border-b border-border last:border-b-0 hover:bg-surface-tint">
       <td className="px-5 py-4">
         <Link
           href={href}
+          onClick={rememberClick}
           className="flex min-w-0 items-center gap-3 no-underline"
         >
           <ProviderLogo
@@ -506,9 +533,10 @@ const PlanDesktopRow = memo(function PlanDesktopRow({
         <PlanFeatureChips plan={plan} />
       </td>
 
-      <td className="px-3 py-4">
+            <td className="px-3 py-4">
         <Link
           href={href}
+          onClick={rememberClick}
           aria-label={`View ${plan.provider.name} plan details`}
           className="flex items-center justify-center no-underline"
         >
@@ -563,6 +591,7 @@ export default function PlansTable({
   sortDir,
   onSort,
   slug,
+  applyPromo = true,
 }: Props) {
   const [showAll, setShowAll] = useState(false);
 
@@ -647,7 +676,9 @@ export default function PlansTable({
             <PlanMobileCard
               key={plan.id}
               plan={plan}
+              slug={slug}
               href={`/${slug}/${plan.provider.slug}-provider`}
+              applyPromo={applyPromo}
             />
           ))}
         </div>
@@ -672,7 +703,9 @@ export default function PlansTable({
                 >
                   <PlanMobileCard
                     plan={plan}
+                    slug={slug}
                     href={`/${slug}/${plan.provider.slug}-provider`}
+                    applyPromo={applyPromo}
                   />
                 </div>
               );
@@ -749,6 +782,7 @@ export default function PlansTable({
                 plan={plan}
                 slug={slug}
                 sort={sort}
+                applyPromo={applyPromo}
               />
             ))}
 
@@ -783,6 +817,7 @@ export default function PlansTable({
                       plan={plan}
                       slug={slug}
                       sort={sort}
+                      applyPromo={applyPromo}
                     />
                   );
                 })}

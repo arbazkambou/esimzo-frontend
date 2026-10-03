@@ -113,17 +113,55 @@ export function isUnlimitedPlan(plan: {
   return plan.dataType === "unlimited";
 }
 
-export function getEffectiveUsdPrice(plan: {
+export type ProviderPromoHint = {
+  promoCode?: string | null;
+};
+
+type PricedPlan = {
   usdPrice: number;
   promoEnabled: boolean;
   promoPrice: number | null;
-}): number {
-  return plan.promoEnabled &&
+  providerPromoAvailable?: boolean | null;
+  provider?: ProviderPromoHint | null;
+};
+
+function providerHasPromoCode(
+  plan: PricedPlan,
+  providerPromo?: ProviderPromoHint | null,
+): boolean {
+  if (providerPromo !== undefined) {
+    return Boolean(providerPromo?.promoCode?.trim());
+  }
+  return (
+    Boolean(plan.provider?.promoCode?.trim()) ||
+    plan.providerPromoAvailable === true
+  );
+}
+
+/**
+ * Effective list price for a plan.
+ *
+ * Source of truth is denormalized `plan.promoPrice` (written at sync /
+ * provider-coupon update). Only applied when the provider has a promo code.
+ */
+export function getEffectiveUsdPrice(
+  plan: PricedPlan,
+  providerPromo?: ProviderPromoHint | null,
+): number {
+  if (!providerHasPromoCode(plan, providerPromo)) {
+    return plan.usdPrice;
+  }
+
+  if (
+    plan.promoEnabled &&
     plan.promoPrice != null &&
     plan.promoPrice >= 0 &&
     plan.promoPrice < plan.usdPrice
-    ? plan.promoPrice
-    : plan.usdPrice;
+  ) {
+    return plan.promoPrice;
+  }
+
+  return plan.usdPrice;
 }
 
 export function pricePerGB(usd: number, capacityMB: number): string {
